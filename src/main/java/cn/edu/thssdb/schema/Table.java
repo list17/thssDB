@@ -3,7 +3,10 @@ package cn.edu.thssdb.schema;
 import cn.edu.thssdb.index.BPlusTree;
 import javafx.util.Pair;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -15,16 +18,35 @@ public class Table implements Iterable<Row> {
   public BPlusTree<Entry, Row> index;
   private int primaryIndex;
 
+  /**
+   * 实例化数据表
+   * 为primary key建立索引
+   * @param databaseName 数据库名称
+   * @param columns 列属性
+   * @param tableName 数据表名称
+   */
   public Table(String databaseName, String tableName, Column[] columns) {
     // TODO
+    this.tableName = tableName;
+    this.databaseName = databaseName;
+    this.columns = new ArrayList<>(Arrays.asList(columns));
+
   }
 
   private void recover() {
     // TODO
   }
 
-  public void insert() {
+  public void insert(Row newRow) throws SQLException {
     // TODO
+    this.lock.writeLock().lock();
+    try {
+
+    }
+    finally {
+      this.lock.writeLock().unlock();
+    }
+
   }
 
   public void delete() {
