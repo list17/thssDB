@@ -122,8 +122,19 @@ public class Table implements Iterable<Row> {
   public void update(Entry updateKey, Row newRow) throws RuntimeException {
     // TODO
     // 由于可能涉及到主键的更新, 所以这里我们选择删掉该主键然后再插入新的行
-    this.delete(updateKey);
-    this.insert(newRow);
+    Row locatedRow;
+    try {
+      locatedRow = this.findRowByPrimaryKey(updateKey);
+      this.delete(updateKey);
+    } catch (KeyNotExistException e) {
+      throw e;
+    }
+    try {
+      this.insert(newRow);
+    } catch (RuntimeException e) {
+      this.insert(locatedRow);
+      throw e;
+    }
   }
 
   /**
