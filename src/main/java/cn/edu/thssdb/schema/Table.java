@@ -129,7 +129,7 @@ public class Table implements Iterable<Row> {
   /**
    * 序列化数据表, 存储到文件中.
    */
-  private void serialize() throws IOException {
+  public void serialize() throws IOException {
     // TODO
     String fileName = "data/" + this.databaseName + "/" + this.tableName;
     ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
@@ -144,7 +144,7 @@ public class Table implements Iterable<Row> {
     objectOutputStream.close();
   }
 
-  private ArrayList<Row> deserialize() throws IOException, ClassNotFoundException {
+  public ArrayList<Row> deserialize() throws IOException, ClassNotFoundException {
     // TODO
     this.index = new BPlusTree<Entry, Row>();
     String fileName = "data/" + this.databaseName + "/" + this.tableName;
