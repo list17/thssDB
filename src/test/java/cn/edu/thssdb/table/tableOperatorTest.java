@@ -26,7 +26,7 @@ public class tableOperatorTest {
         Column[] columns = new Column[2];
         columns[0] = new Column("ID", ColumnType.INT, true, true, 20);
         columns[1] = new Column("name", ColumnType.STRING, false, true, 100);
-        this.table = new Table("database", "table", columns);
+        this.table = new Table("data/database/table", "table", columns);
     }
 
     @Test
@@ -244,10 +244,7 @@ public class tableOperatorTest {
                     this.table.findRowByPrimaryKey(newRow_1.getEntries().get(0)).toString());
             Assert.assertEquals(newRow_2.toString(),
                     this.table.findRowByPrimaryKey(newRow_2.getEntries().get(0)).toString());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLHandleException e) {
             e.printStackTrace();
         }
     }

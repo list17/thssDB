@@ -3,7 +3,7 @@ package cn.edu.thssdb.schema;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MultiEntry implements Comparable<MultiEntry>, Serializable{
+public class MultiEntry implements Comparable<MultiEntry>, Serializable {
     private static final long serialVersionUID = -5809782578272943989L;
     public ArrayList<Entry> values;
     public int valueCount;
@@ -15,6 +15,7 @@ public class MultiEntry implements Comparable<MultiEntry>, Serializable{
 
     /**
      * 多列entry的比较
+     *
      * @param e
      * @return
      */
