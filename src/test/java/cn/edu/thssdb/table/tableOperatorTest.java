@@ -30,7 +30,7 @@ public class tableOperatorTest {
     }
 
     @Test
-    public void testInsert() {
+    public void testInsert() throws SQLHandleException {
         System.out.println("----------testInsert----------");
 
         Row newRow = new Row();
@@ -88,7 +88,7 @@ public class tableOperatorTest {
     }
 
     @Test
-    public void testQuery() {
+    public void testQuery() throws SQLHandleException {
         System.out.println("----------testQuery----------");
 
         Row newRow_1 = new Row();
@@ -116,7 +116,7 @@ public class tableOperatorTest {
     }
 
     @Test
-    public void testDelete() {
+    public void testDelete() throws SQLHandleException {
         System.out.println("----------testDelete----------");
 
         Row newRow = new Row();
@@ -152,7 +152,7 @@ public class tableOperatorTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void testUpdate() throws SQLHandleException {
         System.out.println("----------testUpdate----------");
 
         Row newRow = new Row();
@@ -219,7 +219,7 @@ public class tableOperatorTest {
     }
 
     @Test
-    public void testSerialize() {
+    public void testSerialize() throws SQLHandleException {
         System.out.println("----------testSerialize----------");
 
         Row newRow_1 = new Row();

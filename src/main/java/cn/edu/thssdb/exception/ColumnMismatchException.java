@@ -1,8 +1,7 @@
 package cn.edu.thssdb.exception;
 
-public class ColumnMismatchException extends RuntimeException {
-    @Override
-    public String getMessage() {
-        return "Exception: Column mismatch.";
+public class ColumnMismatchException extends SQLHandleException {
+    public ColumnMismatchException() {
+        super("Exception: Column mismatch.");
     }
 }

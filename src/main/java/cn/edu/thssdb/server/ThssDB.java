@@ -20,7 +20,6 @@ public class ThssDB {
     private static TServerSocket transport;
     private static TServer server;
 
-    private Manager manager;
 
     public static ThssDB getInstance() {
         return ThssDBHolder.INSTANCE;

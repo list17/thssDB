@@ -3,6 +3,7 @@ namespace java cn.edu.thssdb.rpc.thrift
 struct Status {
   1: required i32 code;
   2: optional string msg;
+  3: required string currentDatabase;
 }
 
 struct GetTimeReq {

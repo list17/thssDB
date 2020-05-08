@@ -26,10 +26,6 @@ public class Database {
         recover();
     }
 
-    private void persist() {
-        // TODO
-    }
-
     public void createTable(String name, Column[] columns) throws SQLHandleException {
         // TODO
         if (this.tables.containsKey(name))
@@ -45,7 +41,7 @@ public class Database {
             throw new SQLHandleException("Table " + name + " does not exist");
         }
         Table table = tables.get(name);
-        if (!new File(table.getRoot()).delete()) {
+        if (new File(table.getRoot()).exists() && !new File(table.getRoot()).delete()) {
             throw new SQLHandleException("Fail to delete table " + name + ".");
         }
         this.tables.remove(name);
@@ -57,7 +53,7 @@ public class Database {
         return null;
     }
 
-    private void recover() throws SQLHandleException {
+    public void recover() {
         this.tables.clear();
         String[] list = new File(this.root).list();
         if (list != null) {
@@ -70,7 +66,7 @@ public class Database {
             throw new SQLHandleException("Load database failed");
     }
 
-    public void quit() {
-        // TODO
+    public String getRoot() {
+        return this.root;
     }
 }

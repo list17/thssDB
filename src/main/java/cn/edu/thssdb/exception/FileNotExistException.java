@@ -1,14 +1,10 @@
 package cn.edu.thssdb.exception;
 
-public class FileNotExistException extends RuntimeException {
-    private String path;
-
+/**
+ * 代表无法在本地找到数据库文件
+ */
+public class FileNotExistException extends SQLHandleException {
     public FileNotExistException(String path) {
-        this.path = path;
-    }
-
-    @Override
-    public String getMessage() {
-        return "Exception: the data file: " + this.path + ", does not exist.";
+        super("Exception: the data file: " + path + ", does not exist.");
     }
 }

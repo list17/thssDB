@@ -53,7 +53,7 @@ public class Table implements Iterable<Row> {
         this(databaseRoot, tableName, new Column[0]);
     }
 
-    public synchronized void recover() throws SQLHandleException {
+    public synchronized void recover(){
         this.deserialize();
     }
 
@@ -79,7 +79,7 @@ public class Table implements Iterable<Row> {
      * @param newRow 要插入的新行
      * @throws RuntimeException
      */
-    public void insert(Row newRow) throws RuntimeException {
+    public void insert(Row newRow) throws SQLHandleException {
         // TODO
         Entry primaryKey = newRow.getEntries().get(this.primaryIndex);
         if (this.index.contains(primaryKey)) {
@@ -128,7 +128,7 @@ public class Table implements Iterable<Row> {
      * @param newRow    新行
      * @throws RuntimeException
      */
-    public void update(Entry updateKey, Row newRow) throws RuntimeException {
+    public void update(Entry updateKey, Row newRow){
         // TODO
         // 由于可能涉及到主键的更新, 所以这里我们选择删掉该主键然后再插入新的行
         Row locatedRow;
@@ -149,7 +149,7 @@ public class Table implements Iterable<Row> {
     /**
      * 序列化数据表, 存储到文件中.
      */
-    public void serialize() throws SQLHandleException {
+    public void serialize() {
         // TODO
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(this.root));
@@ -163,11 +163,11 @@ public class Table implements Iterable<Row> {
             }
             objectOutputStream.close();
         } catch (Exception e) {
-            throw new SQLHandleException("Save table " + this.root + " failed");
+            throw new SQLHandleException("Save table " +this.tableName + " failed.");
         }
     }
 
-    public synchronized void deserialize() throws SQLHandleException {
+    public synchronized void deserialize(){
         // TODO
         try {
             this.index = new BPlusTree<Entry, Row>();
@@ -179,7 +179,7 @@ public class Table implements Iterable<Row> {
                 this.index.put(loadRow.getEntries().get(this.primaryIndex), loadRow);
             }
         } catch (Exception e) {
-            throw new SQLHandleException("Load table " + this.tableName + " failed");
+            throw new SQLHandleException("Load table " + this.tableName + " failed.");
         }
     }
 

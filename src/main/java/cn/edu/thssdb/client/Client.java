@@ -1,5 +1,7 @@
 package cn.edu.thssdb.client;
 
+import cn.edu.thssdb.rpc.thrift.ConnectReq;
+import cn.edu.thssdb.rpc.thrift.ConnectResp;
 import cn.edu.thssdb.rpc.thrift.GetTimeReq;
 import cn.edu.thssdb.rpc.thrift.IService;
 import cn.edu.thssdb.utils.Global;
@@ -41,6 +43,7 @@ public class Client {
     private static TProtocol protocol;
     private static IService.Client client;
     private static CommandLine commandLine;
+    private static long sessionId;
 
     public static void main(String[] args) {
         commandLine = parseCmd(args);
@@ -56,7 +59,12 @@ public class Client {
             transport.open();
             protocol = new TBinaryProtocol(transport);
             client = new IService.Client(protocol);
-            boolean open = true;
+            boolean open = false;
+            ConnectResp resp = client.connect(new ConnectReq("username", "password"));
+            if (resp.status.code == Global.SUCCESS_CODE){
+                sessionId = resp.sessionId;
+                 open = true;
+            }
             while (true) {
                 print(Global.CLI_PREFIX);
                 String msg = SCANNER.nextLine();
@@ -81,6 +89,9 @@ public class Client {
             transport.close();
         } catch (TTransportException e) {
             logger.error(e.getMessage());
+        } catch (TException e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 
