@@ -154,6 +154,7 @@ public class Table implements Iterable<Row> {
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(this.root));
             Iterator rowIterator = this.iterator();
+            objectOutputStream.writeObject(this.columns);
 
             // 写入数据行的个数以及所有数据行到文件中.
             objectOutputStream.writeObject(this.index.size());
@@ -172,6 +173,7 @@ public class Table implements Iterable<Row> {
         try {
             this.index = new BPlusTree<Entry, Row>();
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(this.root));
+            this.columns = (ArrayList<Column>) objectInputStream.readObject();
             int rowSize = (int) objectInputStream.readObject();
 
             for (int i = 0; i < rowSize; i++) {
