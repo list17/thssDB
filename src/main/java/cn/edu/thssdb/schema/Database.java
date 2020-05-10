@@ -58,7 +58,7 @@ public class Database {
         String[] list = new File(this.root).list();
         if (list != null) {
             for (String item : list) {
-                Table table = new Table(this.root, item);
+                Table table = new Table(Paths.get(this.root, item).toString(), item);
                 table.recover();
                 this.tables.put(name, table);
             }
