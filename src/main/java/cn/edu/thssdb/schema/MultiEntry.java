@@ -1,16 +1,36 @@
 package cn.edu.thssdb.schema;
 
+import cn.edu.thssdb.exception.DataHandleException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MultiEntry implements Comparable<MultiEntry>, Serializable {
-    private static final long serialVersionUID = -5809782578272943989L;
+public class MultiEntry implements Comparable<MultiEntry> {
     public ArrayList<Entry> values;
     public int valueCount;
 
     public MultiEntry(ArrayList<Entry> values) {
         this.values = values;
         this.valueCount = this.values.size();
+    }
+
+    public MultiEntry() {
+        this.values = new ArrayList<Entry>();
+        this.valueCount = 0;
+    }
+
+    public MultiEntry(Entry... entries) {
+        this.values = new ArrayList<Entry>();
+        this.valueCount = 0;
+
+        for (Entry entry: entries) {
+            addEntry(entry);
+        }
+    }
+
+    public void addEntry(Entry entry) {
+        this.values.add(entry);
+        this.valueCount++;
     }
 
     /**
@@ -22,7 +42,7 @@ public class MultiEntry implements Comparable<MultiEntry>, Serializable {
     @Override
     public int compareTo(MultiEntry e) {
         if (e.valueCount != this.valueCount) {
-            throw new NumberFormatException();
+            throw new DataHandleException(DataHandleException.ErrorCode.MULTIENTRY_LENGTH_MISMATCH);
         }
         for (int i = 0; i < this.valueCount; i++) {
             if (this.values.get(i).equals(e.values.get(i))) {
@@ -50,12 +70,20 @@ public class MultiEntry implements Comparable<MultiEntry>, Serializable {
         return true;
     }
 
-//    public String toString() {
-//        return value.toString();
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return value.hashCode();
-//    }
+    public String toString() {
+        String str = "";
+        for (Entry e: values) {
+            str += e.toString();
+        }
+        return str;
+    }
+
+    @Override
+    public int hashCode() {
+        int code = 0;
+        for (Entry e: values) {
+            code += e.hashCode();
+        }
+        return code;
+    }
 }

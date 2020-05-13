@@ -25,6 +25,21 @@ public class Row implements Serializable {
         this.entries.addAll(entries);
     }
 
+    public MultiEntry getMultiEntry(ArrayList<Integer> indices) {
+        ArrayList<Entry> selectedEntries = new ArrayList<Entry>();
+        for (Integer i: indices) {
+            selectedEntries.add(this.entries.get(i));
+        }
+        return new MultiEntry(selectedEntries);
+    }
+    public MultiEntry getMultiEntry(int... indices) {
+        ArrayList<Entry> selectedEntries = new ArrayList<Entry>();
+        for (int i: indices) {
+            selectedEntries.add(this.entries.get(i));
+        }
+        return new MultiEntry(selectedEntries);
+    }
+
     public String toString() {
         if (entries == null)
             return "EMPTY";

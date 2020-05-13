@@ -2,10 +2,7 @@ package cn.edu.thssdb.table;
 
 import cn.edu.thssdb.exception.*;
 import cn.edu.thssdb.index.BPlusTree;
-import cn.edu.thssdb.schema.Column;
-import cn.edu.thssdb.schema.Entry;
-import cn.edu.thssdb.schema.Row;
-import cn.edu.thssdb.schema.Table;
+import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
 import org.junit.Assert;
 import org.junit.Before;
@@ -105,13 +102,13 @@ public class tableOperatorTest {
         newRow_2.appendEntries(entries);
         this.table.insert(newRow_2);
 
-
         Assert.assertEquals(newRow_1.toString(),
-                this.table.findRowByPrimaryKey(newRow_1.getEntries().get(0)).toString());
+                this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.primaryIndices)).toString());
         Assert.assertEquals(newRow_2.toString(),
-                this.table.findRowByPrimaryKey(newRow_2.getEntries().get(0)).toString());
+                this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.primaryIndices)).toString());
+
         Assert.assertThrows(KeyNotExistException.class, () -> {
-            this.table.findRowByPrimaryKey(new Entry(3, ColumnType.INT));
+            this.table.findRowByPrimaryKey(new MultiEntry(new Entry(3, ColumnType.INT)));
         });
     }
 
@@ -134,20 +131,20 @@ public class tableOperatorTest {
         this.table.insert(newRow);
 
         // 验证该行确实被删除
-        this.table.delete(new Entry(1, ColumnType.INT));
+        this.table.delete(new MultiEntry(new Entry(1, ColumnType.INT)));
         Assert.assertThrows(KeyNotExistException.class, () -> {
-            this.table.findRowByPrimaryKey(new Entry(1, ColumnType.INT));
+            this.table.findRowByPrimaryKey(new MultiEntry(new Entry(1, ColumnType.INT)));
         });
 
         // 不存在的行删除报错
         Assert.assertThrows(KeyNotExistException.class, () -> {
-            this.table.delete(new Entry(3, ColumnType.INT));
+            this.table.delete(new MultiEntry(new Entry(3, ColumnType.INT)));
         });
 
         // 验证该行确实被删除
-        this.table.delete(new Entry(2, ColumnType.INT));
+        this.table.delete(new MultiEntry(new Entry(2, ColumnType.INT)));
         Assert.assertThrows(KeyNotExistException.class, () -> {
-            this.table.findRowByPrimaryKey(new Entry(2, ColumnType.INT));
+            this.table.findRowByPrimaryKey(new MultiEntry(new Entry(2, ColumnType.INT)));
         });
     }
 
@@ -174,18 +171,18 @@ public class tableOperatorTest {
         entries.add(new Entry(1, ColumnType.INT));
         entries.add(new Entry("MurasakiShion", ColumnType.STRING));
         updateRow.appendEntries(entries);
-        this.table.update(new Entry(1, ColumnType.INT), updateRow);
+        this.table.update(new MultiEntry(new Entry(1, ColumnType.INT)), updateRow);
         Assert.assertEquals(updateRow.toString(),
-                this.table.findRowByPrimaryKey(new Entry(1, ColumnType.INT)).toString());
+                this.table.findRowByPrimaryKey(new MultiEntry(new Entry(1, ColumnType.INT))).toString());
 
         updateRow = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(3, ColumnType.INT));
         entries.add(new Entry("MurasakiShion", ColumnType.STRING));
         updateRow.appendEntries(entries);
-        this.table.update(new Entry(1, ColumnType.INT), updateRow);
+        this.table.update(new MultiEntry(new Entry(1, ColumnType.INT)), updateRow);
         Assert.assertEquals(updateRow.toString(),
-                this.table.findRowByPrimaryKey(new Entry(3, ColumnType.INT)).toString());
+                this.table.findRowByPrimaryKey(new MultiEntry(new Entry(3, ColumnType.INT))).toString());
 
         // 想要修改的行不存在(出现在delete部分)
         Assert.assertThrows(KeyNotExistException.class, () -> {
@@ -194,7 +191,7 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(1, ColumnType.INT));
             errorEntries.add(new Entry("MurasakiShion", ColumnType.STRING));
             errorRow.appendEntries(errorEntries);
-            this.table.update(new Entry(1, ColumnType.INT), errorRow);
+            this.table.update(new MultiEntry(new Entry(1, ColumnType.INT)), errorRow);
         });
 
         // 修改后的行存在主键重复(出现在insert部分)
@@ -204,8 +201,9 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(2, ColumnType.INT));
             errorEntries.add(new Entry("MurasakiShion", ColumnType.STRING));
             errorRow.appendEntries(errorEntries);
-            this.table.update(new Entry(3, ColumnType.INT), errorRow);
+            this.table.update(new MultiEntry(new Entry(3, ColumnType.INT)), errorRow);
         });
+
         // 验证原来的行是否被意外删除.
         Row originRow = new Row();
         ArrayList<Entry> originEntries = new ArrayList<Entry>();
@@ -213,7 +211,7 @@ public class tableOperatorTest {
         originEntries.add(new Entry("MurasakiShion", ColumnType.STRING));
         originRow.appendEntries(originEntries);
         Assert.assertEquals(originRow.toString(),
-                this.table.findRowByPrimaryKey(new Entry(3, ColumnType.INT)).toString());
+                this.table.findRowByPrimaryKey(new MultiEntry(new Entry(3, ColumnType.INT))).toString());
 
 
     }
@@ -241,9 +239,10 @@ public class tableOperatorTest {
             this.table.deserialize();
             // 能够复原数据.
             Assert.assertEquals(newRow_1.toString(),
-                    this.table.findRowByPrimaryKey(newRow_1.getEntries().get(0)).toString());
+                    this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.primaryIndices)).toString());
             Assert.assertEquals(newRow_2.toString(),
-                    this.table.findRowByPrimaryKey(newRow_2.getEntries().get(0)).toString());
+                    this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.primaryIndices)).toString());
+            
         } catch (SQLHandleException e) {
             e.printStackTrace();
         }
