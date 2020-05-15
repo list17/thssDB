@@ -12,6 +12,7 @@ import org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class tableOperatorTest {
     private Table table;
@@ -23,7 +24,7 @@ public class tableOperatorTest {
         Column[] columns = new Column[2];
         columns[0] = new Column("ID", ColumnType.INT, true, true, 20);
         columns[1] = new Column("name", ColumnType.STRING, false, true, 100);
-        this.table = new Table("data/database/table", "table", columns);
+        this.table = new Table("data/database/table", "table", (ArrayList<Column>) Arrays.asList(columns));
     }
 
     @Test

@@ -1,5 +1,9 @@
 package cn.edu.thssdb.expression;
 
+import cn.edu.thssdb.exception.ExpressionHandleException;
+
+import java.util.ArrayList;
+
 public class LogicalExpression implements Expression{
     public enum Operator {
         AND,
@@ -17,7 +21,7 @@ public class LogicalExpression implements Expression{
     }
 
     @Override
-    public boolean evaluate() {
+    public boolean evaluate() throws ExpressionHandleException {
         boolean result = false;
         switch (this.op) {
             case AND:
@@ -33,8 +37,9 @@ public class LogicalExpression implements Expression{
     }
 
     @Override
-    public void assignValue(Variable.Value... values) {
-        this.leftExpression.assignValue(values);
-        this.rightExpression.assignValue(values);
+    public ArrayList<Variable> getAllVariables() {
+        ArrayList<Variable> result = this.leftExpression.getAllVariables();
+        result.addAll(this.rightExpression.getAllVariables());
+        return result;
     }
 }

@@ -3,15 +3,16 @@ package cn.edu.thssdb.exception;
 /**
  * 数据处理时出现的错误, 包括获取主键失败等.
  */
-public class DataHandleException extends RuntimeException {
+public class ExpressionHandleException extends RuntimeException {
     private String message;
     public enum ErrorCode {
         GENERAL("Exception: general"),
         INDEX_OVERFLOW("Exception: index overflow."),
-        MULTIENTRY_LENGTH_MISMATCH(" Exception: the lengths of two multientry are not the same.");
+        VALUE_OF_VARIABLE_NOT_FOUND("Exception: some variables of the expression have not been assigned."),
+        AMBIGUOUS_VARIABLE("Exception: the variables in the expression are ambiguous.");
 
         private String message;
-        private ErrorCode(String message) {
+        ErrorCode(String message) {
             this.message = message;
         }
         public String getMessage() {
@@ -20,10 +21,10 @@ public class DataHandleException extends RuntimeException {
     }
     private ErrorCode errorCode;
 
-    public DataHandleException() {
+    public ExpressionHandleException() {
         this.errorCode = ErrorCode.GENERAL;
     }
-    public DataHandleException(ErrorCode errorCode) {
+    public ExpressionHandleException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 

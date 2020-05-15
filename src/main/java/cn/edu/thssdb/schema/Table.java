@@ -55,6 +55,52 @@ public class Table implements Iterable<Row> {
         this(databaseRoot, tableName, new ArrayList<Column>());
     }
 
+    public ArrayList<Column> getCopiedColumns(boolean withPrefix) {
+        ArrayList<Column> copy = new ArrayList<>();
+        for (Column col: this.columns) {
+            copy.add(col.getCopiedColumn());
+        }
+        if (withPrefix) {
+            for (Column col: copy) {
+                col.setPrefix(this.tableName);
+            }
+        }
+        return copy;
+    }
+
+    /**
+     * 设置每列名字的前缀
+     */
+    public void updatePrefix() {
+        //设置前缀
+        for (Column col: this.columns) {
+            col.setPrefix(this.tableName);
+        }
+        //清空Hash表, 重新建立映射
+        this.columnIndices.clear();
+        int attrSize = this.columns.size();
+        for (int i = 0; i < attrSize; i++) {
+            columnIndices.put(this.columns.get(i).getName(), i);
+        }
+    }
+
+    /**
+     * 清空每列名字的前缀
+     */
+    public void clearPrefix() {
+        //设置前缀为null
+        for (Column col: this.columns) {
+            col.setPrefix(null);
+        }
+        //清空Hash表, 重新建立映射
+        this.columnIndices.clear();
+        int attrSize = this.columns.size();
+        for (int i = 0; i < attrSize; i++) {
+            columnIndices.put(this.columns.get(i).getName(), i);
+        }
+    }
+
+
     public synchronized void recover(){
         this.deserialize();
     }
@@ -193,9 +239,12 @@ public class Table implements Iterable<Row> {
         return this.root;
     }
 
-    public Table getAlias(String alias) {
-        Table aliasTable = new Table(this.root, alias, this.columns);
-        return aliasTable;
+    public synchronized String getTableName() {
+        return this.tableName;
+    }
+
+    public HashMap<String, Integer> getColumnIndices() {
+        return this.columnIndices;
     }
 
     private class TableIterator implements Iterator<Row> {

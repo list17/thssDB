@@ -1,5 +1,9 @@
 package cn.edu.thssdb.expression;
 
+import cn.edu.thssdb.exception.ExpressionHandleException;
+
+import java.util.ArrayList;
+
 public class CompareExpression implements Expression {
     public enum Operator {
         EQ,
@@ -21,7 +25,7 @@ public class CompareExpression implements Expression {
     }
 
     @Override
-    public boolean evaluate() {
+    public boolean evaluate() throws ExpressionHandleException {
         Comparable leftValue = this.leftVariable.evaluate();
         Comparable rightValue = this.rightVariable.evaluate();
         if (leftValue == null || rightValue == null) {
@@ -41,10 +45,11 @@ public class CompareExpression implements Expression {
         }
         return result;
     }
-
     @Override
-    public void assignValue(Variable.Value... values) {
-        this.leftVariable.assignValue(values);
-        this.rightVariable.assignValue(values);
+    public ArrayList<Variable> getAllVariables() {
+        ArrayList<Variable> result = new ArrayList<>();
+        result.add(this.leftVariable);
+        result.add(this.rightVariable);
+        return result;
     }
 }
