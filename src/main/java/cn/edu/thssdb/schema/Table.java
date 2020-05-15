@@ -6,10 +6,7 @@ import javafx.util.Pair;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Table implements Iterable<Row> {
@@ -19,7 +16,8 @@ public class Table implements Iterable<Row> {
     public ArrayList<Column> columns;
 
     public BPlusTree<MultiEntry, Row> index;
-    public ArrayList<Integer> primaryIndices;
+    public HashMap<String, Integer> columnIndices;  //根据列名定位索引(下标)
+    public ArrayList<Integer> primaryIndices;   //主键索引(下标)
 
     /**
      * 实例化数据表
@@ -29,18 +27,20 @@ public class Table implements Iterable<Row> {
      * @param columns   列属性
      * @param tableName 数据表名称
      */
-    public Table(String tableRoot, String tableName, Column[] columns) {
+    public Table(String tableRoot, String tableName, ArrayList<Column> columns) {
         // TODO
         // 设置该数据表的表名称, 数据库名称, 以及列属性.
         this.tableName = tableName;
         this.root = tableRoot;
-        this.columns = new ArrayList<>(Arrays.asList(columns));
+        this.columns = columns;
+        this.columnIndices = new HashMap<String, Integer>();
 
         // 设定主键的位置, 并初始化索引树
         int attrSize = this.columns.size();
         this.primaryIndices = new ArrayList<Integer>();
 
         for (int i = 0; i < attrSize; i++) {
+            columnIndices.put(this.columns.get(i).getName(), i);
             if (this.columns.get(i).isPrimary()) {
                 this.primaryIndices.add(i);
             }
@@ -52,7 +52,7 @@ public class Table implements Iterable<Row> {
     }
 
     public Table(String databaseRoot, String tableName) {
-        this(databaseRoot, tableName, new Column[0]);
+        this(databaseRoot, tableName, new ArrayList<Column>());
     }
 
     public synchronized void recover(){
@@ -191,6 +191,11 @@ public class Table implements Iterable<Row> {
 
     public synchronized String getRoot() {
         return this.root;
+    }
+
+    public Table getAlias(String alias) {
+        Table aliasTable = new Table(this.root, alias, this.columns);
+        return aliasTable;
     }
 
     private class TableIterator implements Iterator<Row> {

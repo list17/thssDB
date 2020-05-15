@@ -8,6 +8,8 @@ import javafx.scene.control.Tab;
 import java.io.File;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -31,7 +33,7 @@ public class Database {
         if (this.tables.containsKey(name))
             throw new SQLHandleException("Table " + name + " already exists.");
         String tableRoot = Paths.get(this.root, name).toString();
-        Table table = new Table(tableRoot, name, columns);
+        Table table = new Table(tableRoot, name, (ArrayList<Column>) Arrays.asList(columns));
         this.tables.put(name, table);
     }
 
@@ -51,6 +53,10 @@ public class Database {
         // TODO
         QueryResult queryResult = new QueryResult(queryTables);
         return null;
+    }
+
+    public Table getTable(String name) throws SQLHandleException {
+        return this.tables.get(name);
     }
 
     public void recover() {

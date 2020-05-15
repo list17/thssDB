@@ -10,8 +10,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 public class databaseTest {
@@ -110,7 +113,8 @@ public class databaseTest {
         Column[] columns = new Column[2];
         columns[0] = new Column("ID", ColumnType.INT, true, true, 20);
         columns[1] = new Column("name", ColumnType.STRING, false, true, 100);
-        Table table = new Table(Paths.get(database.getRoot(), "table").toString(), "table", columns);
+        ArrayList<Column> columnArrayList = (ArrayList<Column>) Arrays.asList(columns);
+        Table table = new Table(Paths.get(database.getRoot(), "table").toString(), "table", columnArrayList);
 
         Row newRow_1 = new Row();
         ArrayList<Entry> entries = new ArrayList<Entry>();
