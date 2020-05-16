@@ -2,22 +2,22 @@ package cn.edu.thssdb.schema;
 
 import cn.edu.thssdb.exception.*;
 import cn.edu.thssdb.index.BPlusTree;
+import cn.edu.thssdb.query.QueryTable;
 import javafx.util.Pair;
 
 import java.io.*;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Table implements Iterable<Row> {
     ReentrantReadWriteLock lock;
     private String root;
-    public String tableName;
-    public ArrayList<Column> columns;
+    private String tableName;
+    private ArrayList<Column> columns;
 
-    public BPlusTree<MultiEntry, Row> index;
-    public HashMap<String, Integer> columnIndices;  //根据列名定位索引(下标)
-    public ArrayList<Integer> primaryIndices;   //主键索引(下标)
+    private BPlusTree<MultiEntry, Row> index;
+    private HashMap<String, Integer> columnIndicesMap;  //根据列名定位索引(下标)
+    private ArrayList<Integer> primaryIndices;   //主键索引(下标)
 
     /**
      * 实例化数据表
@@ -33,18 +33,29 @@ public class Table implements Iterable<Row> {
         this.tableName = tableName;
         this.root = tableRoot;
         this.columns = columns;
-        this.columnIndices = new HashMap<String, Integer>();
 
-        // 设定主键的位置, 并初始化索引树
+
+        // 设定主键的位置, 并初始化列列索引树
         int attrSize = this.columns.size();
         this.primaryIndices = new ArrayList<Integer>();
-
+        this.columnIndicesMap = new HashMap<String, Integer>();
+        boolean hasPrimary = false;
         for (int i = 0; i < attrSize; i++) {
-            columnIndices.put(this.columns.get(i).getName(), i);
+            if (columnIndicesMap.containsKey(this.columns.get(i).getName())) {
+                //重名列的表非法.
+                throw new SQLHandleException("Exception: duplicate column name.");
+            }
+            columnIndicesMap.put(this.columns.get(i).getName(), i);
             if (this.columns.get(i).isPrimary()) {
+                hasPrimary = true;
                 this.primaryIndices.add(i);
             }
         }
+        if (!hasPrimary) {
+            // 不含主键的表非法.
+            throw new SQLHandleException("Exception: no primary key.");
+        }
+        // 建立主键索引树.
         this.index = new BPlusTree<MultiEntry, Row>();
 
         //
@@ -77,10 +88,10 @@ public class Table implements Iterable<Row> {
             col.setPrefix(this.tableName);
         }
         //清空Hash表, 重新建立映射
-        this.columnIndices.clear();
+        this.columnIndicesMap.clear();
         int attrSize = this.columns.size();
         for (int i = 0; i < attrSize; i++) {
-            columnIndices.put(this.columns.get(i).getName(), i);
+            columnIndicesMap.put(this.columns.get(i).getName(), i);
         }
     }
 
@@ -93,16 +104,23 @@ public class Table implements Iterable<Row> {
             col.setPrefix(null);
         }
         //清空Hash表, 重新建立映射
-        this.columnIndices.clear();
+        this.columnIndicesMap.clear();
         int attrSize = this.columns.size();
         for (int i = 0; i < attrSize; i++) {
-            columnIndices.put(this.columns.get(i).getName(), i);
+            columnIndicesMap.put(this.columns.get(i).getName(), i);
         }
     }
 
 
     public synchronized void recover(){
         this.deserialize();
+    }
+
+    public synchronized QueryTable getQueryTable(boolean withPrefix) {
+        ArrayList<Column> queryColumns = this.getCopiedColumns(withPrefix);
+        QueryTable queryTable = new QueryTable(this.tableName, queryColumns);
+        // TODO: 复制数据到queryTable中.
+        return queryTable;
     }
 
     /**
@@ -243,8 +261,11 @@ public class Table implements Iterable<Row> {
         return this.tableName;
     }
 
-    public HashMap<String, Integer> getColumnIndices() {
-        return this.columnIndices;
+    public HashMap<String, Integer> getColumnIndicesMap() {
+        return this.columnIndicesMap;
+    }
+    public ArrayList<Integer> getPrimaryIndices() {
+        return this.primaryIndices;
     }
 
     private class TableIterator implements Iterator<Row> {

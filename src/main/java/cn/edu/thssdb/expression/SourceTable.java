@@ -4,6 +4,7 @@ import cn.edu.thssdb.schema.Column;
 import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Table;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SourceTable {
     public class JoinOperator {
@@ -35,10 +36,6 @@ public class SourceTable {
                 ArrayList<Column> joinedColumn = new ArrayList<>();
                 joinedColumn.addAll(baseTable.getCopiedColumns(true));
                 joinedColumn.addAll(toJoinTable.getCopiedColumns(true));
-                Table joinedTable = new Table("",
-                        baseTable.getTableName() + " JOIN " + toJoinTable.getTableName(),
-                        joinedColumn);
-
             }
         }
     }

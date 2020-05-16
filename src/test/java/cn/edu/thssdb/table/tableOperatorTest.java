@@ -104,9 +104,9 @@ public class tableOperatorTest {
         this.table.insert(newRow_2);
 
         Assert.assertEquals(newRow_1.toString(),
-                this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.primaryIndices)).toString());
+                this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.getPrimaryIndices())).toString());
         Assert.assertEquals(newRow_2.toString(),
-                this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.primaryIndices)).toString());
+                this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.getPrimaryIndices())).toString());
 
         Assert.assertThrows(KeyNotExistException.class, () -> {
             this.table.findRowByPrimaryKey(new MultiEntry(new Entry(3, ColumnType.INT)));
@@ -240,9 +240,9 @@ public class tableOperatorTest {
             this.table.deserialize();
             // 能够复原数据.
             Assert.assertEquals(newRow_1.toString(),
-                    this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.primaryIndices)).toString());
+                    this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.getPrimaryIndices())).toString());
             Assert.assertEquals(newRow_2.toString(),
-                    this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.primaryIndices)).toString());
+                    this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.getPrimaryIndices())).toString());
             
         } catch (SQLHandleException e) {
             e.printStackTrace();
