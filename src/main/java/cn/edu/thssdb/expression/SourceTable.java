@@ -13,10 +13,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class SourceTable {
-    public class JoinOperator {
+    public static class JoinOperator {
         public String joinedTableName;
         public Expression expression;
         public String alias;
+
+        public JoinOperator(String joinedTableName, Expression expression, String alias) {
+            this.joinedTableName = joinedTableName;
+            this.expression = expression;
+            this.alias = alias;
+        }
+        public JoinOperator(String joinedTableName, Expression expression) {
+            this.joinedTableName = joinedTableName;
+            this.expression = expression;
+        }
     }
 
     public String tableName;
@@ -28,6 +38,10 @@ public class SourceTable {
         this.tableName = tableName;
         this.joinOps = joinOps;
         this.alias = alias;
+    }
+    public SourceTable(String tableName, ArrayList<JoinOperator> joinOps) {
+        this.tableName = tableName;
+        this.joinOps = joinOps;
     }
 
     /**
@@ -59,15 +73,15 @@ public class SourceTable {
             // 获取所有需要赋值的Variable.
             ArrayList<Variable> variables = joinOp.expression.getAllVariables();
             int variableNum = variables.size();
-            ArrayList<Integer> assignIndices = new ArrayList<>(variableNum);
+            ArrayList<Integer> assignIndices = new ArrayList<>();
 
             // 寻找这些变量在合成表含有的列中的位置. 找不到则抛出一个错误.
             for (int i = 0; i < variableNum; i++) {
                 if (joinedTable.columnIndicesMap.containsKey(variables.get(i).getVariableName().toString())) {
-                    assignIndices.set(i, joinedTable.columnIndicesMap
+                    assignIndices.add(joinedTable.columnIndicesMap
                             .get(variables.get(i).getVariableName().toString()));
-                } else if (joinedTable.notConflictIndicesMap.containsKey(variables.get(i).getVariableName().toString())) {
-                    assignIndices.set(i, joinedTable.notConflictIndicesMap
+                } else if (joinedTable.notConflictIndicesMap.containsKey(variables.get(i).getVariableName().name)) {
+                    assignIndices.add(joinedTable.notConflictIndicesMap
                             .get(variables.get(i).getVariableName().name));
                 } else {
                     throw new SQLHandleException("Exception: " +
@@ -83,13 +97,15 @@ public class SourceTable {
                     joinedRow.appendEntries(toJoinRow.getEntries());
 
                     for (int i = 0; i < variableNum; i++) {
-                        variables.get(i).assignValue(joinedRow.getEntries().get(assignIndices.get(i)));
+                        variables.get(i).assignValue(joinedRow.getEntries().get(assignIndices.get(i)).value);
                     }
                     if (joinOp.expression.evaluate()) {
                         joinedTable.rows.add(joinedRow);
                     }
                 }
             }
+            //最后将结果迭代到baseTable上
+            baseTable = joinedTable;
         }
         return baseTable;
     }

@@ -5,6 +5,7 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.exception.SQLHandleException;
 import javafx.scene.control.Tab;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -28,13 +29,27 @@ public class Database {
         recover();
     }
 
-    public void createTable(String name, Column[] columns) throws SQLHandleException {
+    public Database(String name, String databaseRoot, boolean withRecover) throws SQLHandleException {
+        this.name = name;
+        this.root = databaseRoot;
+        this.tables = new HashMap<>();
+        this.lock = new ReentrantReadWriteLock();
+        if (withRecover) {
+            recover();
+        }
+    }
+
+    public Table createTable(String name, Column[] columns) throws SQLHandleException {
         // TODO
         if (this.tables.containsKey(name))
             throw new SQLHandleException("Table " + name + " already exists.");
         String tableRoot = Paths.get(this.root, name).toString();
-        Table table = new Table(tableRoot, name, (ArrayList<Column>) Arrays.asList(columns));
+        ArrayList<Column> tableColumns = new ArrayList<>();
+        tableColumns.addAll(Arrays.asList(columns));
+
+        Table table = new Table(tableRoot, name, tableColumns);
         this.tables.put(name, table);
+        return table;
     }
 
     public void dropTable(String name) throws SQLHandleException {

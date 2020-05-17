@@ -7,27 +7,14 @@ import java.io.Serializable;
 public class Entry implements Comparable<Entry>, Serializable {
     private static final long serialVersionUID = -5809782578272943999L;
     public Comparable value;
-    public ColumnType type;
 
     public static Entry generateEntry(Comparable value) {
-        Entry entry = null;
-        if (value.getClass() == int.class) {
-            entry = new Entry(value, ColumnType.INT);
-        } else if (value.getClass() == double.class) {
-            entry = new Entry(value, ColumnType.DOUBLE);
-        } else if (value.getClass() == float.class) {
-            entry = new Entry(value, ColumnType.FLOAT);
-        } else if (value.getClass() == long.class) {
-            entry = new Entry(value, ColumnType.LONG);
-        } else if (value.getClass() == String.class) {
-            entry = new Entry(value, ColumnType.STRING);
-        }
+        Entry entry = new Entry(value);
         return entry;
     }
 
-    public Entry(Comparable value, ColumnType type) {
+    public Entry(Comparable value) {
         this.value = value;
-        this.type = type;
     }
 
     @Override
@@ -47,10 +34,6 @@ public class Entry implements Comparable<Entry>, Serializable {
 
     public String toString() {
         return value.toString();
-    }
-
-    public ColumnType getType() {
-        return this.type;
     }
 
     @Override

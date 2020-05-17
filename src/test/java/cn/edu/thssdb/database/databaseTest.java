@@ -118,15 +118,15 @@ public class databaseTest {
 
         Row newRow_1 = new Row();
         ArrayList<Entry> entries = new ArrayList<Entry>();
-        entries.add(new Entry(1, ColumnType.INT));
-        entries.add(new Entry("Shion", ColumnType.STRING));
+        entries.add(new Entry(1));
+        entries.add(new Entry("Shion"));
         newRow_1.appendEntries(entries);
         table.insert(newRow_1);
 
         Row newRow_2 = new Row();
         entries = new ArrayList<Entry>();
-        entries.add(new Entry(2, ColumnType.INT));
-        entries.add(new Entry("Ayaka", ColumnType.STRING));
+        entries.add(new Entry(2));
+        entries.add(new Entry("Ayaka"));
         newRow_2.appendEntries(entries);
         table.insert(newRow_2);
         table.serialize();

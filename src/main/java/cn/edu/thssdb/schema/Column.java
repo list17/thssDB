@@ -10,11 +10,15 @@ public class Column implements Comparable<Column>, Serializable {
     private boolean notNull;
     private int maxLength;
 
-    public class FullName {
+    public static class FullName implements Serializable{
         public String prefix;
         public String name;
 
         public FullName(String name) {
+            this.name = name;
+        }
+        public FullName(String prefix, String name) {
+            this.prefix = prefix;
             this.name = name;
         }
 
@@ -54,6 +58,22 @@ public class Column implements Comparable<Column>, Serializable {
         this.fullName.prefix = prefix;
     }
 
+    public boolean isCompatible(Entry entry) {
+        if (entry.value == null) {
+            return true;
+        }
+        if (entry.value.getClass() == String.class && this.type == ColumnType.STRING) {
+            if (((String) entry.value).length() <= this.maxLength) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (entry.value.getClass() != String.class && this.type != ColumnType.STRING) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public int compareTo(Column e) {

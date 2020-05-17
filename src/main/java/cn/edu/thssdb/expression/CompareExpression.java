@@ -4,6 +4,7 @@ import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.schema.Column;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CompareExpression implements Expression {
     public enum Operator {
@@ -32,14 +33,31 @@ public class CompareExpression implements Expression {
         if (leftValue == null || rightValue == null) {
             return false;
         }
-        if (leftValue.getClass() != rightValue.getClass()) {
+        if (leftValue.getClass() == String.class && rightValue.getClass() != String.class) {
+            return false;
+        } else if (leftValue.getClass() != String.class && rightValue.getClass() == String.class) {
             return false;
         }
         boolean result = false;
 
         switch (this.op) {
             case EQ:
-                result = (leftValue == rightValue);
+                result = (leftValue.equals(rightValue));
+                break;
+            case GE:
+                result = (leftValue.compareTo(rightValue) > 0);
+                break;
+            case GEQ:
+                result = (leftValue.compareTo(rightValue) >= 0);
+                break;
+            case LE:
+                result = (leftValue.compareTo(rightValue) < 0);
+                break;
+            case LEQ:
+                result = (leftValue.compareTo(rightValue) <= 0);
+                break;
+            case NEQ:
+                result = !(leftValue.equals(rightValue));
                 break;
             default:
                 break;
@@ -75,7 +93,8 @@ public class CompareExpression implements Expression {
         } else if (this.leftVariable.getType() == Variable.Type.VARIABLE) {
             for (int i = 0; i < variableNum; i++) {
                 if (primaryKeys.get(i).equals(this.leftVariable.getVariableName())) {
-                    ArrayList<Comparable> values = new ArrayList<>(variableNum);
+                    ArrayList<Comparable> values = new ArrayList<Comparable>();
+                    Collections.addAll(values, new Comparable[variableNum]);
                     values.set(i, this.rightVariable.evaluate());
                     return values;
                 }
@@ -84,7 +103,8 @@ public class CompareExpression implements Expression {
         } else {
             for (int i = 0; i < variableNum; i++) {
                 if (primaryKeys.get(i).equals(this.rightVariable.getVariableName())) {
-                    ArrayList<Comparable> values = new ArrayList<>(variableNum);
+                    ArrayList<Comparable> values = new ArrayList<>();
+                    Collections.addAll(values, new Comparable[variableNum]);
                     values.set(i, this.leftVariable.evaluate());
                     return values;
                 }

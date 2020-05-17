@@ -141,6 +141,13 @@ public class Table implements Iterable<Row> {
         }
     }
 
+    public Row search(MultiEntry primaryKey) {
+        if (!this.index.contains(primaryKey)) {
+            return null;
+        } else {
+            return this.index.get(primaryKey);
+        }
+    }
     /**
      * 往该数据表插入一条新行.
      *
@@ -157,7 +164,7 @@ public class Table implements Iterable<Row> {
             int columnCount = this.columns.size();
             for (int i = 0; i < columnCount; i++) {
                 // 新插入的行某元素不属于该列定义的类型.
-                if (this.columns.get(i).getType() != newRow.getEntries().get(i).getType()) {
+                if (!this.columns.get(i).isCompatible(newRow.getEntries().get(i))) {
                     throw new TypeMismatchException(this.columns.get(i).getType().toString());
                 }
                 // 新插入的行某元素违反了某些约束(如notNull)
@@ -234,6 +241,7 @@ public class Table implements Iterable<Row> {
             }
             objectOutputStream.close();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new SQLHandleException("Exception: Save table " + this.tableName + " failed.");
         }
     }
