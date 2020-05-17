@@ -49,8 +49,12 @@ public class CompareExpression implements Expression {
     @Override
     public ArrayList<Variable> getAllVariables() {
         ArrayList<Variable> result = new ArrayList<>();
-        result.add(this.leftVariable);
-        result.add(this.rightVariable);
+        if (this.leftVariable.getType() == Variable.Type.VARIABLE) {
+            result.add(this.leftVariable);
+        }
+        if (this.rightVariable.getType() == Variable.Type.VARIABLE) {
+            result.add(this.rightVariable);
+        }
         return result;
     }
 
@@ -70,7 +74,7 @@ public class CompareExpression implements Expression {
             return new ArrayList<>();
         } else if (this.leftVariable.getType() == Variable.Type.VARIABLE) {
             for (int i = 0; i < variableNum; i++) {
-                if (primaryKeys.get(i).name.equals(this.leftVariable.getVariableName().name)) {
+                if (primaryKeys.get(i).equals(this.leftVariable.getVariableName())) {
                     ArrayList<Comparable> values = new ArrayList<>(variableNum);
                     values.set(i, this.rightVariable.evaluate());
                     return values;
@@ -79,7 +83,7 @@ public class CompareExpression implements Expression {
             return new ArrayList<>();
         } else {
             for (int i = 0; i < variableNum; i++) {
-                if (primaryKeys.get(i).name.equals(this.rightVariable.getVariableName().name)) {
+                if (primaryKeys.get(i).equals(this.rightVariable.getVariableName())) {
                     ArrayList<Comparable> values = new ArrayList<>(variableNum);
                     values.set(i, this.leftVariable.evaluate());
                     return values;

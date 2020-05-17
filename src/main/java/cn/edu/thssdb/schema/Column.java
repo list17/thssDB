@@ -18,6 +18,19 @@ public class Column implements Comparable<Column>, Serializable {
             this.name = name;
         }
 
+        public boolean equals(FullName other) {
+            // 两者都存在前缀时, 先比较前缀.
+            // 若其中一个不存在前缀或是两者前缀相同, 则直接比较后缀名.
+            if (prefix != null && other.prefix != null && !prefix.equals(other.prefix)) {
+                return false;
+            } else if (name.equals(other.name)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
         public String toString() {
             if (this.prefix != null) {
                 return this.prefix + "." + this.name;
@@ -61,13 +74,15 @@ public class Column implements Comparable<Column>, Serializable {
 
     public int getMaxLength() { return this.maxLength; }
 
-    public Column getCopiedColumn() {
+    public Column getCopiedColumn(boolean withPrefix) {
         Column copiedColumn = new Column(this.fullName.name,
                 this.type,
                 this.primary,
                 this.notNull,
                 this.maxLength);
-        copiedColumn.setPrefix(this.fullName.prefix);
+        if (withPrefix) {
+            copiedColumn.setPrefix(this.fullName.prefix);
+        }
         return copiedColumn;
     }
 

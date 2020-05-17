@@ -1,7 +1,5 @@
 package cn.edu.thssdb.schema;
 
-import cn.edu.thssdb.exception.DataHandleException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -42,7 +40,7 @@ public class MultiEntry implements Comparable<MultiEntry> {
     @Override
     public int compareTo(MultiEntry e) {
         if (e.valueCount != this.valueCount) {
-            throw new DataHandleException(DataHandleException.ErrorCode.MULTIENTRY_LENGTH_MISMATCH);
+//            throw new DataHandleException(DataHandleException.ErrorCode.MULTIENTRY_LENGTH_MISMATCH);
         }
         for (int i = 0; i < this.valueCount; i++) {
             if (this.values.get(i).equals(e.values.get(i))) {

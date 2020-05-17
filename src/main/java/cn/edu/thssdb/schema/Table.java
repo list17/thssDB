@@ -34,18 +34,18 @@ public class Table implements Iterable<Row> {
         this.root = tableRoot;
         this.columns = columns;
 
-
-        // 设定主键的位置, 并初始化列列索引树
+        // 设定主键的位置, 并检查列名是否有重复.
         int attrSize = this.columns.size();
         this.primaryIndices = new ArrayList<Integer>();
-        this.columnIndicesMap = new HashMap<String, Integer>();
+        this.columnIndicesMap = new HashMap<>();
+
         boolean hasPrimary = false;
         for (int i = 0; i < attrSize; i++) {
-            if (columnIndicesMap.containsKey(this.columns.get(i).getName())) {
+            if (this.columnIndicesMap.containsKey(this.columns.get(i).getColumnFullName().name)) {
                 //重名列的表非法.
                 throw new SQLHandleException("Exception: duplicate column name.");
             }
-            columnIndicesMap.put(this.columns.get(i).getName(), i);
+            this.columnIndicesMap.put(this.columns.get(i).getColumnFullName().name, i);
             if (this.columns.get(i).isPrimary()) {
                 hasPrimary = true;
                 this.primaryIndices.add(i);
@@ -55,6 +55,10 @@ public class Table implements Iterable<Row> {
             // 不含主键的表非法.
             throw new SQLHandleException("Exception: no primary key.");
         }
+
+        // 更新列名前缀
+        this.updatePrefix();
+
         // 建立主键索引树.
         this.index = new BPlusTree<MultiEntry, Row>();
 
@@ -66,10 +70,15 @@ public class Table implements Iterable<Row> {
         this(databaseRoot, tableName, new ArrayList<Column>());
     }
 
+    /**
+     * 获取该表的列属性复制.
+     * @param withPrefix
+     * @return
+     */
     public ArrayList<Column> getCopiedColumns(boolean withPrefix) {
         ArrayList<Column> copy = new ArrayList<>();
         for (Column col: this.columns) {
-            copy.add(col.getCopiedColumn());
+            copy.add(col.getCopiedColumn(withPrefix));
         }
         if (withPrefix) {
             for (Column col: copy) {
@@ -80,34 +89,22 @@ public class Table implements Iterable<Row> {
     }
 
     /**
-     * 设置每列名字的前缀
+     * 设置每列名字的前缀, 并更新列索引哈希表.
      */
     public void updatePrefix() {
         //设置前缀
         for (Column col: this.columns) {
             col.setPrefix(this.tableName);
         }
-        //清空Hash表, 重新建立映射
-        this.columnIndicesMap.clear();
-        int attrSize = this.columns.size();
-        for (int i = 0; i < attrSize; i++) {
-            columnIndicesMap.put(this.columns.get(i).getName(), i);
-        }
     }
 
     /**
-     * 清空每列名字的前缀
+     * 清空每列名字的前缀, 并更新列索引哈希表.
      */
     public void clearPrefix() {
         //设置前缀为null
         for (Column col: this.columns) {
             col.setPrefix(null);
-        }
-        //清空Hash表, 重新建立映射
-        this.columnIndicesMap.clear();
-        int attrSize = this.columns.size();
-        for (int i = 0; i < attrSize; i++) {
-            columnIndicesMap.put(this.columns.get(i).getName(), i);
         }
     }
 
@@ -119,7 +116,12 @@ public class Table implements Iterable<Row> {
     public synchronized QueryTable getQueryTable(boolean withPrefix) {
         ArrayList<Column> queryColumns = this.getCopiedColumns(withPrefix);
         QueryTable queryTable = new QueryTable(this.tableName, queryColumns);
+
         // TODO: 复制数据到queryTable中.
+        Iterator<Pair<MultiEntry, Row>> dataIterator = this.index.iterator();
+        while (dataIterator.hasNext()) {
+            queryTable.rows.add(dataIterator.next().getValue());
+        }
         return queryTable;
     }
 
