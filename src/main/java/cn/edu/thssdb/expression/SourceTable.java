@@ -99,7 +99,7 @@ public class SourceTable {
                     for (int i = 0; i < variableNum; i++) {
                         variables.get(i).assignValue(joinedRow.getEntries().get(assignIndices.get(i)).value);
                     }
-                    if (joinOp.expression.evaluate()) {
+                    if (joinOp.expression == null || joinOp.expression.evaluate()) {
                         joinedTable.rows.add(joinedRow);
                     }
                 }

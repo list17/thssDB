@@ -48,28 +48,10 @@ public class SelectStatement implements Statement {
             ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
             HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
 
-            //先获取选择后的列. 然后建立结果空表.
+            //先获取选择后的列以及排列顺序. 然后建立结果空表.
             ArrayList<Column> resultColumns = new ArrayList<>();
             ArrayList<Integer> resultIndices = new ArrayList<>();
-            if (this.selectedColumns.isEmpty()) {
-                // 列全选.
-                resultColumns = baseTable.getCopiedColumns(false);
-                int attrSize = resultColumns.size();
-                for (int i = 0; i < attrSize; i++) {
-                    resultIndices.add(i);
-                }
-            } else {
-                for (Column.FullName selectedCol: this.selectedColumns) {
-                    if (!columnMap.containsKey(selectedCol.name)) {
-                        throw new SQLHandleException("Exception: some selected columns do not exist.");
-                    } else {
-                        int index = columnMap.get(selectedCol.name);
-                        resultIndices.add(index);
-                        resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
-                    }
-                }
-            }
-
+            this.setColumnsAndIndices(this.selectedColumns, baseTable, resultColumns, resultIndices);
             resultTable = new QueryTable("Result", resultColumns);
 
             // 查找出所有主键属性.
@@ -105,22 +87,12 @@ public class SelectStatement implements Statement {
                 }
             }
             // 否则将遍历搜索
-            // 获取所有需要赋值的Variable.
+            // 获取所有需要赋值的Variable, 以及赋值时需要索引到行的下标.
             ArrayList<Variable> variables = this.expression.getAllVariables();
             int variableNum = variables.size();
             ArrayList<Integer> assignIndices = new ArrayList<>();
+            this.setAssignIndices(variables, baseTable, assignIndices);
 
-            // 寻找这些变量在源表列中的位置. 找不到则抛出一个错误.
-            for (int i = 0; i < variableNum; i++) {
-                if (baseTable.getColumnIndicesMap().containsKey(variables.get(i).getVariableName().name)) {
-                    assignIndices.add(baseTable.getColumnIndicesMap()
-                            .get(variables.get(i).getVariableName().name));
-                } else {
-                    throw new SQLHandleException("Exception: " +
-                            variables.get(i).getVariableName().name +
-                            " in the WHERE clause could not be found.");
-                }
-            }
             Iterator<Row> iterator = baseTable.iterator();
             while (iterator.hasNext()) {
                 Row rawRow = iterator.next();
@@ -135,55 +107,18 @@ public class SelectStatement implements Statement {
         } else {
             // 获取Join后的总源表
             QueryTable baseQueryTable = sourceTable.getQueryTable(database);
-
-            //先获取选择后的列. 然后建立结果空表.(注意要查两个HashMap)
-            ArrayList<Column> baseColumns = baseQueryTable.getCopiedColumns();
             ArrayList<Column> resultColumns = new ArrayList<>();
             ArrayList<Integer> resultIndices = new ArrayList<>();
-            if (selectedColumns.isEmpty()) {
-                resultColumns = baseQueryTable.getCopiedColumns();
-                int attrSize = resultColumns.size();
-                for (int i = 0; i < attrSize; i++) {
-                    resultIndices.add(i);
-                }
-            } else {
-                for (Column.FullName selectedCol: this.selectedColumns) {
-                    if (baseQueryTable.columnIndicesMap.containsKey(selectedCol.toString())) {
-                        int index = baseQueryTable.columnIndicesMap.get(selectedCol.toString());
-                        resultIndices.add(index);
-                        resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
-                    } else if (baseQueryTable.notConflictIndicesMap.containsKey(selectedCol.name)) {
-                        int index = baseQueryTable.notConflictIndicesMap.get(selectedCol.name);
-                        resultIndices.add(index);
-                        resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
-                    } else {
-                        throw new SQLHandleException("Exception: some selected columns do not exist.");
-                    }
-                }
-            }
-
+            this.setColumnsAndIndices(this.selectedColumns, baseQueryTable, resultColumns, resultIndices);
             resultTable = new QueryTable("Result", resultColumns);
 
             // 同样遍历搜索
             // 获取所有需要赋值的Variable.
-            ArrayList<Variable> variables = this.expression.getAllVariables();
-            int variableNum = variables.size();
             ArrayList<Integer> assignIndices = new ArrayList<>();
+            ArrayList<Variable> variables = this.expression.getAllVariables();
+            this.setAssignIndices(variables, baseQueryTable, assignIndices);
+            int variableNum = assignIndices.size();
 
-            // 寻找这些变量在源表列中的位置. 找不到则抛出一个错误.
-            for (int i = 0; i < variableNum; i++) {
-                if (baseQueryTable.columnIndicesMap.containsKey(variables.get(i).getVariableName().toString())) {
-                    assignIndices.add(baseQueryTable.columnIndicesMap
-                            .get(variables.get(i).getVariableName().toString()));
-                } else if (baseQueryTable.notConflictIndicesMap.containsKey(variables.get(i).getVariableName().name)) {
-                    assignIndices.add(baseQueryTable.notConflictIndicesMap
-                            .get(variables.get(i).getVariableName().name));
-                } else {
-                    throw new SQLHandleException("Exception: " +
-                            variables.get(i).getVariableName().toString() +
-                            " could not be found.");
-                }
-            }
             // 判断每一行是否满足条件
             for (Row rawRow: baseQueryTable.rows) {
                 for (int i = 0; i < variableNum; i++) {
@@ -194,6 +129,106 @@ public class SelectStatement implements Statement {
                 }
             }
             return resultTable;
+        }
+    }
+    public void setColumnsAndIndices(ArrayList<Column.FullName> selectedColumns,
+                                     Table baseTable,
+                                     ArrayList<Column> resultColumns,
+                                     ArrayList<Integer> resultIndices) throws SQLHandleException {
+
+        resultColumns.clear();
+        resultIndices.clear();
+        ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
+        HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
+
+        if (this.selectedColumns.isEmpty()) {
+            // 列全选.
+            resultColumns.addAll(baseTable.getCopiedColumns(false));
+            int attrSize = resultColumns.size();
+            for (int i = 0; i < attrSize; i++) {
+                resultIndices.add(i);
+            }
+        } else {
+            for (Column.FullName selectedCol: this.selectedColumns) {
+                if (!columnMap.containsKey(selectedCol.name)) {
+                    throw new SQLHandleException("Exception: some selected columns do not exist.");
+                } else {
+                    int index = columnMap.get(selectedCol.name);
+                    resultIndices.add(index);
+                    resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+                }
+            }
+        }
+    }
+    public void setColumnsAndIndices(ArrayList<Column.FullName> selectedColumns,
+                                                  QueryTable baseQueryTable,
+                                                  ArrayList<Column> resultColumns,
+                                                  ArrayList<Integer> resultIndices) throws SQLHandleException {
+        //先获取选择后的列. 然后建立结果空表.(注意要查两个HashMap)
+        ArrayList<Column> baseColumns = baseQueryTable.getCopiedColumns();
+        resultColumns.clear();
+        resultIndices.clear();
+
+        if (selectedColumns.isEmpty()) {
+            resultColumns.addAll(baseQueryTable.getCopiedColumns());
+            int attrSize = resultColumns.size();
+            for (int i = 0; i < attrSize; i++) {
+                resultIndices.add(i);
+            }
+        } else {
+            for (Column.FullName selectedCol: this.selectedColumns) {
+                if (baseQueryTable.columnIndicesMap.containsKey(selectedCol.toString())) {
+                    int index = baseQueryTable.columnIndicesMap.get(selectedCol.toString());
+                    resultIndices.add(index);
+                    resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+                } else if (baseQueryTable.notConflictIndicesMap.containsKey(selectedCol.name)) {
+                    int index = baseQueryTable.notConflictIndicesMap.get(selectedCol.name);
+                    resultIndices.add(index);
+                    resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+                } else {
+                    throw new SQLHandleException("Exception: some selected columns do not exist.");
+                }
+            }
+        }
+    }
+    public void setAssignIndices(ArrayList<Variable> variables,
+                                 Table baseTable,
+                                 ArrayList<Integer> assignIndices) {
+        int variableNum = variables.size();
+        assignIndices.clear();
+
+        // 寻找这些变量在源表列中的位置. 找不到则抛出一个错误.
+        for (int i = 0; i < variableNum; i++) {
+            if (baseTable.getColumnIndicesMap().containsKey(variables.get(i).getVariableName().name)) {
+                assignIndices.add(baseTable.getColumnIndicesMap()
+                        .get(variables.get(i).getVariableName().name));
+            } else {
+                throw new SQLHandleException("Exception: " +
+                        variables.get(i).getVariableName().name +
+                        " in the WHERE clause could not be found.");
+            }
+        }
+    }
+
+    public void setAssignIndices(ArrayList<Variable> variables,
+                                 QueryTable baseQueryTable,
+                                 ArrayList<Integer> assignIndices) {
+        int variableNum = variables.size();
+        assignIndices.clear();
+
+        // 寻找这些变量在源表列中的位置. 找不到则抛出一个错误.
+        for (int i = 0; i < variableNum; i++) {
+            if (baseQueryTable.columnIndicesMap.containsKey(variables.get(i).getVariableName().toString())) {
+                assignIndices.add(baseQueryTable.columnIndicesMap
+                        .get(variables.get(i).getVariableName().toString()));
+            } else if (baseQueryTable.notConflictIndicesMap.containsKey(variables.get(i).getVariableName().name)) {
+                assignIndices.add(baseQueryTable.notConflictIndicesMap
+                        .get(variables.get(i).getVariableName().name));
+            } else {
+                throw new SQLHandleException("Exception: " +
+                        variables.get(i).getVariableName().toString() +
+                        " could not be found.");
+            }
         }
     }
 }

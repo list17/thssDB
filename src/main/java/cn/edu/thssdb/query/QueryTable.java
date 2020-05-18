@@ -93,6 +93,18 @@ public class QueryTable {
         }
     }
 
+    public void display() {
+        String header = "";
+        for (Column col: this.columns) {
+            header += col.getName() + " ";
+        }
+        System.out.println(header);
+
+        for (Row row: this.rows) {
+            System.out.println(row.toString());
+        }
+    }
+
     public boolean hasNext() {
         // TODO
         return true;
