@@ -5,12 +5,14 @@ import java.io.Serializable;
 
 public class Column implements Comparable<Column>, Serializable {
 
+    private static final long serialVersionUID = -9149197353456835277L;
     private ColumnType type;
     private boolean primary;
     private boolean notNull;
     private int maxLength;
 
     public static class FullName implements Serializable{
+        private static final long serialVersionUID = -6457698203477068938L;
         public String prefix;
         public String name;
 

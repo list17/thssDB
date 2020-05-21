@@ -273,6 +273,7 @@ public class Table implements Iterable<Row> {
                 this.index.put(loadRow.getMultiEntry(primaryIndices), loadRow);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new SQLHandleException("Exception: Load table " + this.tableName + " failed.");
         }
     }
