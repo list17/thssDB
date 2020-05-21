@@ -22,6 +22,7 @@ public class statementExecuteTest {
     public Database database;
     public Table vtuberTable;
     public Table groupTable;
+    public Table multiTable;
     public ConnectResp connectResp;
 
     @Before
@@ -46,6 +47,11 @@ public class statementExecuteTest {
         columns2.add(new Column("Group", ColumnType.STRING, true, true, 20));
         columns2.add(new Column("Enterprise", ColumnType.STRING, false, false, 20));
         this.groupTable = database.createTable("Group", columns2);
+
+        ArrayList<Column> columns3 = new ArrayList<>();
+        columns3.add(new Column("ID_1", ColumnType.INT, true, true, 20));
+        columns3.add(new Column("ID_2", ColumnType.INT, true, true, 20));
+        this.multiTable = database.createTable("Multi", columns3);
 
         Row row = new Row();
         ArrayList<Entry> entries = new ArrayList<Entry>();
@@ -140,6 +146,28 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("Nijisanji"));
         row.appendEntries(entries);
         this.groupTable.insert(row);
+
+        //
+        row = new Row();
+        entries = new ArrayList<Entry>();
+        entries.add(Entry.generateEntry(1));
+        entries.add(Entry.generateEntry(1));
+        row.appendEntries(entries);
+        this.multiTable.insert(row);
+
+        row = new Row();
+        entries = new ArrayList<Entry>();
+        entries.add(Entry.generateEntry(1));
+        entries.add(Entry.generateEntry(2));
+        row.appendEntries(entries);
+        this.multiTable.insert(row);
+
+        row = new Row();
+        entries = new ArrayList<Entry>();
+        entries.add(Entry.generateEntry(1));
+        entries.add(Entry.generateEntry(3));
+        row.appendEntries(entries);
+        this.multiTable.insert(row);
 
     }
 
@@ -255,7 +283,6 @@ public class statementExecuteTest {
                 "FROM Vtuber JOIN Group ON Vtuber.Group == Group.Group\n" +
                 "----------");
         ArrayList<SourceTable.JoinOperator> joinOps = new ArrayList<>();
-        selectedColumns.add(new Column.FullName("*"));
         joinOps.add(new SourceTable.JoinOperator("Group"
                 , new CompareExpression(new ColumnVariable(new Column.FullName("Vtuber", "Group"))
                                         , CompareExpression.Operator.EQ
@@ -264,6 +291,7 @@ public class statementExecuteTest {
                 , joinOps);
 
         selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         expression = new UnaryExpression(true);
 
 
@@ -351,5 +379,281 @@ public class statementExecuteTest {
         resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
+
+        System.out.println("----------\n" +
+                "SELECT Vtuber.* \n" +
+                "FROM Vtuber JOIN Group ON Vtuber.Group == Group.Group\n" +
+                "----------");
+        joinOps = new ArrayList<>();
+        joinOps.add(new SourceTable.JoinOperator("Group"
+                , new CompareExpression(new ColumnVariable(new Column.FullName("Vtuber", "Group"))
+                , CompareExpression.Operator.EQ
+                , new ColumnVariable(new Column.FullName("Group", "Group")))));
+        sourceTable = new SourceTable("Vtuber"
+                , joinOps);
+
+        selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("Vtuber", "*"));
+        expression = new UnaryExpression(true);
+
+
+        selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable.display();
+
+        System.out.println("----------\n" +
+                "SELECT * \n" +
+                "FROM Vtuber AS V JOIN Group AS G ON V.Group == G.Group\n" +
+                "----------");
+        joinOps = new ArrayList<>();
+        joinOps.add(new SourceTable.JoinOperator("Group"
+                , new CompareExpression(new ColumnVariable(new Column.FullName("V", "Group"))
+                , CompareExpression.Operator.EQ
+                , new ColumnVariable(new Column.FullName("G", "Group"))), "G"));
+        sourceTable = new SourceTable("Vtuber"
+                , joinOps, "V");
+
+        selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
+        expression = new UnaryExpression(true);
+
+
+        selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable.display();
+
+        System.out.println("----------\n" +
+                "SELECT * \n" +
+                "FROM Vtuber, Group\n" +
+                "----------");
+        joinOps = new ArrayList<>();
+        joinOps.add(new SourceTable.JoinOperator("Group"
+                , new UnaryExpression(true)));
+        sourceTable = new SourceTable("Vtuber"
+                , joinOps);
+
+        selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
+        expression = new UnaryExpression(true);
+
+
+        selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable.display();
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT * \n" +
+                    "FROM Vtuber, Group\n" +
+                    "WHERE ID == 9\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            joinOps.add(new SourceTable.JoinOperator("Group"
+                    , new UnaryExpression(true)));
+            sourceTable = new SourceTable("Vtuber"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("*"));
+            expression = new CompareExpression(new ColumnVariable(new Column.FullName("ID")),
+                                                CompareExpression.Operator.EQ,
+                                                new ConstantVariable(9));
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT * \n" +
+                    "FROM Vtuber, Group\n" +
+                    "WHERE Company == \"Hololive\"\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            joinOps.add(new SourceTable.JoinOperator("Group"
+                    , new UnaryExpression(true)));
+            sourceTable = new SourceTable("Vtuber"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("*"));
+            expression = new CompareExpression(new ColumnVariable(new Column.FullName("Company")),
+                                                CompareExpression.Operator.EQ,
+                                                new ConstantVariable("Hololive"));
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT * \n" +
+                    "FROM Vtuber, Group\n" +
+                    "WHERE Enterprise == 1\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            joinOps.add(new SourceTable.JoinOperator("Group"
+                    , new UnaryExpression(true)));
+            sourceTable = new SourceTable("Vtuber"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("*"));
+            expression = new CompareExpression(new ColumnVariable(new Column.FullName("Enterprise")),
+                    CompareExpression.Operator.EQ,
+                    new ConstantVariable(1));
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT ABC \n" +
+                    "FROM Vtuber, Group\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            joinOps.add(new SourceTable.JoinOperator("Group"
+                    , new UnaryExpression(true)));
+            sourceTable = new SourceTable("Vtuber"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("ABC"));
+            expression = new UnaryExpression(true);
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT * \n" +
+                    "FROM VUP\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            sourceTable = new SourceTable("VUP"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("*"));
+            expression = new UnaryExpression(true);
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT * \n" +
+                    "FROM Vtuber, VUP\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            joinOps.add(new SourceTable.JoinOperator("VUP"
+                    , new UnaryExpression(true)));
+            sourceTable = new SourceTable("Vtuber"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("*"));
+            expression = new UnaryExpression(true);
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            System.out.println("----------\n" +
+                    "SELECT Group \n" +
+                    "FROM Vtuber, Group\n" +
+                    "----------");
+            joinOps = new ArrayList<>();
+            joinOps.add(new SourceTable.JoinOperator("Group"
+                    , new UnaryExpression(true)));
+            sourceTable = new SourceTable("Vtuber"
+                    , joinOps);
+
+            selectedColumns = new ArrayList<>();
+            selectedColumns.add(new Column.FullName("Group"));
+            expression = new UnaryExpression(true);
+
+            selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable.display();
+        } catch (SQLHandleException e) {
+            System.out.println(e.getMessage());
+        } catch (ExpressionHandleException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("----------\n" +
+                "SELECT * \n" +
+                "FROM Multi\n" +
+                "----------");
+        joinOps = new ArrayList<>();
+        sourceTable = new SourceTable("Multi"
+                , joinOps);
+
+        selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
+        expression = new CompareExpression(new ColumnVariable(new Column.FullName("ID_1")),
+                CompareExpression.Operator.EQ,
+                new ConstantVariable(1));
+        selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable.display();
+
+        System.out.println("----------\n" +
+                "SELECT * \n" +
+                "FROM Multi\n" +
+                "----------");
+        joinOps = new ArrayList<>();
+        sourceTable = new SourceTable("Multi"
+                , joinOps);
+
+        selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
+        expression = new CompareExpression(new ColumnVariable(new Column.FullName("ID_1")),
+                CompareExpression.Operator.EQ,
+                new ConstantVariable(1));
+        expression = new LogicalExpression(expression,
+                LogicalExpression.Operator.AND,
+                new CompareExpression(new ColumnVariable(new Column.FullName("ID_2")),
+                        CompareExpression.Operator.EQ,
+                        new ConstantVariable(2)));
+
+        selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable.display();
     }
 }

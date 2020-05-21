@@ -4,6 +4,7 @@ import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.schema.Column;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class LogicalExpression implements Expression{
     public enum Operator {
@@ -56,7 +57,9 @@ public class LogicalExpression implements Expression{
         if (leftValues.isEmpty() || rightValues.isEmpty()) {
             return new ArrayList<>();
         } else {
-            ArrayList<Comparable> result = new ArrayList<>(variableNum);
+            ArrayList<Comparable> result = new ArrayList<>();
+            Collections.addAll(result, new Comparable[variableNum]);
+
             for (int i = 0; i < variableNum; i++) {
                 Comparable l = leftValues.get(i);
                 Comparable r = rightValues.get(i);

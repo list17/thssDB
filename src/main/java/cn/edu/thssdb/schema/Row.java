@@ -14,6 +14,13 @@ public class Row implements Serializable {
         this.entries = new ArrayList<>();
     }
 
+    public Row(Comparable... values) {
+        this.entries = new ArrayList<>();
+        for (Comparable v: values) {
+            this.entries.add(Entry.generateEntry(v));
+        }
+    }
+
     public Row(Entry[] entries) {
         this.entries = new ArrayList<>(Arrays.asList(entries));
     }
@@ -43,6 +50,16 @@ public class Row implements Serializable {
             selectedEntries.add(this.entries.get(i));
         }
         return new MultiEntry(selectedEntries);
+    }
+
+    public Row getCopiedRow() {
+        ArrayList<Entry> copiedEntries = new ArrayList<>();
+        for (Entry e: this.entries) {
+            copiedEntries.add(Entry.generateEntry(e.value));
+        }
+        Row copiedRow = new Row();
+        copiedRow.appendEntries(copiedEntries);
+        return copiedRow;
     }
 
     public String toString() {

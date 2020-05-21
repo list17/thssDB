@@ -51,12 +51,22 @@ public class SourceTable {
      * @return
      */
     public QueryTable getQueryTable(Database database) throws SQLHandleException {
+        Table tempTable = database.getTable(tableName);
+        if (tempTable == null) {
+            throw new SQLHandleException("Exception: table " + tableName + " could not be found.");
+        }
         QueryTable baseTable = database.getTable(tableName).getQueryTable(true);
+
         if (this.alias != null) {
             baseTable.setAlias(this.alias);
         }
 
         for (JoinOperator joinOp: joinOps) {
+            tempTable = database.getTable(joinOp.joinedTableName);
+            if (tempTable == null) {
+                throw new SQLHandleException("Exception: table " + joinOp.joinedTableName + " could not be found.");
+            }
+
             QueryTable toJoinTable = database.getTable(joinOp.joinedTableName).getQueryTable(true);
             if (joinOp.alias != null) {
                 toJoinTable.setAlias(joinOp.alias);

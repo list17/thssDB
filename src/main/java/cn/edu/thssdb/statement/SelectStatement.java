@@ -45,6 +45,9 @@ public class SelectStatement implements Statement {
         if (sourceTable.joinOps.isEmpty()) {
             // 没有join或者cartesian操作, 单表源, 可以尝试主键检索.
             Table baseTable = database.getTable(sourceTable.tableName);
+            if (baseTable == null) {
+                throw new SQLHandleException("Exception: table " + sourceTable.tableName + " could not be found.");
+            }
             ArrayList<Integer> primaryIndices = baseTable.getPrimaryIndices();
             ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
             HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
@@ -142,7 +145,7 @@ public class SelectStatement implements Statement {
         ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
         HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
 
-        for (Column.FullName selectedCol: this.selectedColumns) {
+        for (Column.FullName selectedCol: selectedColumns) {
             if (selectedCol.name.equals("*")) {
                 if (selectedCol.prefix == null || selectedCol.equals(baseTable.getTableName())) {
                     ArrayList<Column> toAddColumns = baseTable.getCopiedColumns(false);
@@ -158,7 +161,7 @@ public class SelectStatement implements Statement {
             } else {
                 int index = columnMap.get(selectedCol.name);
                 resultIndices.add(index);
-                resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+                resultColumns.add(baseColumns.get(index).getCopiedColumn(false));
             }
         }
     }
@@ -171,7 +174,7 @@ public class SelectStatement implements Statement {
         resultColumns.clear();
         resultIndices.clear();
 
-        for (Column.FullName selectedCol: this.selectedColumns) {
+        for (Column.FullName selectedCol: selectedColumns) {
             if (selectedCol.name.equals("*")) {
                 if (selectedCol.prefix == null) {
                     // 列全选

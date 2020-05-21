@@ -31,12 +31,12 @@ public class CompareExpression implements Expression {
         Comparable leftValue = this.leftVariable.evaluate();
         Comparable rightValue = this.rightVariable.evaluate();
         if (leftValue == null || rightValue == null) {
-            return false;
+            throw new ExpressionHandleException(ExpressionHandleException.ErrorCode.VALUE_OF_VARIABLE_NOT_FOUND);
         }
         if (leftValue.getClass() == String.class && rightValue.getClass() != String.class) {
-            return false;
+            throw new ExpressionHandleException(ExpressionHandleException.ErrorCode.TYPE_NOT_MATCH);
         } else if (leftValue.getClass() != String.class && rightValue.getClass() == String.class) {
-            return false;
+            throw new ExpressionHandleException(ExpressionHandleException.ErrorCode.TYPE_NOT_MATCH);
         }
         boolean result = false;
 

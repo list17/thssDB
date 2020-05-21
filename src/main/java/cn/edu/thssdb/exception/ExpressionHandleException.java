@@ -9,7 +9,8 @@ public class ExpressionHandleException extends RuntimeException {
         GENERAL("Exception: general"),
         INDEX_OVERFLOW("Exception: index overflow."),
         VALUE_OF_VARIABLE_NOT_FOUND("Exception: some variables of the expression have not been assigned."),
-        AMBIGUOUS_VARIABLE("Exception: the variables in the expression are ambiguous.");
+        AMBIGUOUS_VARIABLE("Exception: the variables in the expression are ambiguous."),
+        TYPE_NOT_MATCH("Exception: The comparison between variable and constant is not compatible.");
 
         private String message;
         ErrorCode(String message) {
