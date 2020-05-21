@@ -166,6 +166,8 @@ public class Table implements Iterable<Row> {
                 // 新插入的行某元素不属于该列定义的类型.
                 if (!this.columns.get(i).isCompatible(newRow.getEntries().get(i))) {
                     throw new TypeMismatchException(this.columns.get(i).getType().toString());
+                } else {
+                    this.columns.get(i).transCompatible(newRow.getEntries().get(i));
                 }
                 // 新插入的行某元素违反了某些约束(如notNull)
                 if (this.columns.get(i).isNotNull() && newRow.getEntries().get(i).value == null) {
@@ -178,6 +180,7 @@ public class Table implements Iterable<Row> {
                 throw new DuplicateKeyException();
             }
             // 可以正确插入新行
+
             this.index.put(primaryKey, newRow);
         }
     }

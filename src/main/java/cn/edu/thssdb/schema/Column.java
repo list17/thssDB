@@ -75,6 +75,25 @@ public class Column implements Comparable<Column>, Serializable {
         }
     }
 
+    public void transCompatible(Entry entry) {
+        switch (this.type) {
+            case INT:
+                entry.value = (Integer) entry.value;
+                break;
+            case LONG:
+                entry.value = (Long) entry.value;
+                break;
+            case FLOAT:
+                entry.value = (Float) entry.value;
+                break;
+            case DOUBLE:
+                entry.value = (Double) entry.value;
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     public int compareTo(Column e) {
         return this.getName().compareTo(e.getName());
