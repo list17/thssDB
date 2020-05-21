@@ -70,7 +70,7 @@ public class Client {
             ConnectResp resp = client.connect(new ConnectReq("username", "password"));
             if (resp.status.code == Global.SUCCESS_CODE){
                 sessionId = resp.sessionId;
-                 open = true;
+                open = true;
             }
             while (true) {
                 print(Global.CLI_PREFIX);
@@ -81,6 +81,9 @@ public class Client {
                         getTime();
                         break;
                     case Global.QUIT:
+                        DisconnetReq req = new DisconnetReq(resp.sessionId);
+                        DisconnetResp resp1 = client.disconnect(req);
+                        println(ANSI_RED + resp1.status.msg + ANSI_RESET);
                         open = false;
                         break;
                     default:

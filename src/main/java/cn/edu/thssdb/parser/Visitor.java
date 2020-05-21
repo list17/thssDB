@@ -111,7 +111,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
             Expression expression = (Expression) visit(ctx.multiple_condition());
             return new DeleteStatement(name, expression);
         } else {
-            return new DeleteStatement(name);
+            return new DeleteStatement(name, new UnaryExpression(true));
         }
     }
 

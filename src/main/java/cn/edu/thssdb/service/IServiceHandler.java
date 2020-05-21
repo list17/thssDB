@@ -50,14 +50,18 @@ public class IServiceHandler implements IService.Iface {
     }
 
     @Override
-    public DisconnetResp disconnect(DisconnetReq req) throws TException {
+    public DisconnetResp disconnect(DisconnetReq req) {
         long sessionId = req.sessionId;
+        DisconnetResp resp = new DisconnetResp();
+        resp.status = this.manager.getConnection(sessionId).status;
+        String errorMessage = "Exit successfully";
         try {
             manager.removeConnection(sessionId);
         } catch (DisconnectionException e){
-            System.out.println(e.getMessage());
+            errorMessage = e.getMessage();
         }
-        return null;
+        resp.status.msg = errorMessage;
+        return resp;
     }
 
     @Override

@@ -15,8 +15,8 @@ public class ColumnStatement implements ColumnDefinition{
 
     @Override
     public void attach(ArrayList<Column> columns) throws SQLHandleException {
-        for (Column column: columns)
-            if (column.getName().equals(column.getName()))
+        for (Column item: columns)
+            if (item.getName().equals(column.getName()))
                 throw new SQLHandleException("Duplicated column name");
         columns.add(column);
     }

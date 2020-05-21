@@ -26,7 +26,6 @@ public class DeleteStatement implements Statement{
 
     @Override
     public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
-        // todo 根据expression找到这些行并删除 如果没有expression则全部删除
         Database database = manager.getSessionCurrentDatabase(sessionId);
         Table baseTable = database.getTable(this.name);
 
