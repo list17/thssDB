@@ -80,7 +80,7 @@ public class Column implements Comparable<Column>, Serializable {
     public void transCompatible(Entry entry) {
         switch (this.type) {
             case INT:
-                entry.value = (int) entry.value;
+                entry.value = ((Number) entry.value).intValue();
                 break;
             case LONG:
                 entry.value = (long) entry.value;

@@ -1,5 +1,6 @@
 package cn.edu.thssdb.service;
 
+import cn.edu.thssdb.exception.DisconnectionException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.rpc.thrift.*;
@@ -50,7 +51,12 @@ public class IServiceHandler implements IService.Iface {
 
     @Override
     public DisconnetResp disconnect(DisconnetReq req) throws TException {
-//        long sessionId = req.se
+        long sessionId = req.sessionId;
+        try {
+            manager.removeConnection(sessionId);
+        } catch (DisconnectionException e){
+            System.out.println(e.getMessage());
+        }
         return null;
     }
 

@@ -1,0 +1,5 @@
+use nihao;
+select * from nihaotable;
+show database nihao;
+create table nihao (id int primary key);
+insert into nihao (id)  values (10);
