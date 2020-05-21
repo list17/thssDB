@@ -83,13 +83,13 @@ public class Column implements Comparable<Column>, Serializable {
                 entry.value = ((Number) entry.value).intValue();
                 break;
             case LONG:
-                entry.value = (long) entry.value;
+                entry.value = ((Number) entry.value).longValue();
                 break;
             case FLOAT:
-                entry.value = (float) entry.value;
+                entry.value = ((Number) entry.value).floatValue();
                 break;
             case DOUBLE:
-                entry.value = (double) entry.value;
+                entry.value = ((Number) entry.value).doubleValue();
                 break;
             default:
                 break;

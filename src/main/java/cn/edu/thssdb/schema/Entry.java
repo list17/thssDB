@@ -8,6 +8,52 @@ public class Entry implements Comparable<Entry>, Serializable {
     private static final long serialVersionUID = -5809782578272943999L;
     public Comparable value;
 
+    public static int compareTo(Comparable a, Comparable b) {
+        Class thisClass = a.getClass();
+        Class thatClass = b.getClass();
+        Comparable thisValue = a;
+        Comparable thatValue = b;
+
+        if (thisClass != String.class && thatClass != String.class) {
+            if (thisClass == Double.class || thisClass == Float.class) {
+                thisValue = ((Number) a).doubleValue();
+                thatValue = ((Number) b).doubleValue();
+            } else if (thisClass == Long.class || thisClass == Integer.class) {
+                if (thatClass == Double.class || thatClass == Float.class) {
+                    thisValue = ((Number) a).doubleValue();
+                    thatValue = ((Number) b).doubleValue();
+                } else {
+                    thisValue = ((Number) a).longValue();
+                    thatValue = ((Number) b).longValue();
+                }
+            }
+        }
+        return thisValue.compareTo(thatValue);
+    }
+
+    public static boolean equals(Comparable a, Comparable b) {
+        Class thisClass = a.getClass();
+        Class thatClass = b.getClass();
+        Comparable thisValue = a;
+        Comparable thatValue = b;
+
+        if (thisClass != String.class && thatClass != String.class) {
+            if (thisClass == Double.class || thisClass == Float.class) {
+                thisValue = ((Number) a).doubleValue();
+                thatValue = ((Number) b).doubleValue();
+            } else if (thisClass == Long.class || thisClass == Integer.class) {
+                if (thatClass == Double.class || thatClass == Float.class) {
+                    thisValue = ((Number) a).doubleValue();
+                    thatValue = ((Number) b).doubleValue();
+                } else {
+                    thisValue = ((Number) a).longValue();
+                    thatValue = ((Number) b).longValue();
+                }
+            }
+        }
+        return thisValue.equals(thatValue);
+    }
+
     public static Entry generateEntry(Comparable value) {
         Entry entry = new Entry(value);
         return entry;
@@ -19,7 +65,7 @@ public class Entry implements Comparable<Entry>, Serializable {
 
     @Override
     public int compareTo(Entry e) {
-        return value.compareTo(e.value);
+        return Entry.compareTo(this.value, e.value);
     }
 
     @Override
@@ -29,7 +75,7 @@ public class Entry implements Comparable<Entry>, Serializable {
         if (this.getClass() != obj.getClass())
             return false;
         Entry e = (Entry) obj;
-        return value.equals(e.value);
+        return Entry.equals(this.value, e.value);
     }
 
     public String toString() {

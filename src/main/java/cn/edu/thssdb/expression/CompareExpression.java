@@ -2,6 +2,7 @@ package cn.edu.thssdb.expression;
 
 import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.schema.Column;
+import cn.edu.thssdb.schema.Entry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,22 +43,22 @@ public class CompareExpression implements Expression {
 
         switch (this.op) {
             case EQ:
-                result = (leftValue.equals(rightValue));
+                result = Entry.equals(leftValue, rightValue);
                 break;
             case GT:
-                result = (leftValue.compareTo(rightValue) > 0);
+                result = (Entry.compareTo(leftValue, rightValue) > 0);
                 break;
             case GE:
-                result = (leftValue.compareTo(rightValue) >= 0);
+                result = (Entry.compareTo(leftValue, rightValue) >= 0);
                 break;
             case LT:
-                result = (leftValue.compareTo(rightValue) < 0);
+                result = (Entry.compareTo(leftValue, rightValue) < 0);
                 break;
             case LE:
-                result = (leftValue.compareTo(rightValue) <= 0);
+                result = (Entry.compareTo(leftValue, rightValue) <= 0);
                 break;
             case NE:
-                result = !(leftValue.equals(rightValue));
+                result = !Entry.equals(leftValue, rightValue);
                 break;
             default:
                 break;
