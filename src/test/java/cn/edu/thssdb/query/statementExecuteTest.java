@@ -813,4 +813,49 @@ public class statementExecuteTest {
         QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
         table.display();
     }
+
+    @Test
+    public void testUpdate() throws SQLHandleException {
+        System.out.println("----------testUpdate----------");
+        UpdateStatement updateStatement = new UpdateStatement("Vtuber", "Name"
+                , new ConstantVariable("Matsuri")
+                , new CompareExpression(new ColumnVariable(new Column.FullName("ID")),
+                                        CompareExpression.Operator.EQ,
+                                        new ConstantVariable(0)));
+
+        updateStatement.execute(manager, connectResp.sessionId);
+        SelectStatement selectStatement = new SelectStatement(
+                new ArrayList<Column.FullName>(){
+                    {
+                        add(new Column.FullName("*"));
+                    }
+                },
+                new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
+                new UnaryExpression(true)
+        );
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        table.display();
+    }
+
+    @Test
+    public void testDelete() throws SQLHandleException {
+        System.out.println("----------testUpdate----------");
+        DeleteStatement deleteStatement = new DeleteStatement("Vtuber"
+                , new CompareExpression(new ColumnVariable(new Column.FullName("ID")),
+                CompareExpression.Operator.EQ,
+                new ConstantVariable(0)));
+
+        deleteStatement.execute(manager, connectResp.sessionId);
+        SelectStatement selectStatement = new SelectStatement(
+                new ArrayList<Column.FullName>(){
+                    {
+                        add(new Column.FullName("*"));
+                    }
+                },
+                new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
+                new UnaryExpression(true)
+        );
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        table.display();
+    }
 }
