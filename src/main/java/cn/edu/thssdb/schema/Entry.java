@@ -13,6 +13,9 @@ public class Entry implements Comparable<Entry>, Serializable {
         Class thatClass = b.getClass();
         Comparable thisValue = a;
         Comparable thatValue = b;
+        if (thisClass == thatClass) {
+            return a.compareTo(b);
+        }
 
         if (thisClass != String.class && thatClass != String.class) {
             if (thisClass == Double.class || thisClass == Float.class) {
@@ -36,7 +39,10 @@ public class Entry implements Comparable<Entry>, Serializable {
         Class thatClass = b.getClass();
         Comparable thisValue = a;
         Comparable thatValue = b;
-
+        if (thisClass == thatClass) {
+            return a.equals(b);
+        }
+        
         if (thisClass != String.class && thatClass != String.class) {
             if (thisClass == Double.class || thisClass == Float.class) {
                 thisValue = ((Number) a).doubleValue();
