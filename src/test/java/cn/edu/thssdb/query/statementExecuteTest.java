@@ -1,15 +1,17 @@
 package cn.edu.thssdb.query;
 
+import cn.edu.thssdb.exception.ConstraintViolatedException;
 import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.expression.*;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
 import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.schema.*;
-import cn.edu.thssdb.statement.SelectStatement;
-import cn.edu.thssdb.statement.Statement;
+import cn.edu.thssdb.statement.*;
 import cn.edu.thssdb.type.ColumnType;
 import com.sun.corba.se.impl.orbutil.closure.Constant;
+import javafx.scene.control.Tab;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -655,5 +657,160 @@ public class statementExecuteTest {
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
         resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
+    }
+
+    @Test
+    public void testCreateDatabase() throws SQLHandleException{
+        System.out.println("----------testCreateDatabase----------");
+        manager.deleteAllDatabase();
+        CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
+        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            CreateDatabaseStatement createDatabaseStatement2 = new CreateDatabaseStatement("a");
+            createDatabaseStatement.execute(manager, connectResp.sessionId);
+        });
+    }
+
+    @Test
+    public void testDrpoDatabase() throws SQLHandleException{
+        System.out.println("----------testDrpoDatabase----------");
+        manager.deleteAllDatabase();
+        CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
+        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        DropDatabaseStatement dropDatabaseStatement = new DropDatabaseStatement("a");
+        dropDatabaseStatement.execute(manager, connectResp.sessionId);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            DropDatabaseStatement dropDatabaseStatement2 = new DropDatabaseStatement("a");
+            dropDatabaseStatement2.execute(manager, connectResp.sessionId);
+        });
+    }
+
+    @Test
+    public void testUseDatabase() throws SQLHandleException{
+        System.out.println("----------testUseDatabase----------");
+        manager.deleteAllDatabase();
+        CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
+        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        UseDatabaseStatement useDatabaseStatement = new UseDatabaseStatement("a");
+        useDatabaseStatement.execute(manager, connectResp.sessionId);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            UseDatabaseStatement useDatabaseStatement2 = new UseDatabaseStatement("b");
+            useDatabaseStatement2.execute(manager, connectResp.sessionId);
+        });
+    }
+
+    @Test
+    public void testCreateTable() throws SQLHandleException{
+        System.out.println("----------testCreateTable----------");
+        manager.deleteAllDatabase();
+        CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
+        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<>();
+        columnDefinitions.add(new ColumnStatement(new Column("a", ColumnType.STRING, true, true, 100)));
+        CreateTableStatement createTableStatement = new CreateTableStatement("a", columnDefinitions);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            createTableStatement.execute(manager, connectResp.sessionId);
+        });
+        UseDatabaseStatement useDatabaseStatement = new UseDatabaseStatement("a");
+        useDatabaseStatement.execute(manager, connectResp.sessionId);
+        createTableStatement.execute(manager, connectResp.sessionId);
+    }
+
+    @Test
+    public void testDropTable() throws SQLHandleException{
+        System.out.println("----------testDropTable----------");
+        manager.deleteAllDatabase();
+        CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
+        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<>();
+        columnDefinitions.add(new ColumnStatement(new Column("a", ColumnType.STRING, true, true, 100)));
+        CreateTableStatement createTableStatement = new CreateTableStatement("a", columnDefinitions);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            createTableStatement.execute(manager, connectResp.sessionId);
+        });
+        UseDatabaseStatement useDatabaseStatement = new UseDatabaseStatement("a");
+        useDatabaseStatement.execute(manager, connectResp.sessionId);
+        createTableStatement.execute(manager, connectResp.sessionId);
+        DropDatabaseStatement dropDatabaseStatement = new DropDatabaseStatement("a");
+        dropDatabaseStatement.execute(manager, connectResp.sessionId);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            dropDatabaseStatement.execute(manager, connectResp.sessionId);
+        });
+    }
+
+    @Test
+    public void testShowMeta() throws SQLHandleException{
+        System.out.println("----------testShowMeta----------");
+        SelectStatement selectStatement = new SelectStatement(
+                new ArrayList<Column.FullName>(){
+                    {
+                        add(new Column.FullName("*"));
+                    }
+                },
+                new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
+                new UnaryExpression(true)
+        );
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        table.display();
+    }
+
+    @Test
+    public void testShowTable() throws SQLHandleException{
+        System.out.println("----------testShowTable----------");
+        ShowTableStatement showTableStatement = new ShowTableStatement("TestDatabase");
+        QueryTable table = showTableStatement.execute(manager, connectResp.sessionId);
+        table.display();
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            ShowTableStatement showTableStatement2 = new ShowTableStatement("TestDatabase2");
+            showTableStatement2.execute(manager, connectResp.sessionId);
+        });
+    }
+
+    @Test
+    public void testShowDatabase() throws SQLHandleException{
+        System.out.println("----------testShowDatabase----------");
+        ShowDatabaseStatement showDatabaseStatement = new ShowDatabaseStatement();
+        QueryTable table = showDatabaseStatement.execute(manager, connectResp.sessionId);
+        table.display();
+        manager.deleteAllDatabase();
+        System.out.println("If we delete all databases, the result of show databases is:");
+        table = showDatabaseStatement.execute(manager, connectResp.sessionId);
+        table.display();
+    }
+
+    @Test
+    public void testInsert() throws SQLHandleException{
+        System.out.println("----------testInsert----------");
+        InsertStatement insertStatement = new InsertStatement("Vtuber",
+                new ArrayList<String>(){
+                    {
+                        add("ID");
+                        add("Name");
+                        add("Group");
+                    }
+                },
+                new ArrayList<ArrayList<ConstantVariable>>(){
+                    {
+                        add(new ArrayList<ConstantVariable>(){
+                            {
+                                add(new ConstantVariable(10));
+                                add(new ConstantVariable("zhengweixi"));
+                                add(new ConstantVariable("THU"));
+                            }
+                        });
+                    }
+                });
+        insertStatement.execute(manager, connectResp.sessionId);
+        SelectStatement selectStatement = new SelectStatement(
+                new ArrayList<Column.FullName>(){
+                    {
+                        add(new Column.FullName("*"));
+                    }
+                },
+                new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
+                new UnaryExpression(true)
+        );
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        table.display();
     }
 }

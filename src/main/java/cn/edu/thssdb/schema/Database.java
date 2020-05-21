@@ -1,16 +1,10 @@
 package cn.edu.thssdb.schema;
 
-import cn.edu.thssdb.query.QueryResult;
-import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.exception.SQLHandleException;
-import javafx.scene.control.Tab;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 

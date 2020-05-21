@@ -33,6 +33,16 @@ public class Client {
     static final String PORT_ARGS = "p";
     static final String PORT_NAME = "port";
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
     private static final PrintStream SCREEN_PRINTER = new PrintStream(System.out);
     private static final Scanner SCANNER = new Scanner(System.in);
 
@@ -78,11 +88,16 @@ public class Client {
                         executeStatementReq.statement = msg;
                         executeStatementReq.sessionId = resp.sessionId;
                         ExecuteStatementResp executeStatementResp = client.executeStatement(executeStatementReq);
-                        println(executeStatementResp.status.msg);
+                        if(executeStatementResp.status.msg.equals("success")){
+                            println(ANSI_GREEN + executeStatementResp.status.msg + ANSI_RESET);
+                        } else {
+                            println(ANSI_RED + executeStatementResp.status.msg + ANSI_RESET);
+                        }
+                        println(executeStatementResp.status.result);
                         break;
                 }
                 long endTime = System.currentTimeMillis();
-                println("It costs " + (endTime - startTime) + " ms.");
+                println(ANSI_BLUE + "It costs " + (endTime - startTime) + " ms." + ANSI_RESET);
                 if (!open) {
                     break;
                 }

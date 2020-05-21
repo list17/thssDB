@@ -4,6 +4,7 @@ struct Status {
   1: required i32 code;
   2: optional string msg;
   3: required string currentDatabase;
+  4: optional string result;
 }
 
 struct GetTimeReq {
@@ -49,6 +50,6 @@ struct ExecuteStatementResp{
 service IService {
   GetTimeResp getTime(1: GetTimeReq req);
   ConnectResp connect(1: ConnectReq req);
-  DisconnetResp disconnect(1: DisconnetResp req);
+  DisconnetResp disconnect(1: DisconnetReq req);
   ExecuteStatementResp executeStatement(1: ExecuteStatementReq req);
 }

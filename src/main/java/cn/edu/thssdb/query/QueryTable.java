@@ -105,6 +105,18 @@ public class QueryTable {
         }
     }
 
+    public String toString(){
+        String result = "";
+        for (Column col: this.columns) {
+            result += col.getName() + " ";
+        }
+        for (Row row: this.rows) {
+            result += '\n';
+            result += row.toString();
+        }
+        return result;
+    }
+
     public boolean hasNext() {
         // TODO
         return true;

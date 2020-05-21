@@ -3,7 +3,6 @@ package cn.edu.thssdb.schema;
 import cn.edu.thssdb.exception.DisconnectionException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.exception.SessionLostException;
-import cn.edu.thssdb.server.ThssDB;
 import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
 
@@ -53,8 +52,8 @@ public class Manager {
         if (!deleteRecursive(new File(database.getRoot())))
             throw new SQLHandleException("Failed to delete database");
         for(Map.Entry<Long, ConnectResp> entry : this.connections.entrySet()){
-            if(entry.getValue().status.currentDatabase.equals(databaseName)) {
-                entry.getValue().status.currentDatabase = null;
+            if(entry.getValue().status.currentDatabase != null && entry.getValue().status.currentDatabase.equals(databaseName)) {
+                entry.getValue().status.currentDatabase = "";
             }
         }
         databases.remove(databaseName);

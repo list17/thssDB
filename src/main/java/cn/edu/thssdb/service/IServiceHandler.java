@@ -2,15 +2,7 @@ package cn.edu.thssdb.service;
 
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
-import cn.edu.thssdb.rpc.thrift.ConnectReq;
-import cn.edu.thssdb.rpc.thrift.ConnectResp;
-import cn.edu.thssdb.rpc.thrift.DisconnetResp;
-import cn.edu.thssdb.rpc.thrift.ExecuteStatementReq;
-import cn.edu.thssdb.rpc.thrift.ExecuteStatementResp;
-import cn.edu.thssdb.rpc.thrift.GetTimeReq;
-import cn.edu.thssdb.rpc.thrift.GetTimeResp;
-import cn.edu.thssdb.rpc.thrift.IService;
-import cn.edu.thssdb.rpc.thrift.Status;
+import cn.edu.thssdb.rpc.thrift.*;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.parser.SQLParser;
@@ -57,8 +49,8 @@ public class IServiceHandler implements IService.Iface {
     }
 
     @Override
-    public DisconnetResp disconnect(DisconnetResp req) throws TException {
-        // TODO
+    public DisconnetResp disconnect(DisconnetReq req) throws TException {
+//        long sessionId = req.se
         return null;
     }
 
@@ -67,34 +59,40 @@ public class IServiceHandler implements IService.Iface {
         String command = req.statement;
         long sessionId = req.sessionId;
         // 解析命令
-        SQLThrowErrorListener listener = new SQLThrowErrorListener();
-        SQLLexer lexer = new SQLLexer(CharStreams.fromString(command));
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(listener);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        SQLParser parser = new SQLParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(listener);
-        ParseTree tree = parser.parse();
-        // 遍历语法树
-        Visitor visitor = new Visitor();
-        ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
-        // 执行语句
-        QueryTable result = null;
         String errorMessage = "success";
-        for (Statement statement: statements){
-            try{
+        QueryTable result = null;
+        try{
+            SQLThrowErrorListener listener = new SQLThrowErrorListener();
+            SQLLexer lexer = new SQLLexer(CharStreams.fromString(command));
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(listener);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            SQLParser parser = new SQLParser(tokens);
+            parser.removeErrorListeners();
+            parser.addErrorListener(listener);
+            ParseTree tree = parser.parse();
+            // 遍历语法树
+            Visitor visitor = new Visitor();
+            ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
+            // 执行语句
+            for (Statement statement: statements){
                result = statement.execute(this.manager, sessionId);
-            } catch (SQLHandleException e) {
-                errorMessage = e.getMessage();
-            } catch (Exception e) {
-                e.printStackTrace();
-                errorMessage = "Internal error";
             }
+        } catch (SQLHandleException e) {
+            errorMessage = e.getMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorMessage = "Internal error";
         }
         ExecuteStatementResp executeStatementResp = new ExecuteStatementResp();
         executeStatementResp.status = this.manager.getConnection(sessionId).status;
         executeStatementResp.status.msg = errorMessage;
+        if(result!=null && req.toString()!=null){
+            executeStatementResp.status.result = result.toString();
+            result = null;
+        } else {
+            executeStatementResp.status.result = "";
+        }
 //        executeStatementResp.rowList = result.rows;
         return executeStatementResp;
     }

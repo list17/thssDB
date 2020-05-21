@@ -7,7 +7,6 @@ import cn.edu.thssdb.statement.*;
 import cn.edu.thssdb.type.ColumnType;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class Visitor extends SQLBaseVisitor<Object>{
 
@@ -67,8 +66,10 @@ public class Visitor extends SQLBaseVisitor<Object>{
         for(SQLParser.Column_defContext column_defContext :ctx.column_def()) {
             columnDefinitions.add((ColumnDefinition) visit(column_defContext));
         }
-        for(SQLParser.Column_nameContext column_nameContext : ((SQLParser.Table_constraintContext) visit(ctx.table_constraint())).column_name()) {
-            columnDefinitions.add((ColumnDefinition) visit(column_nameContext));
+        if(ctx.table_constraint() != null) {
+            for(SQLParser.Column_nameContext column_nameContext : ((SQLParser.Table_constraintContext) visit(ctx.table_constraint())).column_name()) {
+                columnDefinitions.add((ColumnDefinition) visit(column_nameContext));
+            }
         }
         return new CreateTableStatement(name, columnDefinitions);
     }
@@ -138,21 +139,21 @@ public class Visitor extends SQLBaseVisitor<Object>{
     public Object visitInsert_stmt(SQLParser.Insert_stmtContext ctx) {
         String name = (String) visit(ctx.table_name());
         ArrayList<String> columns = new ArrayList<>();
-        ArrayList<ArrayList<Comparable>> rows = new ArrayList<>();
+        ArrayList<ArrayList<ConstantVariable>> rows = new ArrayList<>();
         for(SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
             columns.add((String) visit(column_nameContext));
         }
         for(SQLParser.Value_entryContext value_entryContext : ctx.value_entry()) {
-            rows.add((ArrayList<Comparable>) visit(value_entryContext));
+            rows.add((ArrayList<ConstantVariable>) visit(value_entryContext));
         }
         return new InsertStatement(name, columns, rows);
     }
 
     @Override
     public Object visitValue_entry(SQLParser.Value_entryContext ctx) {
-        ArrayList<Comparable> row = new ArrayList<>();
+        ArrayList<ConstantVariable> row = new ArrayList<>();
         for(SQLParser.Literal_valueContext literal_valueContext : ctx.literal_value()) {
-            row.add((Comparable) visit(literal_valueContext));
+            row.add((ConstantVariable) visit(literal_valueContext));
         }
         return row;
     }
