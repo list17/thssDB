@@ -77,7 +77,7 @@ public class Manager {
             if(this.databases.containsKey(this.connections.get(sessionId).status.currentDatabase))
                 return this.databases.get(this.connections.get(sessionId).status.currentDatabase);
             else if(this.connections.get(sessionId).status.currentDatabase.equals(""))
-                return null;
+                throw new SQLHandleException("Use database first");
             else
                 throw new SQLHandleException("Database " + this.connections.get(sessionId).status.currentDatabase + " not exists");
         }

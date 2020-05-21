@@ -174,13 +174,6 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLogicalExpression(SQLParser.LogicalExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code NestedPredicateExpression}
-	 * labeled alternative in {@link SQLParser#multiple_condition}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code CompareExpression}
 	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
@@ -215,11 +208,26 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTable_constraint(SQLParser.Table_constraintContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#result_column}.
+	 * Visit a parse tree produced by the {@code ResultArbitraryColumn}
+	 * labeled alternative in {@link SQLParser#result_column}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitResult_column(SQLParser.Result_columnContext ctx);
+	T visitResultArbitraryColumn(SQLParser.ResultArbitraryColumnContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ResultTableArbitraryColumn}
+	 * labeled alternative in {@link SQLParser#result_column}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitResultTableArbitraryColumn(SQLParser.ResultTableArbitraryColumnContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ResultColumnFull}
+	 * labeled alternative in {@link SQLParser#result_column}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitResultColumnFull(SQLParser.ResultColumnFullContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#table_query}.
 	 * @param ctx the parse tree
@@ -232,48 +240,6 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAuth_level(SQLParser.Auth_levelContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StringConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStringConstant(SQLParser.StringConstantContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code DecimalConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDecimalConstant(SQLParser.DecimalConstantContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code RealConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRealConstant(SQLParser.RealConstantContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code TrueConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTrueConstant(SQLParser.TrueConstantContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code FalseConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFalseConstant(SQLParser.FalseConstantContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code NullConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNullConstant(SQLParser.NullConstantContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#column_full_name}.
 	 * @param ctx the parse tree
@@ -328,6 +294,41 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPassword(SQLParser.PasswordContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code StringConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringConstant(SQLParser.StringConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code DecimalConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecimalConstant(SQLParser.DecimalConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RealConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRealConstant(SQLParser.RealConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TrueConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTrueConstant(SQLParser.TrueConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code FalseConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFalseConstant(SQLParser.FalseConstantContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AndOperator}
 	 * labeled alternative in {@link SQLParser#logicalOperator}.

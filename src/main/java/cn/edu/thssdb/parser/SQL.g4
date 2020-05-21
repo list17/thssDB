@@ -108,14 +108,12 @@ column_constraint :
 multiple_condition
     : left=expression comparator right=expression                                 # CompareExpression
     | left=multiple_condition logicalOperator right=multiple_condition            # LogicalExpression
-    | expression                                                                  # NestedPredicateExpression
+//    | expression                                                                  # NestedPredicateExpression
     ;
 
 expression
     : column_full_name                          # ColumnVariable
     | literal_value                             # ConstantVariable
-//    | expression ( MUL | DIV ) expression
-//    | expression ( ADD | SUB ) expression
     | '(' expression ')'                        # BracketExpression
     ;
 
@@ -123,24 +121,16 @@ table_constraint :
     K_PRIMARY K_KEY '(' column_name (',' column_name)* ')' ;
 
 result_column
-    : '*'
-    | table_name '.' '*'
-    | column_full_name;
+    : '*'                                       # ResultArbitraryColumn
+    | table_name '.' '*'                        # ResultTableArbitraryColumn
+    | column_full_name                          # ResultColumnFull
+    ;
 
 table_query :
     table_full_name ( K_JOIN table_full_name  + (K_ON multiple_condition) ?)*;
 
 auth_level :
     K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_DROP ;
-
-literal_value
-    : STRING_LITERAL        # StringConstant
-    | DECIMAL_LITERAL       # DecimalConstant
-    | REAL_LITERAL          # RealConstant
-    | K_TRUE                # TrueConstant
-    | K_FALSE               # FalseConstant
-    | K_NULL                # NullConstant
-    ;
 
 column_full_name:
     ( table_name '.' )? column_name ;
@@ -149,7 +139,7 @@ database_name :
     IDENTIFIER ;
 
 table_full_name:
-    table_name (K_AS table_alias_name);
+    table_name (K_AS table_alias_name)?;
 
 table_alias_name :
     IDENTIFIER ;
@@ -168,6 +158,14 @@ view_name :
 
 password :
     STRING_LITERAL ;
+
+literal_value
+    : STRING_LITERAL        # StringConstant
+    | DECIMAL_LITERAL       # DecimalConstant
+    | REAL_LITERAL          # RealConstant
+    | K_TRUE                # TrueConstant
+    | K_FALSE               # FalseConstant
+    ;
 
 logicalOperator
     : AND       # AndOperator

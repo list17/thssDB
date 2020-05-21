@@ -280,18 +280,6 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitLogicalExpression(SQLParser.LogicalExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code NestedPredicateExpression}
-	 * labeled alternative in {@link SQLParser#multiple_condition}.
-	 * @param ctx the parse tree
-	 */
-	void enterNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code NestedPredicateExpression}
-	 * labeled alternative in {@link SQLParser#multiple_condition}.
-	 * @param ctx the parse tree
-	 */
-	void exitNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code CompareExpression}
 	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
@@ -350,15 +338,41 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitTable_constraint(SQLParser.Table_constraintContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#result_column}.
+	 * Enter a parse tree produced by the {@code ResultArbitraryColumn}
+	 * labeled alternative in {@link SQLParser#result_column}.
 	 * @param ctx the parse tree
 	 */
-	void enterResult_column(SQLParser.Result_columnContext ctx);
+	void enterResultArbitraryColumn(SQLParser.ResultArbitraryColumnContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#result_column}.
+	 * Exit a parse tree produced by the {@code ResultArbitraryColumn}
+	 * labeled alternative in {@link SQLParser#result_column}.
 	 * @param ctx the parse tree
 	 */
-	void exitResult_column(SQLParser.Result_columnContext ctx);
+	void exitResultArbitraryColumn(SQLParser.ResultArbitraryColumnContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ResultTableArbitraryColumn}
+	 * labeled alternative in {@link SQLParser#result_column}.
+	 * @param ctx the parse tree
+	 */
+	void enterResultTableArbitraryColumn(SQLParser.ResultTableArbitraryColumnContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ResultTableArbitraryColumn}
+	 * labeled alternative in {@link SQLParser#result_column}.
+	 * @param ctx the parse tree
+	 */
+	void exitResultTableArbitraryColumn(SQLParser.ResultTableArbitraryColumnContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ResultColumnFull}
+	 * labeled alternative in {@link SQLParser#result_column}.
+	 * @param ctx the parse tree
+	 */
+	void enterResultColumnFull(SQLParser.ResultColumnFullContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ResultColumnFull}
+	 * labeled alternative in {@link SQLParser#result_column}.
+	 * @param ctx the parse tree
+	 */
+	void exitResultColumnFull(SQLParser.ResultColumnFullContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#table_query}.
 	 * @param ctx the parse tree
@@ -379,78 +393,6 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAuth_level(SQLParser.Auth_levelContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code StringConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void enterStringConstant(SQLParser.StringConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code StringConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void exitStringConstant(SQLParser.StringConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code DecimalConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void enterDecimalConstant(SQLParser.DecimalConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code DecimalConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void exitDecimalConstant(SQLParser.DecimalConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code RealConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void enterRealConstant(SQLParser.RealConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code RealConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void exitRealConstant(SQLParser.RealConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code TrueConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void enterTrueConstant(SQLParser.TrueConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code TrueConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void exitTrueConstant(SQLParser.TrueConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code FalseConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void enterFalseConstant(SQLParser.FalseConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code FalseConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void exitFalseConstant(SQLParser.FalseConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code NullConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void enterNullConstant(SQLParser.NullConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code NullConstant}
-	 * labeled alternative in {@link SQLParser#literal_value}.
-	 * @param ctx the parse tree
-	 */
-	void exitNullConstant(SQLParser.NullConstantContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#column_full_name}.
 	 * @param ctx the parse tree
@@ -541,6 +483,66 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPassword(SQLParser.PasswordContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code StringConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringConstant(SQLParser.StringConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code StringConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringConstant(SQLParser.StringConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code DecimalConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterDecimalConstant(SQLParser.DecimalConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code DecimalConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitDecimalConstant(SQLParser.DecimalConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code RealConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterRealConstant(SQLParser.RealConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code RealConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitRealConstant(SQLParser.RealConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TrueConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterTrueConstant(SQLParser.TrueConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TrueConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitTrueConstant(SQLParser.TrueConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FalseConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterFalseConstant(SQLParser.FalseConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FalseConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitFalseConstant(SQLParser.FalseConstantContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AndOperator}
 	 * labeled alternative in {@link SQLParser#logicalOperator}.

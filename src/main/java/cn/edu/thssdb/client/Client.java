@@ -79,7 +79,6 @@ public class Client {
                         executeStatementReq.sessionId = resp.sessionId;
                         ExecuteStatementResp executeStatementResp = client.executeStatement(executeStatementReq);
                         println(executeStatementResp.status.msg);
-//                        println("Invalid statements!");
                         break;
                 }
                 long endTime = System.currentTimeMillis();

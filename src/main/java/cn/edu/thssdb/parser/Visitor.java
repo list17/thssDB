@@ -159,7 +159,13 @@ public class Visitor extends SQLBaseVisitor<Object>{
             throw new SQLHandleException("Source table missed");
         }
         SourceTable sourceTable = new SourceTable(sourceTablename, operators);
-        return super.visitSelect_stmt(ctx);
+        Expression expression = null;
+        if(ctx.multiple_condition() != null) {
+            expression = (Expression) visit(ctx.multiple_condition());
+        } else {
+            expression = new UnaryExpression(true);
+        }
+        return new SelectStatement(selectedColumns, sourceTable, expression);
     }
 
     @Override
@@ -255,32 +261,27 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitStringConstant(SQLParser.StringConstantContext ctx) {
-        return super.visitStringConstant(ctx);
+        return new ConstantVariable(ctx.getText());
     }
 
     @Override
     public Object visitDecimalConstant(SQLParser.DecimalConstantContext ctx) {
-        return super.visitDecimalConstant(ctx);
+        return new ConstantVariable(Long.parseLong(ctx.getText()));
     }
 
     @Override
     public Object visitRealConstant(SQLParser.RealConstantContext ctx) {
-        return super.visitRealConstant(ctx);
+        return new ConstantVariable(Double.parseDouble(ctx.getText()));
     }
 
     @Override
     public Object visitTrueConstant(SQLParser.TrueConstantContext ctx) {
-        return super.visitTrueConstant(ctx);
+        return new UnaryExpression(true);
     }
 
     @Override
     public Object visitFalseConstant(SQLParser.FalseConstantContext ctx) {
-        return super.visitFalseConstant(ctx);
-    }
-
-    @Override
-    public Object visitNullConstant(SQLParser.NullConstantContext ctx) {
-        return super.visitNullConstant(ctx);
+        return new UnaryExpression(false);
     }
 
     @Override
@@ -290,31 +291,36 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitConstantVariable(SQLParser.ConstantVariableContext ctx) {
-        return new ConstantVariable()
+        return visit(ctx.literal_value());
     }
 
     @Override
     public Object visitBracketExpression(SQLParser.BracketExpressionContext ctx) {
-        return super.visitBracketExpression(ctx);
+        return visit(ctx.expression());
     }
 
     @Override
     public Object visitTable_constraint(SQLParser.Table_constraintContext ctx) {
-        return super.visitTable_constraint(ctx);
+        ArrayList<String> names = new ArrayList<>();
+        for(SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
+            names.add((String) visit(column_nameContext));
+        }
+        return new ConstraintColumnStatement(names);
     }
 
     @Override
-    public Object visitResult_column(SQLParser.Result_columnContext ctx) {
-        Column.FullName column_fullname;
-        if(ctx.column_full_name()!=null){
-            column_fullname = (Column.FullName) visit(ctx.column_full_name());
-        } else if (ctx.table_name() != null) {
-            // todo 此语法暂不支持
-            column_fullname = new Column.FullName((String) visit(ctx.table_name()), (String) visit(ctx.))
-        } else {
-            return null;
-        }
-        return super.visitResult_column(ctx);
+    public Object visitResultArbitraryColumn(SQLParser.ResultArbitraryColumnContext ctx) {
+        return new Column.FullName("*");
+    }
+
+    @Override
+    public Object visitResultTableArbitraryColumn(SQLParser.ResultTableArbitraryColumnContext ctx) {
+        return new Column.FullName((String) visit(ctx.table_name()), "*");
+    }
+
+    @Override
+    public Object visitResultColumnFull(SQLParser.ResultColumnFullContext ctx) {
+        return visit(ctx.column_full_name());
     }
 
     @Override
@@ -342,18 +348,13 @@ public class Visitor extends SQLBaseVisitor<Object>{
     }
 
     @Override
-    public Object visitLiteral_value(SQLParser.Literal_valueContext ctx) {
-        return ctx.getText();
-    }
-
-    @Override
     public Object visitColumn_full_name(SQLParser.Column_full_nameContext ctx) {
-        String table_name = null;
-        if(ctx.table_name() != null){
-            table_name = (String) visit(ctx.table_name());
-        }
         String column_name = (String) visit(ctx.column_name());
-        return new Column.FullName(table_name, column_name);
+        if(ctx.table_name() != null){
+            return new Column.FullName((String) visit(ctx.table_name()), column_name);
+        } else {
+            return new Column.FullName(column_name);
+        }
     }
 
     @Override

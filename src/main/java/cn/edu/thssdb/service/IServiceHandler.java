@@ -1,5 +1,6 @@
 package cn.edu.thssdb.service;
 
+import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.rpc.thrift.ConnectReq;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
@@ -22,6 +23,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.thrift.TException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date;
@@ -79,11 +81,20 @@ public class IServiceHandler implements IService.Iface {
         ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
         // 执行语句
         QueryTable result = null;
-        for (Statement statement: statements)
-            result = statement.execute(this.manager, this.manager.getSessionCurrentDatabase(sessionId));
+        String errorMessage = "success";
+        for (Statement statement: statements){
+            try{
+               result = statement.execute(this.manager, sessionId);
+            } catch (SQLHandleException e) {
+                errorMessage = e.getMessage();
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorMessage = "Internal error";
+            }
+        }
         ExecuteStatementResp executeStatementResp = new ExecuteStatementResp();
         executeStatementResp.status = this.manager.getConnection(sessionId).status;
-        executeStatementResp.status.msg = "success";
+        executeStatementResp.status.msg = errorMessage;
 //        executeStatementResp.rowList = result.rows;
         return executeStatementResp;
     }
