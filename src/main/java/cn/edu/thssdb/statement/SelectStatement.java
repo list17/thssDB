@@ -142,22 +142,23 @@ public class SelectStatement implements Statement {
         ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
         HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
 
-        if (this.selectedColumns.isEmpty()) {
-            // 列全选.
-            resultColumns.addAll(baseTable.getCopiedColumns(false));
-            int attrSize = resultColumns.size();
-            for (int i = 0; i < attrSize; i++) {
-                resultIndices.add(i);
-            }
-        } else {
-            for (Column.FullName selectedCol: this.selectedColumns) {
-                if (!columnMap.containsKey(selectedCol.name)) {
-                    throw new SQLHandleException("Exception: some selected columns do not exist.");
+        for (Column.FullName selectedCol: this.selectedColumns) {
+            if (selectedCol.name.equals("*")) {
+                if (selectedCol.prefix == null || selectedCol.equals(baseTable.getTableName())) {
+                    ArrayList<Column> toAddColumns = baseTable.getCopiedColumns(false);
+                    for (Column col: toAddColumns) {
+                        resultIndices.add(columnMap.get(col.getColumnFullName().name));
+                    }
+                    resultColumns.addAll(toAddColumns);
                 } else {
-                    int index = columnMap.get(selectedCol.name);
-                    resultIndices.add(index);
-                    resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+                    throw new SQLHandleException("Exception: some selected columns do not exist.");
                 }
+            } else if (!columnMap.containsKey(selectedCol.name)) {
+                throw new SQLHandleException("Exception: some selected columns do not exist.");
+            } else {
+                int index = columnMap.get(selectedCol.name);
+                resultIndices.add(index);
+                resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
             }
         }
     }
@@ -170,27 +171,46 @@ public class SelectStatement implements Statement {
         resultColumns.clear();
         resultIndices.clear();
 
-        if (selectedColumns.isEmpty()) {
-            resultColumns.addAll(baseQueryTable.getCopiedColumns());
-            int attrSize = resultColumns.size();
-            for (int i = 0; i < attrSize; i++) {
-                resultIndices.add(i);
-            }
-        } else {
-            for (Column.FullName selectedCol: this.selectedColumns) {
-                if (baseQueryTable.columnIndicesMap.containsKey(selectedCol.toString())) {
-                    int index = baseQueryTable.columnIndicesMap.get(selectedCol.toString());
-                    resultIndices.add(index);
-                    resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
-                } else if (baseQueryTable.notConflictIndicesMap.containsKey(selectedCol.name)) {
-                    int index = baseQueryTable.notConflictIndicesMap.get(selectedCol.name);
-                    resultIndices.add(index);
-                    resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+        for (Column.FullName selectedCol: this.selectedColumns) {
+            if (selectedCol.name.equals("*")) {
+                if (selectedCol.prefix == null) {
+                    // 列全选
+                    ArrayList<Column> toAddColumns = baseQueryTable.getCopiedColumns();
+                    for (Column col: toAddColumns) {
+                        resultIndices.add(baseQueryTable.columnIndicesMap.get(col.getColumnFullName().toString()));
+                    }
+                    resultColumns.addAll(toAddColumns);
+
                 } else {
-                    throw new SQLHandleException("Exception: some selected columns do not exist.");
+                    ArrayList<Column> toAddColumns = new ArrayList<>();
+                    ArrayList<Integer> toAddIndices = new ArrayList<>();
+                    for (Column col: baseColumns) {
+                        if (col.getColumnFullName().prefix.equals(selectedCol.prefix)) {
+                            toAddColumns.add(col.getCopiedColumn(true));
+                            toAddIndices.add(baseQueryTable.columnIndicesMap.get(col.getColumnFullName().toString()));
+                        }
+                    }
+                    if (toAddColumns.isEmpty()) {
+                        throw new SQLHandleException("Exception: some selected columns do not exist.");
+                    } else {
+                        resultColumns.addAll(toAddColumns);
+                        resultIndices.addAll(toAddIndices);
+                    }
+
                 }
+            } else if (baseQueryTable.columnIndicesMap.containsKey(selectedCol.toString())) {
+                int index = baseQueryTable.columnIndicesMap.get(selectedCol.toString());
+                resultIndices.add(index);
+                resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+            } else if (baseQueryTable.notConflictIndicesMap.containsKey(selectedCol.name)) {
+                int index = baseQueryTable.notConflictIndicesMap.get(selectedCol.name);
+                resultIndices.add(index);
+                resultColumns.add(baseColumns.get(index).getCopiedColumn(true));
+            } else {
+                throw new SQLHandleException("Exception: some selected columns do not exist.");
             }
         }
+//        }
     }
     public void setAssignIndices(ArrayList<Variable> variables,
                                  Table baseTable,

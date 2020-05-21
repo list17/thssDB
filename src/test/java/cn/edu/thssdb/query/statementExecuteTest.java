@@ -22,13 +22,14 @@ public class statementExecuteTest {
     public Database database;
     public Table vtuberTable;
     public Table groupTable;
+    public ConnectResp connectResp;
 
     @Before
     public void setUp() {
         System.out.println("----------setUp----------");
         manager.deleteAllDatabase();
         manager.createDatabaseIfNotExists("TestDatabase");
-        ConnectResp connectResp = new ConnectResp();
+        connectResp = new ConnectResp();
         Status status = new Status();
         status.currentDatabase = "TestDatabase";
         connectResp.status = status;
@@ -150,13 +151,14 @@ public class statementExecuteTest {
                 "FROM Vtuber\n" +
                 "----------");
         ArrayList<Column.FullName> selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         SourceTable sourceTable = new SourceTable("Vtuber"
                 , new ArrayList<SourceTable.JoinOperator>());
 
         Expression expression = new UnaryExpression(true);
 
         Statement selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        QueryTable resultTable = selectStatement.execute(this.manager, this.database);
+        QueryTable resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -165,6 +167,7 @@ public class statementExecuteTest {
                 "WHERE ID == 1\n" +
                 "----------");
         selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         sourceTable = new SourceTable("Vtuber"
                 , new ArrayList<SourceTable.JoinOperator>());
 
@@ -173,7 +176,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -182,15 +185,16 @@ public class statementExecuteTest {
                 "WHERE ID >= 1\n" +
                 "----------");
         selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         sourceTable = new SourceTable("Vtuber"
                 , new ArrayList<SourceTable.JoinOperator>());
 
         expression = new CompareExpression(new ColumnVariable(new Column.FullName("ID"))
-                , CompareExpression.Operator.GEQ
+                , CompareExpression.Operator.GE
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
 
@@ -200,6 +204,7 @@ public class statementExecuteTest {
                 "WHERE ID > 1\n" +
                 "----------");
         selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         sourceTable = new SourceTable("Vtuber"
                 , new ArrayList<SourceTable.JoinOperator>());
 
@@ -208,7 +213,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -217,15 +222,16 @@ public class statementExecuteTest {
                 "WHERE ID != 1\n" +
                 "----------");
         selectedColumns = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         sourceTable = new SourceTable("Vtuber"
                 , new ArrayList<SourceTable.JoinOperator>());
 
         expression = new CompareExpression(new ColumnVariable(new Column.FullName("ID"))
-                , CompareExpression.Operator.NEQ
+                , CompareExpression.Operator.NE
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -241,7 +247,7 @@ public class statementExecuteTest {
         expression = new UnaryExpression(true);
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -249,6 +255,7 @@ public class statementExecuteTest {
                 "FROM Vtuber JOIN Group ON Vtuber.Group == Group.Group\n" +
                 "----------");
         ArrayList<SourceTable.JoinOperator> joinOps = new ArrayList<>();
+        selectedColumns.add(new Column.FullName("*"));
         joinOps.add(new SourceTable.JoinOperator("Group"
                 , new CompareExpression(new ColumnVariable(new Column.FullName("Vtuber", "Group"))
                                         , CompareExpression.Operator.EQ
@@ -261,7 +268,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -284,7 +291,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -310,7 +317,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -341,7 +348,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, this.database);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
         resultTable.display();
 
     }
