@@ -1828,8 +1828,8 @@ public class SQLParser extends Parser {
 			return getRuleContext(Column_nameContext.class,0);
 		}
 		public TerminalNode EQ() { return getToken(SQLParser.EQ, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public Literal_valueContext literal_value() {
+			return getRuleContext(Literal_valueContext.class,0);
 		}
 		public TerminalNode K_WHERE() { return getToken(SQLParser.K_WHERE, 0); }
 		public Multiple_conditionContext multiple_condition() {
@@ -1872,7 +1872,7 @@ public class SQLParser extends Parser {
 			setState(318);
 			match(EQ);
 			setState(319);
-			expression();
+			literal_value();
 			setState(322);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -3693,7 +3693,7 @@ public class SQLParser extends Parser {
 		"\2\2\u0134\u0135\7#\2\2\u0135\u0138\7<\2\2\u0136\u0137\7\'\2\2\u0137\u0139"+
 		"\7$\2\2\u0138\u0136\3\2\2\2\u0138\u0139\3\2\2\2\u0139\u013a\3\2\2\2\u013a"+
 		"\u013b\5P)\2\u013b-\3\2\2\2\u013c\u013d\78\2\2\u013d\u013e\5J&\2\u013e"+
-		"\u013f\7\64\2\2\u013f\u0140\5N(\2\u0140\u0141\7\b\2\2\u0141\u0144\58\35"+
+		"\u013f\7\64\2\2\u013f\u0140\5N(\2\u0140\u0141\7\b\2\2\u0141\u0144\5T+"+
 		"\2\u0142\u0143\7=\2\2\u0143\u0145\5\66\34\2\u0144\u0142\3\2\2\2\u0144"+
 		"\u0145\3\2\2\2\u0145/\3\2\2\2\u0146\u0147\5N(\2\u0147\u014b\5\62\32\2"+
 		"\u0148\u014a\5\64\33\2\u0149\u0148\3\2\2\2\u014a\u014d\3\2\2\2\u014b\u0149"+

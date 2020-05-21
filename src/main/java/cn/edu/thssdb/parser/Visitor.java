@@ -3,13 +3,11 @@ package cn.edu.thssdb.parser;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.expression.*;
 import cn.edu.thssdb.schema.Column;
-import cn.edu.thssdb.schema.Table;
 import cn.edu.thssdb.statement.*;
 import cn.edu.thssdb.type.ColumnType;
-import javafx.scene.control.Tab;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Visitor extends SQLBaseVisitor<Object>{
 
@@ -77,7 +75,15 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitShow_meta_stmt(SQLParser.Show_meta_stmtContext ctx) {
-        return new ShowTableStatement((String) visit(ctx.table_name()));
+        return new SelectStatement(
+                new ArrayList<Column.FullName>(){
+                    {
+                        add(new Column.FullName("*"));
+                    }
+                },
+                new SourceTable((String) visit(ctx.table_name()), new ArrayList<SourceTable.JoinOperator>()),
+                new UnaryExpression(true)
+        );
     }
 
     @Override
@@ -99,17 +105,23 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitDelete_stmt(SQLParser.Delete_stmtContext ctx) {
-        return super.visitDelete_stmt(ctx);
+        String name = (String) visit(ctx.table_name());
+        if(ctx.multiple_condition()!= null ){
+            Expression expression = (Expression) visit(ctx.multiple_condition());
+            return new DeleteStatement(name, expression);
+        } else {
+            return new DeleteStatement(name);
+        }
     }
 
     @Override
     public Object visitDrop_table_stmt(SQLParser.Drop_table_stmtContext ctx) {
-        return super.visitDrop_table_stmt(ctx);
+        return new DropDatabaseStatement((String) visit(ctx.table_name()));
     }
 
     @Override
     public Object visitShow_db_stmt(SQLParser.Show_db_stmtContext ctx) {
-        return super.visitShow_db_stmt(ctx);
+        return new ShowDatabaseStatement();
     }
 
     @Override
@@ -119,17 +131,30 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitShow_table_stmt(SQLParser.Show_table_stmtContext ctx) {
-        return super.visitShow_table_stmt(ctx);
+        return new ShowTableStatement((String) visit(ctx.database_name()));
     }
 
     @Override
     public Object visitInsert_stmt(SQLParser.Insert_stmtContext ctx) {
-        return super.visitInsert_stmt(ctx);
+        String name = (String) visit(ctx.table_name());
+        ArrayList<String> columns = new ArrayList<>();
+        ArrayList<ArrayList<Comparable>> rows = new ArrayList<>();
+        for(SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
+            columns.add((String) visit(column_nameContext));
+        }
+        for(SQLParser.Value_entryContext value_entryContext : ctx.value_entry()) {
+            rows.add((ArrayList<Comparable>) visit(value_entryContext));
+        }
+        return new InsertStatement(name, columns, rows);
     }
 
     @Override
     public Object visitValue_entry(SQLParser.Value_entryContext ctx) {
-        return super.visitValue_entry(ctx);
+        ArrayList<Comparable> row = new ArrayList<>();
+        for(SQLParser.Literal_valueContext literal_valueContext : ctx.literal_value()) {
+            row.add((Comparable) visit(literal_valueContext));
+        }
+        return row;
     }
 
     @Override
@@ -180,7 +205,11 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitUpdate_stmt(SQLParser.Update_stmtContext ctx) {
-        return super.visitUpdate_stmt(ctx);
+        String name = (String) visit(ctx.table_name());
+        String column_name = (String) visit(ctx.column_name());
+        ConstantVariable variable = (ConstantVariable) visit(ctx.literal_value());
+        Expression expression = (Expression) visit(ctx.multiple_condition());
+        return new UpdateStatement(name, column_name, variable, expression);
     }
 
     @Override

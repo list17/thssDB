@@ -9,6 +9,7 @@ import cn.edu.thssdb.rpc.thrift.ConnectResp;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -136,10 +137,18 @@ public class Manager {
             throw new RuntimeException("List databases failed");
     }
 
+    public ArrayList<String> getAllDatabases() {
+        return new ArrayList<String>(this.databases.keySet());
+    }
+
     public void deleteAllDatabase() {
         for(Map.Entry<String, Database> entry : this.databases.entrySet()){
             this.deleteDatabase(entry.getKey());
         }
+    }
+
+    public Database getDatabase(String name) {
+        return this.databases.get(name);
     }
 
     public String getRoot() {

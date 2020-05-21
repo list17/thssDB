@@ -7,23 +7,18 @@ import cn.edu.thssdb.type.ColumnType;
 
 import java.util.ArrayList;
 
-public class ShowTableStatement implements Statement{
-    private String name;
+public class ShowDatabaseStatement implements Statement{
 
-    public ShowTableStatement(String name) {
-        this.name = name;
+    public ShowDatabaseStatement() {
+        super();
     }
 
     @Override
     public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
-        if(!manager.getAllDatabases().contains(this.name)) {
-            throw new SQLHandleException("Database" + this.name + "does not exist.");
-        }
-        Database database = manager.getDatabase(this.name);
-        ArrayList<String> databaseArrayList = database.getAllTables();
+        ArrayList<String> databaseArrayList = manager.getAllDatabases();
         ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("TABLES", ColumnType.STRING, false, true, 100));
-        QueryTable queryTable = new QueryTable("ShowTableResult", columns);
+        columns.add(new Column("DATABASES", ColumnType.STRING, false, true, 100));
+        QueryTable queryTable = new QueryTable("ShowDatabaseResult", columns);
         for(String name: databaseArrayList) {
             Entry[] entries = new Entry[] {new Entry(name)};
             queryTable.rows.add(new Row(entries));

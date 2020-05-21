@@ -85,6 +85,10 @@ public class Database {
             throw new SQLHandleException("Load database failed");
     }
 
+    public ArrayList<String> getAllTables() {
+        return new ArrayList<String>(this.tables.keySet());
+    }
+
     public String getRoot() {
         return this.root;
     }
