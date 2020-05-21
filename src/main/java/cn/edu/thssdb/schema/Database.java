@@ -62,12 +62,6 @@ public class Database {
         this.tables.remove(name);
     }
 
-    public String select(QueryTable[] queryTables) {
-        // TODO
-        QueryResult queryResult = new QueryResult(queryTables);
-        return null;
-    }
-
     public Table getTable(String name) throws SQLHandleException {
         return this.tables.get(name);
     }
