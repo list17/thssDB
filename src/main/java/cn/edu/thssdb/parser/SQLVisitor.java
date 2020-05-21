@@ -1,4 +1,4 @@
-// Generated from /Users/anyanzhe/workspace/ThssDB/src/main/java/cn/edu/thssdb/parser/SQL.g4 by ANTLR 4.8
+// Generated from /home/list/Documents/数据库原理/大作业框架及具体要求/ThssDB/src/main/java/cn/edu/thssdb/parser/SQL.g4 by ANTLR 4.8
 package cn.edu.thssdb.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -167,35 +167,47 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitColumn_constraint(SQLParser.Column_constraintContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#multiple_condition}.
+	 * Visit a parse tree produced by the {@code LogicalExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultiple_condition(SQLParser.Multiple_conditionContext ctx);
+	T visitLogicalExpression(SQLParser.LogicalExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#condition}.
+	 * Visit a parse tree produced by the {@code NestedPredicateExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCondition(SQLParser.ConditionContext ctx);
+	T visitNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#comparer}.
+	 * Visit a parse tree produced by the {@code CompareExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitComparer(SQLParser.ComparerContext ctx);
+	T visitCompareExpression(SQLParser.CompareExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#comparator}.
+	 * Visit a parse tree produced by the {@code ColumnVariable}
+	 * labeled alternative in {@link SQLParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitComparator(SQLParser.ComparatorContext ctx);
+	T visitColumnVariable(SQLParser.ColumnVariableContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#expression}.
+	 * Visit a parse tree produced by the {@code ConstantVariable}
+	 * labeled alternative in {@link SQLParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExpression(SQLParser.ExpressionContext ctx);
+	T visitConstantVariable(SQLParser.ConstantVariableContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code BracketExpression}
+	 * labeled alternative in {@link SQLParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBracketExpression(SQLParser.BracketExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#table_constraint}.
 	 * @param ctx the parse tree
@@ -221,11 +233,47 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAuth_level(SQLParser.Auth_levelContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#literal_value}.
+	 * Visit a parse tree produced by the {@code StringConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLiteral_value(SQLParser.Literal_valueContext ctx);
+	T visitStringConstant(SQLParser.StringConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code DecimalConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecimalConstant(SQLParser.DecimalConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RealConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRealConstant(SQLParser.RealConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TrueConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTrueConstant(SQLParser.TrueConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code FalseConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFalseConstant(SQLParser.FalseConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NullConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNullConstant(SQLParser.NullConstantContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#column_full_name}.
 	 * @param ctx the parse tree
@@ -238,6 +286,18 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDatabase_name(SQLParser.Database_nameContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLParser#table_full_name}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTable_full_name(SQLParser.Table_full_nameContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLParser#table_alias_name}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTable_alias_name(SQLParser.Table_alias_nameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#table_name}.
 	 * @param ctx the parse tree
@@ -268,4 +328,60 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPassword(SQLParser.PasswordContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code AndOperator}
+	 * labeled alternative in {@link SQLParser#logicalOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAndOperator(SQLParser.AndOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code OrOperator}
+	 * labeled alternative in {@link SQLParser#logicalOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOrOperator(SQLParser.OrOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code EqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEqualOperator(SQLParser.EqualOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code GreateThanOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGreateThanOperator(SQLParser.GreateThanOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code LessThanOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLessThanOperator(SQLParser.LessThanOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code LessEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLessEqualOperator(SQLParser.LessEqualOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code GreatEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGreatEqualOperator(SQLParser.GreatEqualOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NotEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotEqualOperator(SQLParser.NotEqualOperatorContext ctx);
 }

@@ -71,6 +71,20 @@ public class Manager {
         else throw new SessionLostException(sessionId);
     }
 
+    public Database getSessionCurrentDatabase(long sessionId) {
+        if(this.connections.containsKey(sessionId))
+        {
+            if(this.databases.containsKey(this.connections.get(sessionId).status.currentDatabase))
+                return this.databases.get(this.connections.get(sessionId).status.currentDatabase);
+            else if(this.connections.get(sessionId).status.currentDatabase.equals(""))
+                return null;
+            else
+                throw new SQLHandleException("Database " + this.connections.get(sessionId).status.currentDatabase + " not exists");
+        }
+        else
+            throw new SessionLostException(sessionId);
+    }
+
     private static class ManagerHolder {
         private static final Manager INSTANCE = new Manager();
 
@@ -103,6 +117,13 @@ public class Manager {
         if(this.connections.containsKey(sessionId))
             this.connections.remove(sessionId);
         else throw new DisconnectionException(sessionId);
+    }
+
+    public ConnectResp getConnection(long sessionId) {
+        if(this.connections.containsKey(sessionId))
+            return this.connections.get(sessionId);
+        else
+            throw new SessionLostException(sessionId);
     }
 
     private void loadDatabase() {

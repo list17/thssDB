@@ -3,6 +3,8 @@ package cn.edu.thssdb.query;
 import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.expression.*;
+import cn.edu.thssdb.rpc.thrift.ConnectResp;
+import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.statement.SelectStatement;
 import cn.edu.thssdb.statement.Statement;
@@ -16,25 +18,33 @@ import java.util.ArrayList;
 
 public class statementExecuteTest {
 
-    public Database database = new Database("TestDatabase", "", false);
+    public Manager manager = new Manager();
+    public Database database;
     public Table vtuberTable;
     public Table groupTable;
 
     @Before
     public void setUp() {
         System.out.println("----------setUp----------");
-        Column[] columns = new Column[]{
-                new Column("ID", ColumnType.INT, true, true, 20),
-                new Column("Name", ColumnType.STRING, false, true, 20),
-                new Column("Group", ColumnType.STRING, false, true, 20)
-        };
+        manager.deleteAllDatabase();
+        manager.createDatabaseIfNotExists("TestDatabase");
+        ConnectResp connectResp = new ConnectResp();
+        Status status = new Status();
+        status.currentDatabase = "TestDatabase";
+        connectResp.status = status;
+        connectResp.sessionId = 1;
+        manager.addConnection(connectResp.sessionId, connectResp);
+        database = manager.getSessionCurrentDatabase(connectResp.sessionId);
+        ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("ID", ColumnType.INT, true, true, 20));
+        columns.add(new Column("Name", ColumnType.STRING, false, true, 20));
+        columns.add(new Column("Group", ColumnType.STRING, false, true, 20));
         this.vtuberTable = database.createTable("Vtuber", columns);
 
-        columns = new Column[]{
-                new Column("Group", ColumnType.STRING, true, true, 20),
-                new Column("Enterprise", ColumnType.STRING, false, false, 20),
-        };
-        this.groupTable = database.createTable("Group", columns);
+        ArrayList<Column> columns2 = new ArrayList<>();
+        columns2.add(new Column("Group", ColumnType.STRING, true, true, 20));
+        columns2.add(new Column("Enterprise", ColumnType.STRING, false, false, 20));
+        this.groupTable = database.createTable("Group", columns2);
 
         Row row = new Row();
         ArrayList<Entry> entries = new ArrayList<Entry>();
@@ -146,7 +156,7 @@ public class statementExecuteTest {
         Expression expression = new UnaryExpression(true);
 
         Statement selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        QueryTable resultTable = selectStatement.execute(this.database);
+        QueryTable resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -163,7 +173,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -180,7 +190,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
 
@@ -198,7 +208,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -215,7 +225,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -231,7 +241,7 @@ public class statementExecuteTest {
         expression = new UnaryExpression(true);
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -251,7 +261,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -274,7 +284,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -300,7 +310,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -331,7 +341,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.database);
+        resultTable = selectStatement.execute(this.manager, this.database);
         resultTable.display();
 
     }

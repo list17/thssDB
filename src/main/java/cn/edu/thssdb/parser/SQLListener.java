@@ -1,4 +1,4 @@
-// Generated from /Users/anyanzhe/workspace/ThssDB/src/main/java/cn/edu/thssdb/parser/SQL.g4 by ANTLR 4.8
+// Generated from /home/list/Documents/数据库原理/大作业框架及具体要求/ThssDB/src/main/java/cn/edu/thssdb/parser/SQL.g4 by ANTLR 4.8
 package cn.edu.thssdb.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -268,55 +268,77 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitColumn_constraint(SQLParser.Column_constraintContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#multiple_condition}.
+	 * Enter a parse tree produced by the {@code LogicalExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterMultiple_condition(SQLParser.Multiple_conditionContext ctx);
+	void enterLogicalExpression(SQLParser.LogicalExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#multiple_condition}.
+	 * Exit a parse tree produced by the {@code LogicalExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitMultiple_condition(SQLParser.Multiple_conditionContext ctx);
+	void exitLogicalExpression(SQLParser.LogicalExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#condition}.
+	 * Enter a parse tree produced by the {@code NestedPredicateExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterCondition(SQLParser.ConditionContext ctx);
+	void enterNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#condition}.
+	 * Exit a parse tree produced by the {@code NestedPredicateExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitCondition(SQLParser.ConditionContext ctx);
+	void exitNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#comparer}.
+	 * Enter a parse tree produced by the {@code CompareExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 */
-	void enterComparer(SQLParser.ComparerContext ctx);
+	void enterCompareExpression(SQLParser.CompareExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#comparer}.
+	 * Exit a parse tree produced by the {@code CompareExpression}
+	 * labeled alternative in {@link SQLParser#multiple_condition}.
 	 * @param ctx the parse tree
 	 */
-	void exitComparer(SQLParser.ComparerContext ctx);
+	void exitCompareExpression(SQLParser.CompareExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#comparator}.
+	 * Enter a parse tree produced by the {@code ColumnVariable}
+	 * labeled alternative in {@link SQLParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterComparator(SQLParser.ComparatorContext ctx);
+	void enterColumnVariable(SQLParser.ColumnVariableContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#comparator}.
+	 * Exit a parse tree produced by the {@code ColumnVariable}
+	 * labeled alternative in {@link SQLParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitComparator(SQLParser.ComparatorContext ctx);
+	void exitColumnVariable(SQLParser.ColumnVariableContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#expression}.
+	 * Enter a parse tree produced by the {@code ConstantVariable}
+	 * labeled alternative in {@link SQLParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(SQLParser.ExpressionContext ctx);
+	void enterConstantVariable(SQLParser.ConstantVariableContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#expression}.
+	 * Exit a parse tree produced by the {@code ConstantVariable}
+	 * labeled alternative in {@link SQLParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(SQLParser.ExpressionContext ctx);
+	void exitConstantVariable(SQLParser.ConstantVariableContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BracketExpression}
+	 * labeled alternative in {@link SQLParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterBracketExpression(SQLParser.BracketExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BracketExpression}
+	 * labeled alternative in {@link SQLParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitBracketExpression(SQLParser.BracketExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#table_constraint}.
 	 * @param ctx the parse tree
@@ -358,15 +380,77 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitAuth_level(SQLParser.Auth_levelContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#literal_value}.
+	 * Enter a parse tree produced by the {@code StringConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
 	 * @param ctx the parse tree
 	 */
-	void enterLiteral_value(SQLParser.Literal_valueContext ctx);
+	void enterStringConstant(SQLParser.StringConstantContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#literal_value}.
+	 * Exit a parse tree produced by the {@code StringConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
 	 * @param ctx the parse tree
 	 */
-	void exitLiteral_value(SQLParser.Literal_valueContext ctx);
+	void exitStringConstant(SQLParser.StringConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code DecimalConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterDecimalConstant(SQLParser.DecimalConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code DecimalConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitDecimalConstant(SQLParser.DecimalConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code RealConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterRealConstant(SQLParser.RealConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code RealConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitRealConstant(SQLParser.RealConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TrueConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterTrueConstant(SQLParser.TrueConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TrueConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitTrueConstant(SQLParser.TrueConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code FalseConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterFalseConstant(SQLParser.FalseConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code FalseConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitFalseConstant(SQLParser.FalseConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NullConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterNullConstant(SQLParser.NullConstantContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NullConstant}
+	 * labeled alternative in {@link SQLParser#literal_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitNullConstant(SQLParser.NullConstantContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#column_full_name}.
 	 * @param ctx the parse tree
@@ -387,6 +471,26 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDatabase_name(SQLParser.Database_nameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#table_full_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterTable_full_name(SQLParser.Table_full_nameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#table_full_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitTable_full_name(SQLParser.Table_full_nameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#table_alias_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterTable_alias_name(SQLParser.Table_alias_nameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#table_alias_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitTable_alias_name(SQLParser.Table_alias_nameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#table_name}.
 	 * @param ctx the parse tree
@@ -437,4 +541,100 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPassword(SQLParser.PasswordContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AndOperator}
+	 * labeled alternative in {@link SQLParser#logicalOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndOperator(SQLParser.AndOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AndOperator}
+	 * labeled alternative in {@link SQLParser#logicalOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndOperator(SQLParser.AndOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code OrOperator}
+	 * labeled alternative in {@link SQLParser#logicalOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterOrOperator(SQLParser.OrOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code OrOperator}
+	 * labeled alternative in {@link SQLParser#logicalOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitOrOperator(SQLParser.OrOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code EqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void enterEqualOperator(SQLParser.EqualOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code EqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void exitEqualOperator(SQLParser.EqualOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code GreateThanOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void enterGreateThanOperator(SQLParser.GreateThanOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code GreateThanOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void exitGreateThanOperator(SQLParser.GreateThanOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code LessThanOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void enterLessThanOperator(SQLParser.LessThanOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LessThanOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void exitLessThanOperator(SQLParser.LessThanOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code LessEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void enterLessEqualOperator(SQLParser.LessEqualOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code LessEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void exitLessEqualOperator(SQLParser.LessEqualOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code GreatEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void enterGreatEqualOperator(SQLParser.GreatEqualOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code GreatEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void exitGreatEqualOperator(SQLParser.GreatEqualOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code NotEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotEqualOperator(SQLParser.NotEqualOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code NotEqualOperator}
+	 * labeled alternative in {@link SQLParser#comparator}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotEqualOperator(SQLParser.NotEqualOperatorContext ctx);
 }

@@ -9,11 +9,11 @@ import java.util.Collections;
 public class CompareExpression implements Expression {
     public enum Operator {
         EQ,
-        GEQ,
-        LEQ,
-        NEQ,
         GE,
-        LE;
+        LE,
+        NE,
+        GT,
+        LT;
     }
 
     private Variable leftVariable;
@@ -44,19 +44,19 @@ public class CompareExpression implements Expression {
             case EQ:
                 result = (leftValue.equals(rightValue));
                 break;
-            case GE:
+            case GT:
                 result = (leftValue.compareTo(rightValue) > 0);
                 break;
-            case GEQ:
+            case GE:
                 result = (leftValue.compareTo(rightValue) >= 0);
                 break;
-            case LE:
+            case LT:
                 result = (leftValue.compareTo(rightValue) < 0);
                 break;
-            case LEQ:
+            case LE:
                 result = (leftValue.compareTo(rightValue) <= 0);
                 break;
-            case NEQ:
+            case NE:
                 result = !(leftValue.equals(rightValue));
                 break;
             default:

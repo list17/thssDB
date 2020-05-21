@@ -51,7 +51,7 @@ public class Table implements Iterable<Row> {
                 this.primaryIndices.add(i);
             }
         }
-        if (!hasPrimary) {
+        if (!hasPrimary && columns.size() != 0) {
             // 不含主键的表非法.
             throw new SQLHandleException("Exception: no primary key.");
         }
@@ -252,6 +252,17 @@ public class Table implements Iterable<Row> {
             this.index = new BPlusTree<MultiEntry, Row>();
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(this.root));
             this.columns = (ArrayList<Column>) objectInputStream.readObject();
+            boolean hasPrimary = false;
+            for (int i = 0; i < this.columns.size(); i++) {
+                if (this.columns.get(i).isPrimary()) {
+                    hasPrimary = true;
+                    this.primaryIndices.add(i);
+                }
+            }
+            if (!hasPrimary) {
+                throw new SQLHandleException("Exception: no primary key.");
+            }
+
             int rowSize = (int) objectInputStream.readObject();
 
             for (int i = 0; i < rowSize; i++) {

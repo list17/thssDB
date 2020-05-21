@@ -33,9 +33,9 @@ public class databaseTest {
         manager.deleteAllDatabase();
         manager.createDatabaseIfNotExists("database");
         Database database = new Database("database", Paths.get(manager.getRoot(), "database").toString());
-        Column[] columns = new Column[2];
-        columns[0] = new Column("ID", ColumnType.INT, true, true, 20);
-        columns[1] = new Column("name", ColumnType.STRING, false, true, 100);
+        ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("ID", ColumnType.INT, true, true, 20));
+        columns.add(new Column("name", ColumnType.STRING, false, true, 100));
         database.createTable("table", columns);
 
         Assert.assertThrows(SQLHandleException.class, ()->{
@@ -49,9 +49,9 @@ public class databaseTest {
         manager.deleteAllDatabase();
         manager.createDatabaseIfNotExists("database");
         Database database = new Database("database", Paths.get(manager.getRoot(), "database").toString());
-        Column[] columns = new Column[2];
-        columns[0] = new Column("ID", ColumnType.INT, true, true, 20);
-        columns[1] = new Column("name", ColumnType.STRING, false, true, 100);
+        ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("ID", ColumnType.INT, true, true, 20));
+        columns.add(new Column("name", ColumnType.STRING, false, true, 100));
         database.createTable("table", columns);
         database.dropTable("table");
 
@@ -110,11 +110,10 @@ public class databaseTest {
         manager.deleteAllDatabase();
         manager.createDatabaseIfNotExists("database");
         Database database = new Database("database", Paths.get(manager.getRoot(), "database").toString());
-        Column[] columns = new Column[2];
-        columns[0] = new Column("ID", ColumnType.INT, true, true, 20);
-        columns[1] = new Column("name", ColumnType.STRING, false, true, 100);
-        ArrayList<Column> columnArrayList = (ArrayList<Column>) Arrays.asList(columns);
-        Table table = new Table(Paths.get(database.getRoot(), "table").toString(), "table", columnArrayList);
+        ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("ID", ColumnType.INT, true, true, 20));
+        columns.add(new Column("name", ColumnType.STRING, false, true, 100));
+        Table table = new Table(Paths.get(database.getRoot(), "table").toString(), "table", columns);
 
         Row newRow_1 = new Row();
         ArrayList<Entry> entries = new ArrayList<Entry>();

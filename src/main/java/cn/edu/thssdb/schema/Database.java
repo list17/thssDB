@@ -39,15 +39,13 @@ public class Database {
         }
     }
 
-    public Table createTable(String name, Column[] columns) throws SQLHandleException {
+    public Table createTable(String name, ArrayList<Column> columns) throws SQLHandleException {
         // TODO
         if (this.tables.containsKey(name))
             throw new SQLHandleException("Table " + name + " already exists.");
         String tableRoot = Paths.get(this.root, name).toString();
-        ArrayList<Column> tableColumns = new ArrayList<>();
-        tableColumns.addAll(Arrays.asList(columns));
 
-        Table table = new Table(tableRoot, name, tableColumns);
+        Table table = new Table(tableRoot, name, columns);
         this.tables.put(name, table);
         return table;
     }

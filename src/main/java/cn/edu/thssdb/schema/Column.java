@@ -113,4 +113,8 @@ public class Column implements Comparable<Column>, Serializable {
     public String toString() {
         return this.getName() + ',' + type + ',' + primary + ',' + notNull + ',' + maxLength;
     }
+
+    public void setPrimary() {
+        this.primary = true;
+    }
 }

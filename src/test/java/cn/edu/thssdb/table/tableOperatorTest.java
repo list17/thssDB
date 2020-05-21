@@ -16,15 +16,18 @@ import java.util.Arrays;
 
 public class tableOperatorTest {
     private Table table;
+    private Manager manager;
 
     @Before
     public void setUp() {
         System.out.println("----------setUp----------");
 
+        manager = new Manager();
+        manager.deleteAllDatabase();
+        manager.createDatabaseIfNotExists("database");
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("ID", ColumnType.INT, true, true, 20));
         columns.add(new Column("name", ColumnType.STRING, false, true, 100));
-
         this.table = new Table("data/database/table", "table", columns);
     }
 

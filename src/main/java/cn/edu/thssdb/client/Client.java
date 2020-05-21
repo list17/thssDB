@@ -1,9 +1,6 @@
 package cn.edu.thssdb.client;
 
-import cn.edu.thssdb.rpc.thrift.ConnectReq;
-import cn.edu.thssdb.rpc.thrift.ConnectResp;
-import cn.edu.thssdb.rpc.thrift.GetTimeReq;
-import cn.edu.thssdb.rpc.thrift.IService;
+import cn.edu.thssdb.rpc.thrift.*;
 import cn.edu.thssdb.utils.Global;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -77,7 +74,12 @@ public class Client {
                         open = false;
                         break;
                     default:
-                        println("Invalid statements!");
+                        ExecuteStatementReq executeStatementReq = new ExecuteStatementReq();
+                        executeStatementReq.statement = msg;
+                        executeStatementReq.sessionId = resp.sessionId;
+                        ExecuteStatementResp executeStatementResp = client.executeStatement(executeStatementReq);
+                        println(executeStatementResp.status.msg);
+//                        println("Invalid statements!");
                         break;
                 }
                 long endTime = System.currentTimeMillis();

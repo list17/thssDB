@@ -38,7 +38,8 @@ public class SelectStatement implements Statement {
     }
 
     @Override
-    public QueryTable execute(Database database) {
+    public QueryTable execute(Manager manager, Long sessionId) {
+        Database database = manager.getSessionCurrentDatabase(sessionId);
         QueryTable resultTable;
 
         if (sourceTable.joinOps.isEmpty()) {

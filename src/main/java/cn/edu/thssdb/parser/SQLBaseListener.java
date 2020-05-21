@@ -1,4 +1,4 @@
-// Generated from /Users/anyanzhe/workspace/ThssDB/src/main/java/cn/edu/thssdb/parser/SQL.g4 by ANTLR 4.8
+// Generated from /home/list/Documents/数据库原理/大作业框架及具体要求/ThssDB/src/main/java/cn/edu/thssdb/parser/SQL.g4 by ANTLR 4.8
 package cn.edu.thssdb.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -328,61 +328,73 @@ public class SQLBaseListener implements SQLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMultiple_condition(SQLParser.Multiple_conditionContext ctx) { }
+	@Override public void enterLogicalExpression(SQLParser.LogicalExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMultiple_condition(SQLParser.Multiple_conditionContext ctx) { }
+	@Override public void exitLogicalExpression(SQLParser.LogicalExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCondition(SQLParser.ConditionContext ctx) { }
+	@Override public void enterNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCondition(SQLParser.ConditionContext ctx) { }
+	@Override public void exitNestedPredicateExpression(SQLParser.NestedPredicateExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterComparer(SQLParser.ComparerContext ctx) { }
+	@Override public void enterCompareExpression(SQLParser.CompareExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitComparer(SQLParser.ComparerContext ctx) { }
+	@Override public void exitCompareExpression(SQLParser.CompareExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterComparator(SQLParser.ComparatorContext ctx) { }
+	@Override public void enterColumnVariable(SQLParser.ColumnVariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitComparator(SQLParser.ComparatorContext ctx) { }
+	@Override public void exitColumnVariable(SQLParser.ColumnVariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(SQLParser.ExpressionContext ctx) { }
+	@Override public void enterConstantVariable(SQLParser.ConstantVariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpression(SQLParser.ExpressionContext ctx) { }
+	@Override public void exitConstantVariable(SQLParser.ConstantVariableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBracketExpression(SQLParser.BracketExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBracketExpression(SQLParser.BracketExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -436,13 +448,73 @@ public class SQLBaseListener implements SQLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteral_value(SQLParser.Literal_valueContext ctx) { }
+	@Override public void enterStringConstant(SQLParser.StringConstantContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteral_value(SQLParser.Literal_valueContext ctx) { }
+	@Override public void exitStringConstant(SQLParser.StringConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDecimalConstant(SQLParser.DecimalConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDecimalConstant(SQLParser.DecimalConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRealConstant(SQLParser.RealConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRealConstant(SQLParser.RealConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTrueConstant(SQLParser.TrueConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTrueConstant(SQLParser.TrueConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFalseConstant(SQLParser.FalseConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFalseConstant(SQLParser.FalseConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNullConstant(SQLParser.NullConstantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNullConstant(SQLParser.NullConstantContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -467,6 +539,30 @@ public class SQLBaseListener implements SQLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDatabase_name(SQLParser.Database_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTable_full_name(SQLParser.Table_full_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTable_full_name(SQLParser.Table_full_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTable_alias_name(SQLParser.Table_alias_nameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTable_alias_name(SQLParser.Table_alias_nameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -527,6 +623,102 @@ public class SQLBaseListener implements SQLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPassword(SQLParser.PasswordContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAndOperator(SQLParser.AndOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAndOperator(SQLParser.AndOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOrOperator(SQLParser.OrOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOrOperator(SQLParser.OrOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEqualOperator(SQLParser.EqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEqualOperator(SQLParser.EqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGreateThanOperator(SQLParser.GreateThanOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGreateThanOperator(SQLParser.GreateThanOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLessThanOperator(SQLParser.LessThanOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLessThanOperator(SQLParser.LessThanOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLessEqualOperator(SQLParser.LessEqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLessEqualOperator(SQLParser.LessEqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGreatEqualOperator(SQLParser.GreatEqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGreatEqualOperator(SQLParser.GreatEqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNotEqualOperator(SQLParser.NotEqualOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNotEqualOperator(SQLParser.NotEqualOperatorContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

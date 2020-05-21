@@ -1,7 +1,7 @@
 grammar SQL;
 
 parse :
-    sql_stmt_list ;
+    sql_stmt_list;
 
 sql_stmt_list :
     ';'* sql_stmt ( ';'+ sql_stmt )* ';'* ;
@@ -105,26 +105,19 @@ column_constraint :
     K_PRIMARY K_KEY
     | K_NOT K_NULL ;
 
-multiple_condition :
-    condition
-    | multiple_condition AND multiple_condition
-    | multiple_condition OR multiple_condition ;
+multiple_condition
+    : left=expression comparator right=expression                                 # CompareExpression
+    | left=multiple_condition logicalOperator right=multiple_condition            # LogicalExpression
+    | expression                                                                  # NestedPredicateExpression
+    ;
 
-condition :
-    expression comparator expression;
-
-comparer :
-    column_full_name
-    | literal_value ;
-
-comparator :
-    EQ | NE | LE | GE | LT | GT ;
-
-expression :
-    comparer
-    | expression ( MUL | DIV ) expression
-    | expression ( ADD | SUB ) expression
-    | '(' expression ')';
+expression
+    : column_full_name                          # ColumnVariable
+    | literal_value                             # ConstantVariable
+//    | expression ( MUL | DIV ) expression
+//    | expression ( ADD | SUB ) expression
+    | '(' expression ')'                        # BracketExpression
+    ;
 
 table_constraint :
     K_PRIMARY K_KEY '(' column_name (',' column_name)* ')' ;
@@ -135,21 +128,30 @@ result_column
     | column_full_name;
 
 table_query :
-    table_name
-    | table_name ( K_JOIN table_name )+ K_ON multiple_condition ;
+    table_full_name ( K_JOIN table_full_name  + (K_ON multiple_condition) ?)*;
 
 auth_level :
     K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_DROP ;
 
-literal_value :
-    NUMERIC_LITERAL
-    | STRING_LITERAL
-    | K_NULL ;
+literal_value
+    : STRING_LITERAL        # StringConstant
+    | DECIMAL_LITERAL       # DecimalConstant
+    | REAL_LITERAL          # RealConstant
+    | K_TRUE                # TrueConstant
+    | K_FALSE               # FalseConstant
+    | K_NULL                # NullConstant
+    ;
 
 column_full_name:
     ( table_name '.' )? column_name ;
 
 database_name :
+    IDENTIFIER ;
+
+table_full_name:
+    table_name (K_AS table_alias_name);
+
+table_alias_name :
     IDENTIFIER ;
 
 table_name :
@@ -166,6 +168,20 @@ view_name :
 
 password :
     STRING_LITERAL ;
+
+logicalOperator
+    : AND       # AndOperator
+    | OR        # OrOperator
+    ;
+
+comparator
+    : EQ            # EqualOperator
+    | GT            # GreateThanOperator
+    | LT            # LessThanOperator
+    | LE            # LessEqualOperator
+    | GE            # GreatEqualOperator
+    | NE            # NotEqualOperator
+    ;
 
 EQ : '=';
 NE : '<>';
@@ -225,14 +241,18 @@ K_USER : U S E R;
 K_VALUES : V A L U E S;
 K_VIEW : V I E W;
 K_WHERE : W H E R E;
+K_TRUE : T R U E;
+K_FALSE : F A L S E;
 
 IDENTIFIER :
     [a-zA-Z_] [a-zA-Z_0-9]* ;
 
-NUMERIC_LITERAL :
-    DIGIT+ EXPONENT?
-    | DIGIT+ '.' DIGIT* EXPONENT?
-    | '.' DIGIT+ EXPONENT? ;
+DECIMAL_LITERAL:                     DIGIT+;
+
+REAL_LITERAL:                        (DIGIT+)? '.' DIGIT+
+                                     | DIGIT+ '.' EXPONENT
+                                     | (DIGIT+)? '.' (DIGIT+ EXPONENT)
+                                     | DIGIT+ EXPONENT;
 
 EXPONENT :
     E [-+]? DIGIT+ ;
