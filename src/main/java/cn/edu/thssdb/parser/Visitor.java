@@ -38,6 +38,21 @@ public class Visitor extends SQLBaseVisitor<Object>{
     }
 
     @Override
+    public Object visitStart_trans_stmt(SQLParser.Start_trans_stmtContext ctx) {
+        return super.visitStart_trans_stmt(ctx);
+    }
+
+    @Override
+    public Object visitCommit_stmt(SQLParser.Commit_stmtContext ctx) {
+        return super.visitCommit_stmt(ctx);
+    }
+
+    @Override
+    public Object visitRollback_stmt(SQLParser.Rollback_stmtContext ctx) {
+        return super.visitRollback_stmt(ctx);
+    }
+
+    @Override
     public Object visitCreate_db_stmt(SQLParser.Create_db_stmtContext ctx) {
         return new CreateDatabaseStatement((String) visit(ctx.database_name()));
     }

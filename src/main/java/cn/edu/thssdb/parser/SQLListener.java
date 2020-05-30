@@ -38,6 +38,36 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitSql_stmt(SQLParser.Sql_stmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SQLParser#start_trans_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStart_trans_stmt(SQLParser.Start_trans_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#start_trans_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStart_trans_stmt(SQLParser.Start_trans_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#commit_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterCommit_stmt(SQLParser.Commit_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#commit_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitCommit_stmt(SQLParser.Commit_stmtContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#rollback_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterRollback_stmt(SQLParser.Rollback_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#rollback_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitRollback_stmt(SQLParser.Rollback_stmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SQLParser#create_db_stmt}.
 	 * @param ctx the parse tree
 	 */
