@@ -10,6 +10,7 @@ sql_stmt
     : start_trans_stmt
     | commit_stmt
     | rollback_stmt
+    | shutdown_stmt
     | create_table_stmt
     | create_db_stmt
     | create_user_stmt
@@ -39,6 +40,9 @@ commit_stmt:
 
 rollback_stmt:
     K_ROLLBACK;
+
+shutdown_stmt:
+    K_SHUTDOWN;
 
 create_db_stmt :
     K_CREATE K_DATABASE database_name ;
@@ -258,6 +262,7 @@ K_START : S T A R T;
 K_TRANSACTION: T R A N S A C T I O N;
 K_COMMIT: C O M M I T;
 K_ROLLBACK: R O L L B A C K;
+K_SHUTDOWN: S H U T D O W N;
 
 IDENTIFIER :
     [a-zA-Z_] [a-zA-Z_0-9]* ;

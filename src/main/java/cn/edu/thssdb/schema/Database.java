@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Database {
@@ -67,10 +68,17 @@ public class Database {
             for (String item : list) {
                 Table table = new Table(Paths.get(this.root, item).toString(), item);
                 table.recover();
-                this.tables.put(name, table);
+                this.tables.put(item, table);
             }
         } else
             throw new SQLHandleException("Load database failed");
+    }
+
+    public void saveData() {
+        for (Map.Entry<String, Table> entry : this.tables.entrySet()){
+            entry.getValue().serialize();
+        }
+        System.exit(0);
     }
 
     public ArrayList<String> getAllTables() {

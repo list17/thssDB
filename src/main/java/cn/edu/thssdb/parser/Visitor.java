@@ -53,6 +53,11 @@ public class Visitor extends SQLBaseVisitor<Object>{
     }
 
     @Override
+    public Object visitShutdown_stmt(SQLParser.Shutdown_stmtContext ctx) {
+        return new ShutdownStatement();
+    }
+
+    @Override
     public Object visitCreate_db_stmt(SQLParser.Create_db_stmtContext ctx) {
         return new CreateDatabaseStatement((String) visit(ctx.database_name()));
     }
