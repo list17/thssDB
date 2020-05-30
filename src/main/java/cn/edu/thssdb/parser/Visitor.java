@@ -39,17 +39,17 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitStart_trans_stmt(SQLParser.Start_trans_stmtContext ctx) {
-        return super.visitStart_trans_stmt(ctx);
+        return new StartTransactionStatement();
     }
 
     @Override
     public Object visitCommit_stmt(SQLParser.Commit_stmtContext ctx) {
-        return super.visitCommit_stmt(ctx);
+        return new CommitStatement();
     }
 
     @Override
     public Object visitRollback_stmt(SQLParser.Rollback_stmtContext ctx) {
-        return super.visitRollback_stmt(ctx);
+        return new RollbackStatement();
     }
 
     @Override

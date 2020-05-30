@@ -9,7 +9,7 @@ import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.statement.*;
 import cn.edu.thssdb.type.ColumnType;
-import com.sun.corba.se.impl.orbutil.closure.Constant;
+//import com.sun.corba.se.impl.orbutil.closure.Constant;
 import javafx.scene.control.Tab;
 import org.junit.Assert;
 import org.junit.Before;
