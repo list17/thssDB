@@ -66,9 +66,11 @@ public class Database {
         String[] list = new File(this.root).list();
         if (list != null) {
             for (String item : list) {
-                Table table = new Table(Paths.get(this.root, item).toString(), item);
-                table.recover();
-                this.tables.put(item, table);
+                if (!item.endsWith(".script") && ! item.endsWith(".log")){
+                    Table table = new Table(Paths.get(this.root, item).toString(), item);
+                    table.recover();
+                    this.tables.put(item, table);
+                }
             }
         } else
             throw new SQLHandleException("Load database failed");

@@ -45,7 +45,7 @@ public class IServiceHandler implements IService.Iface {
         resp.sessionId = sessionId;
         resp.status = status;
         this.manager.addConnection(sessionId, resp);
-        System.out.println(sessionId);
+        System.out.println(sessionId+"已连接");
         return resp;
     }
 
@@ -61,6 +61,7 @@ public class IServiceHandler implements IService.Iface {
             errorMessage = e.getMessage();
         }
         resp.status.msg = errorMessage;
+        System.out.println(sessionId+"已断开");
         return resp;
     }
 

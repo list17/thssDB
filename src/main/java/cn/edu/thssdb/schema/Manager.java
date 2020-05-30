@@ -2,15 +2,28 @@ package cn.edu.thssdb.schema;
 
 import cn.edu.thssdb.exception.DisconnectionException;
 import cn.edu.thssdb.exception.SQLHandleException;
+import cn.edu.thssdb.exception.SQLThrowErrorListener;
 import cn.edu.thssdb.exception.SessionLostException;
+import cn.edu.thssdb.parser.SQLLexer;
+import cn.edu.thssdb.parser.SQLParser;
+import cn.edu.thssdb.parser.Visitor;
+import cn.edu.thssdb.rpc.thrift.ConnectReq;
+import cn.edu.thssdb.rpc.thrift.ExecuteStatementReq;
+import cn.edu.thssdb.rpc.thrift.Status;
+import cn.edu.thssdb.statement.Statement;
 import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Manager {
@@ -31,6 +44,7 @@ public class Manager {
         if (!new File(this.root).exists() && !new File(this.root).mkdir())
             throw new SQLHandleException("Cannot find root");
         this.loadDatabase();
+        this.loadFromScript();
     }
 
     public void createDatabaseIfNotExists(String databaseName){
@@ -134,6 +148,60 @@ public class Manager {
                 databases.put(item, new Database(item, Paths.get(root, item).toString()));
         } else
             throw new RuntimeException("List databases failed");
+    }
+
+    public void loadFromScript(){
+        long sessionId = 12334545;
+        ConnectResp resp = new ConnectResp();
+        Status status = new Status();
+        status.code = Global.SUCCESS_CODE;
+        status.currentDatabase = "";
+        resp.sessionId = sessionId;
+        resp.status = status;
+        this.addConnection(sessionId, resp);
+        for (Map.Entry<String, Database> entry : this.databases.entrySet()){
+            this.switchDatabase(sessionId, entry.getKey());
+            // 找到这个数据库目录下的所有.script文件
+            String[] list = new File(this.root + "/" + entry.getKey()).list();
+            if (list != null) {
+                for (String item : list) {
+                    if (item.endsWith(".script")){
+                        // 按行读取script文件并执行
+                        Scanner scanner = null;
+                        try {
+                            scanner = new Scanner(new File(this.root + "/" + entry.getKey() + "/" + item));
+                            while (scanner.hasNextLine()) {
+                                String command = scanner.nextLine();
+                                try{
+                                    SQLThrowErrorListener listener = new SQLThrowErrorListener();
+                                    SQLLexer lexer = new SQLLexer(CharStreams.fromString(command));
+                                    lexer.removeErrorListeners();
+                                    lexer.addErrorListener(listener);
+                                    CommonTokenStream tokens = new CommonTokenStream(lexer);
+                                    SQLParser parser = new SQLParser(tokens);
+                                    parser.removeErrorListeners();
+                                    parser.addErrorListener(listener);
+                                    ParseTree tree = parser.parse();
+                                    // 遍历语法树
+                                    Visitor visitor = new Visitor();
+                                    ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
+                                    // 执行语句
+                                    for (Statement statement: statements){
+                                        statement.execute(this, sessionId);
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } else
+                throw new SQLHandleException("Recovery database from script failed");
+        }
+        this.removeConnection(sessionId);
     }
 
     public ArrayList<String> getAllDatabases() {
