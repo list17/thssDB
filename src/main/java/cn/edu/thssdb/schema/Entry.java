@@ -9,6 +9,9 @@ public class Entry implements Comparable<Entry>, Serializable {
     public Comparable value;
 
     public static int compareTo(Comparable a, Comparable b) {
+        if (a == null || b == null) {
+            return -1;
+        }
         Class thisClass = a.getClass();
         Class thatClass = b.getClass();
         Comparable thisValue = a;
@@ -35,6 +38,9 @@ public class Entry implements Comparable<Entry>, Serializable {
     }
 
     public static boolean equals(Comparable a, Comparable b) {
+        if (a == null || b == null) {
+            return false;
+        }
         Class thisClass = a.getClass();
         Class thatClass = b.getClass();
         Comparable thisValue = a;
