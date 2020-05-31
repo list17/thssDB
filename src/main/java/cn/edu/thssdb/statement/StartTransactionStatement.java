@@ -12,16 +12,16 @@ public class StartTransactionStatement implements Statement{
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         TransactionManager tm = TransactionManager.getInstance();
 
-        // 新建事务
-        tm.createTransaction();
+        if (tm.getFlag()) {
+            throw new SQLHandleException("Please start transaction out of a transaction!");
+        }
+        else {
+            // 新建事务
+            tm.createTransaction();
 
-        // 进入事务态
-        tm.changeFlag();
-
-        // 获取当前事务
-//        Transaction tx = tm.getTX();
-//
-//        tx.addScript(command);
+            // 进入事务态
+            tm.changeFlag();
+        }
         return null;
     }
 }
