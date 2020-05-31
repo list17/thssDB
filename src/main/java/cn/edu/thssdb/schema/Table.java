@@ -184,7 +184,12 @@ public class Table implements Iterable<Row> {
             this.index.put(primaryKey, newRow);
         }
     }
-
+    public void updateByIndicatingRow(Row selectedRow, Row newRow) throws RuntimeException {
+        this.update(selectedRow.getMultiEntry(this.primaryIndices), newRow);
+    }
+    public void deleteByIndicatingRow(Row selectedRow) throws RuntimeException {
+        this.delete(selectedRow.getMultiEntry(this.primaryIndices));
+    }
     /**
      * 根据主键删除某行
      *
@@ -257,10 +262,12 @@ public class Table implements Iterable<Row> {
             this.columns = (ArrayList<Column>) objectInputStream.readObject();
             boolean hasPrimary = false;
             for (int i = 0; i < this.columns.size(); i++) {
+                //重新更新主键下标和列名哈希表
                 if (this.columns.get(i).isPrimary()) {
                     hasPrimary = true;
                     this.primaryIndices.add(i);
                 }
+                this.columnIndicesMap.put(this.columns.get(i).getColumnFullName().name, i);
             }
             if (!hasPrimary) {
                 throw new SQLHandleException("Exception: no primary key.");
@@ -271,6 +278,7 @@ public class Table implements Iterable<Row> {
             for (int i = 0; i < rowSize; i++) {
                 Row loadRow = (Row) objectInputStream.readObject();
                 this.index.put(loadRow.getMultiEntry(primaryIndices), loadRow);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
