@@ -184,7 +184,7 @@ public class Table implements Iterable<Row> {
 
             this.index.put(primaryKey, newRow);
             if (tx != null) {
-                tx.addLog(newRow, null);
+                tx.addLog(newRow, null, this);
             }
         }
     }
@@ -215,7 +215,7 @@ public class Table implements Iterable<Row> {
             Row oldRow = this.findRowByPrimaryKey(deleteKey);
             this.index.remove(deleteKey);
             if (tx != null) {
-                tx.addLog(null, oldRow);
+                tx.addLog(null, oldRow, this);
             }
         }
     }
@@ -240,7 +240,7 @@ public class Table implements Iterable<Row> {
         try {
             this.insert(newRow, null);
             if (tx != null) {
-                tx.addLog(newRow, locatedRow);
+                tx.addLog(newRow, locatedRow, this);
             }
         } catch (RuntimeException e) {
             this.insert(locatedRow, null);
