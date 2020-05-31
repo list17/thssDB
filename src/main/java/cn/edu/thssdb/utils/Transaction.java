@@ -36,6 +36,10 @@ public class Transaction {
         this.logs.add(0, log);
     }
 
+    public void clearLogs() {
+        this.logs.clear();
+    }
+
     public void rollback() {
         int len = this.logs.size();
         for (int i = 0; i < len; i++) {
@@ -45,6 +49,7 @@ public class Transaction {
         }
     }
 
+    // commit
     public void output(Manager manager, Long sessionId) {
         String db_name = manager.getSessionCurrentDatabase(sessionId).getName();
         String path = "./data/" + db_name + "/" + db_name + ".script";
