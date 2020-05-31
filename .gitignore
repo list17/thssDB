@@ -28,3 +28,4 @@ target/
 /doc/*.pdf
 data/
 gen-java/
+src/lib
