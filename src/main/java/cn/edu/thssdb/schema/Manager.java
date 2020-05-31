@@ -197,6 +197,19 @@ public class Manager {
                             e.printStackTrace();
                         }
                     }
+//                    // 删除script
+//                    try{
+//                        File file = new File(this.root + "/" + entry.getKey() + "/" + item);
+//                        if(file.delete()){
+//                            System.out.println("Delete files" + item + " successfully");
+//                        }
+//                        else{
+//                            System.out.println("Delete files" + item + " failed");
+//                        }
+//                    }
+//                    catch(Exception e){
+//                        e.printStackTrace();
+//                    }
                 }
             } else
                 throw new SQLHandleException("Recovery database from script failed");
