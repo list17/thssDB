@@ -4,6 +4,7 @@ import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.schema.Row;
+import cn.edu.thssdb.schema.Table;
 import com.sun.javafx.iio.ios.IosDescriptor;
 import javafx.util.Pair;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 
 public class Transaction {
     private ArrayList<String> scrtipts;
-    private ArrayList<Pair<Row, Row>> logs;
+    private ArrayList<Pair<Pair<Row, Row>, Table>> logs;
     private Long tx_session;
 
     public Transaction(Long tx_session) {
@@ -32,8 +33,9 @@ public class Transaction {
     }
 
     //逆序添加log
-    public void addLog(Row now, Row ori) {
-        Pair<Row, Row> log = new Pair<Row, Row>(now, ori);
+    public void addLog(Row now, Row ori, Table table) {
+        Pair<Row, Row> log_row = new Pair<Row, Row>(now, ori);
+        Pair<Pair<Row, Row>, Table> log = new Pair<Pair<Row, Row>, Table>(log_row, table);
         this.logs.add(0, log);
     }
 
@@ -41,10 +43,18 @@ public class Transaction {
         this.logs.clear();
     }
 
+    public void printLogs() {
+        for (int i = 0; i < this.logs.size(); i++) {
+            System.out.println(this.logs.get(i));
+        }
+    }
+
     public void rollback() {
         int len = this.logs.size();
         for (int i = 0; i < len; i++) {
-            // TODO: recover data
+            Pair<Pair<Row, Row>, Table> tmp_log = this.logs.get(0);
+            tmp_log.getValue().updateByIndicatingRow(tmp_log.getKey().getValue(), tmp_log.getKey().getKey(), this);
+
             this.logs.remove(0);
             this.scrtipts.remove(this.scrtipts.size() - 1);
         }
