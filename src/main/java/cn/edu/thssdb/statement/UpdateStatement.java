@@ -7,6 +7,7 @@ import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
+import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class UpdateStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Database database = manager.getSessionCurrentDatabase(sessionId);
         Table baseTable = database.getTable(this.name);
 
@@ -77,6 +78,9 @@ public class UpdateStatement implements Statement{
                         baseTable.update(searchKey, updatedRow);
 
                         resultTable.rows.add(new Row(1));
+
+                        WriteScript ws = new WriteScript();
+                        ws.output(manager, sessionId, command);
                         return resultTable;
                     }
                 } catch (SQLHandleException e) {
@@ -113,6 +117,9 @@ public class UpdateStatement implements Statement{
         }
 
         resultTable.rows.add(new Row(updateCount));
+
+        WriteScript ws = new WriteScript();
+        ws.output(manager, sessionId, command);
         return resultTable;
     }
 

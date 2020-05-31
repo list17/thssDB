@@ -188,7 +188,7 @@ public class statementExecuteTest {
         Expression expression = new UnaryExpression(true);
 
         Statement selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        QueryTable resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        QueryTable resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -206,7 +206,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -224,7 +224,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
 
@@ -243,7 +243,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -261,7 +261,7 @@ public class statementExecuteTest {
                 , new ConstantVariable(1));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -277,7 +277,7 @@ public class statementExecuteTest {
         expression = new UnaryExpression(true);
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -298,7 +298,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -321,7 +321,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -347,7 +347,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -378,7 +378,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
 
@@ -400,7 +400,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -421,7 +421,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -440,7 +440,7 @@ public class statementExecuteTest {
 
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         try {
@@ -462,7 +462,7 @@ public class statementExecuteTest {
                                                 new ConstantVariable(9));
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -489,7 +489,7 @@ public class statementExecuteTest {
                                                 new ConstantVariable("Hololive"));
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -516,7 +516,7 @@ public class statementExecuteTest {
                     new ConstantVariable(1));
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -540,7 +540,7 @@ public class statementExecuteTest {
             expression = new UnaryExpression(true);
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -562,7 +562,7 @@ public class statementExecuteTest {
             expression = new UnaryExpression(true);
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -586,7 +586,7 @@ public class statementExecuteTest {
             expression = new UnaryExpression(true);
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -610,7 +610,7 @@ public class statementExecuteTest {
             expression = new UnaryExpression(true);
 
             selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-            resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+            resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
             resultTable.display();
         } catch (SQLHandleException e) {
             System.out.println(e.getMessage());
@@ -632,7 +632,7 @@ public class statementExecuteTest {
                 CompareExpression.Operator.EQ,
                 new ConstantVariable(1));
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
 
         System.out.println("----------\n" +
@@ -655,7 +655,7 @@ public class statementExecuteTest {
                         new ConstantVariable(2)));
 
         selectStatement = new SelectStatement(selectedColumns, sourceTable, expression);
-        resultTable = selectStatement.execute(this.manager, connectResp.sessionId);
+        resultTable = selectStatement.execute(this.manager, connectResp.sessionId, "test_command");
         resultTable.display();
     }
 
@@ -664,10 +664,10 @@ public class statementExecuteTest {
         System.out.println("----------testCreateDatabase----------");
         manager.deleteAllDatabase();
         CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
-        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        createDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         Assert.assertThrows(SQLHandleException.class, () -> {
             CreateDatabaseStatement createDatabaseStatement2 = new CreateDatabaseStatement("a");
-            createDatabaseStatement.execute(manager, connectResp.sessionId);
+            createDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         });
     }
 
@@ -676,12 +676,12 @@ public class statementExecuteTest {
         System.out.println("----------testDrpoDatabase----------");
         manager.deleteAllDatabase();
         CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
-        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        createDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         DropDatabaseStatement dropDatabaseStatement = new DropDatabaseStatement("a");
-        dropDatabaseStatement.execute(manager, connectResp.sessionId);
+        dropDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         Assert.assertThrows(SQLHandleException.class, () -> {
             DropDatabaseStatement dropDatabaseStatement2 = new DropDatabaseStatement("a");
-            dropDatabaseStatement2.execute(manager, connectResp.sessionId);
+            dropDatabaseStatement2.execute(manager, connectResp.sessionId, "test_command");
         });
     }
 
@@ -690,12 +690,12 @@ public class statementExecuteTest {
         System.out.println("----------testUseDatabase----------");
         manager.deleteAllDatabase();
         CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
-        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        createDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         UseDatabaseStatement useDatabaseStatement = new UseDatabaseStatement("a");
-        useDatabaseStatement.execute(manager, connectResp.sessionId);
+        useDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         Assert.assertThrows(SQLHandleException.class, () -> {
             UseDatabaseStatement useDatabaseStatement2 = new UseDatabaseStatement("b");
-            useDatabaseStatement2.execute(manager, connectResp.sessionId);
+            useDatabaseStatement2.execute(manager, connectResp.sessionId, "test_command");
         });
     }
 
@@ -704,16 +704,16 @@ public class statementExecuteTest {
         System.out.println("----------testCreateTable----------");
         manager.deleteAllDatabase();
         CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
-        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        createDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<>();
         columnDefinitions.add(new ColumnStatement(new Column("a", ColumnType.STRING, true, true, 100)));
         CreateTableStatement createTableStatement = new CreateTableStatement("a", columnDefinitions);
         Assert.assertThrows(SQLHandleException.class, () -> {
-            createTableStatement.execute(manager, connectResp.sessionId);
+            createTableStatement.execute(manager, connectResp.sessionId, "test_command");
         });
         UseDatabaseStatement useDatabaseStatement = new UseDatabaseStatement("a");
-        useDatabaseStatement.execute(manager, connectResp.sessionId);
-        createTableStatement.execute(manager, connectResp.sessionId);
+        useDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
+        createTableStatement.execute(manager, connectResp.sessionId, "test_command");
     }
 
     @Test
@@ -721,20 +721,20 @@ public class statementExecuteTest {
         System.out.println("----------testDropTable----------");
         manager.deleteAllDatabase();
         CreateDatabaseStatement createDatabaseStatement = new CreateDatabaseStatement("a");
-        createDatabaseStatement.execute(manager, connectResp.sessionId);
+        createDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<>();
         columnDefinitions.add(new ColumnStatement(new Column("a", ColumnType.STRING, true, true, 100)));
         CreateTableStatement createTableStatement = new CreateTableStatement("a", columnDefinitions);
         Assert.assertThrows(SQLHandleException.class, () -> {
-            createTableStatement.execute(manager, connectResp.sessionId);
+            createTableStatement.execute(manager, connectResp.sessionId, "test_command");
         });
         UseDatabaseStatement useDatabaseStatement = new UseDatabaseStatement("a");
-        useDatabaseStatement.execute(manager, connectResp.sessionId);
-        createTableStatement.execute(manager, connectResp.sessionId);
+        useDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
+        createTableStatement.execute(manager, connectResp.sessionId, "test_command");
         DropDatabaseStatement dropDatabaseStatement = new DropDatabaseStatement("a");
-        dropDatabaseStatement.execute(manager, connectResp.sessionId);
+        dropDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         Assert.assertThrows(SQLHandleException.class, () -> {
-            dropDatabaseStatement.execute(manager, connectResp.sessionId);
+            dropDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         });
     }
 
@@ -750,7 +750,7 @@ public class statementExecuteTest {
                 new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
                 new UnaryExpression(true)
         );
-        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
     }
 
@@ -758,11 +758,11 @@ public class statementExecuteTest {
     public void testShowTable() throws SQLHandleException{
         System.out.println("----------testShowTable----------");
         ShowTableStatement showTableStatement = new ShowTableStatement("TestDatabase");
-        QueryTable table = showTableStatement.execute(manager, connectResp.sessionId);
+        QueryTable table = showTableStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
         Assert.assertThrows(SQLHandleException.class, () -> {
             ShowTableStatement showTableStatement2 = new ShowTableStatement("TestDatabase2");
-            showTableStatement2.execute(manager, connectResp.sessionId);
+            showTableStatement2.execute(manager, connectResp.sessionId, "test_command");
         });
     }
 
@@ -770,11 +770,11 @@ public class statementExecuteTest {
     public void testShowDatabase() throws SQLHandleException{
         System.out.println("----------testShowDatabase----------");
         ShowDatabaseStatement showDatabaseStatement = new ShowDatabaseStatement();
-        QueryTable table = showDatabaseStatement.execute(manager, connectResp.sessionId);
+        QueryTable table = showDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
         manager.deleteAllDatabase();
         System.out.println("If we delete all databases, the result of show databases is:");
-        table = showDatabaseStatement.execute(manager, connectResp.sessionId);
+        table = showDatabaseStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
     }
 
@@ -800,7 +800,7 @@ public class statementExecuteTest {
                         });
                     }
                 });
-        insertStatement.execute(manager, connectResp.sessionId);
+        insertStatement.execute(manager, connectResp.sessionId, "test_command");
         SelectStatement selectStatement = new SelectStatement(
                 new ArrayList<Column.FullName>(){
                     {
@@ -810,7 +810,7 @@ public class statementExecuteTest {
                 new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
                 new UnaryExpression(true)
         );
-        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
     }
 
@@ -823,7 +823,7 @@ public class statementExecuteTest {
                                         CompareExpression.Operator.EQ,
                                         new ConstantVariable(0)));
 
-        updateStatement.execute(manager, connectResp.sessionId);
+        updateStatement.execute(manager, connectResp.sessionId, "test_command");
         SelectStatement selectStatement = new SelectStatement(
                 new ArrayList<Column.FullName>(){
                     {
@@ -833,7 +833,7 @@ public class statementExecuteTest {
                 new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
                 new UnaryExpression(true)
         );
-        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
     }
 
@@ -845,7 +845,7 @@ public class statementExecuteTest {
                 CompareExpression.Operator.EQ,
                 new ConstantVariable(0)));
 
-        deleteStatement.execute(manager, connectResp.sessionId);
+        deleteStatement.execute(manager, connectResp.sessionId, "test_command");
         SelectStatement selectStatement = new SelectStatement(
                 new ArrayList<Column.FullName>(){
                     {
@@ -855,7 +855,7 @@ public class statementExecuteTest {
                 new SourceTable("Vtuber", new ArrayList<SourceTable.JoinOperator>()),
                 new UnaryExpression(true)
         );
-        QueryTable table = selectStatement.execute(manager, connectResp.sessionId);
+        QueryTable table = selectStatement.execute(manager, connectResp.sessionId, "test_command");
         table.display();
     }
 }

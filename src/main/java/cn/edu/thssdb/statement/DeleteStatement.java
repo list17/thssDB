@@ -6,6 +6,7 @@ import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
+import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,7 +26,7 @@ public class DeleteStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Database database = manager.getSessionCurrentDatabase(sessionId);
         Table baseTable = database.getTable(this.name);
 
@@ -67,6 +68,9 @@ public class DeleteStatement implements Statement{
                     if (deleteRow != null) {
                         baseTable.delete(searchKey);
                         resultTable.rows.add(new Row(1));
+
+                        WriteScript ws = new WriteScript();
+                        ws.output(manager, sessionId, command);
                         return resultTable;
                     }
                 } catch (SQLHandleException e) {
@@ -100,6 +104,9 @@ public class DeleteStatement implements Statement{
         }
 
         resultTable.rows.add(new Row(deleteCount));
+
+        WriteScript ws = new WriteScript();
+        ws.output(manager, sessionId, command);
         return resultTable;
     }
 

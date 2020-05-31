@@ -14,7 +14,7 @@ public class ShowDatabaseStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         ArrayList<String> databaseArrayList = manager.getAllDatabases();
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("DATABASES", ColumnType.STRING, false, true, 100));

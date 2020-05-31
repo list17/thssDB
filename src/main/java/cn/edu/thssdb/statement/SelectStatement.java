@@ -38,7 +38,7 @@ public class SelectStatement implements Statement {
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) {
+    public QueryTable execute(Manager manager, Long sessionId, String command) {
         Database database = manager.getSessionCurrentDatabase(sessionId);
         QueryTable resultTable;
 

@@ -1,10 +1,15 @@
 package cn.edu.thssdb.statement;
 
+import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.expression.ConstantVariable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
+import cn.edu.thssdb.utils.WriteScript;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +26,7 @@ public class InsertStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Table table = manager.getSessionCurrentDatabase(sessionId).getTable(name);
         HashMap<String, Integer> columnPos = table.getColumnIndicesMap();
         for(ArrayList<ConstantVariable> row : rows) {
@@ -36,6 +41,8 @@ public class InsertStatement implements Statement{
             }
             Row row1 = new Row(entries);
             table.insert(row1);
+            WriteScript ws = new WriteScript();
+            ws.output(manager, sessionId, command);
         }
         return null;
     }

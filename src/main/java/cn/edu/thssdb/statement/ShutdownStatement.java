@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class ShutdownStatement implements Statement{
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         ArrayList<String> database_names = manager.getAllDatabases();
         for (String name : database_names) {
             Database database = manager.getDatabase(name);

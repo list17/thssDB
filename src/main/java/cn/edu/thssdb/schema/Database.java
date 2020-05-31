@@ -90,4 +90,8 @@ public class Database {
     public String getRoot() {
         return this.root;
     }
+
+    public String getName() {
+        return this.name;
+    }
 }

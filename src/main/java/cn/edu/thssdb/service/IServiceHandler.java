@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date;
+import java.util.Arrays;
 
 public class IServiceHandler implements IService.Iface {
 
@@ -69,6 +70,8 @@ public class IServiceHandler implements IService.Iface {
     public ExecuteStatementResp executeStatement(ExecuteStatementReq req) throws TException{
         String command = req.statement;
         long sessionId = req.sessionId;
+
+        String[] commands = command.split(";");
         // 解析命令
         String errorMessage = "success";
         QueryTable result = null;
@@ -86,8 +89,10 @@ public class IServiceHandler implements IService.Iface {
             Visitor visitor = new Visitor();
             ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
             // 执行语句
+            int i = 0;
             for (Statement statement: statements){
-               result = statement.execute(this.manager, sessionId);
+               result = statement.execute(this.manager, sessionId, commands[i]);
+               i++;
             }
         } catch (SQLHandleException e) {
             errorMessage = e.getMessage();

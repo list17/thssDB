@@ -14,7 +14,7 @@ public class CreateDatabaseStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         manager.createDatabaseIfNotExists(this.name);
         return null;
     }

@@ -13,7 +13,7 @@ public class DropDatabaseStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         manager.deleteDatabase(this.name);
         return null;
     }

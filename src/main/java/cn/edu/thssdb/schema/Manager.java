@@ -187,7 +187,7 @@ public class Manager {
                                     ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
                                     // 执行语句
                                     for (Statement statement: statements){
-                                        statement.execute(this, sessionId);
+                                        statement.execute(this, sessionId, command);
                                     }
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());

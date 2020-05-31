@@ -8,6 +8,6 @@ import cn.edu.thssdb.schema.Table;
 
 public interface Statement {
 
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException;
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException;
 
 }

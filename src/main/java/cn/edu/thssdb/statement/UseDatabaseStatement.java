@@ -13,7 +13,7 @@ public class UseDatabaseStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         manager.switchDatabase(sessionId, this.name);
         return null;
     }

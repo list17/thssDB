@@ -7,7 +7,7 @@ import cn.edu.thssdb.utils.TransactionManager;
 
 public class CommitStatement implements Statement{
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         return null;
     }
 

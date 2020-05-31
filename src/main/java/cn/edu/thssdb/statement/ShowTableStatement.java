@@ -15,7 +15,7 @@ public class ShowTableStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         if(!manager.getAllDatabases().contains(this.name)) {
             throw new SQLHandleException("Database " + this.name + "does not exist.");
         }

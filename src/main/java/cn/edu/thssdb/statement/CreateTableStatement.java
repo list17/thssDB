@@ -5,6 +5,7 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Column;
 import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
+import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ public class CreateTableStatement implements Statement{
     }
 
     @Override
-    public QueryTable execute(Manager manager, Long sessionId) throws SQLHandleException {
+    public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Database database = manager.getSessionCurrentDatabase(sessionId);
         if(database == null)
             throw new SQLHandleException("No database selected");
@@ -26,6 +27,9 @@ public class CreateTableStatement implements Statement{
         for(ColumnDefinition columnDefinition : this.columnDefinitions)
             columnDefinition.attach(columns);
         database.createTable(this.name, columns);
+
+        WriteScript ws = new WriteScript();
+        ws.output(manager, sessionId, command);
         return null;
     }
 }
