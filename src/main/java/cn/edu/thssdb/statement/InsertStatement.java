@@ -42,9 +42,10 @@ public class InsertStatement implements Statement{
                 }
             }
             Row row1 = new Row(entries);
-            table.insert(row1);
-
             TransactionManager tm = TransactionManager.getInstance();
+            table.insert(row1, tm.getTX());
+
+
 
             if (tm.getFlag()) { // 事务态
                 tm.getTX().addScript(command);

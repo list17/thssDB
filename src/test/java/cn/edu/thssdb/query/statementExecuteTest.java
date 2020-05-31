@@ -61,7 +61,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("Natsuiro Matsuri"));
         entries.add(Entry.generateEntry("Hololive 1st"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
@@ -69,7 +69,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("MurasakiShion"));
         entries.add(Entry.generateEntry("Hololive 2nd"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
@@ -77,7 +77,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("MinatoAqua"));
         entries.add(Entry.generateEntry("Hololive 2nd"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
@@ -85,7 +85,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("NakiriAyame"));
         entries.add(Entry.generateEntry("Hololive 2nd"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
@@ -93,7 +93,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("MononobeAlice"));
         entries.add(Entry.generateEntry("Nijisanji 2nd"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
@@ -101,7 +101,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("SasakiSaki"));
         entries.add(Entry.generateEntry("Nijisanji Gamer"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
@@ -109,7 +109,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("HonmaHimawari"));
         entries.add(Entry.generateEntry("Nijisanji Gamer"));
         row.appendEntries(entries);
-        this.vtuberTable.insert(row);
+        this.vtuberTable.insert(row, null);
 
         // groupTable
 
@@ -118,7 +118,7 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("Hololive 1st"));
         entries.add(Entry.generateEntry("Hololive"));
         row.appendEntries(entries);
-        this.groupTable.insert(row);
+        this.groupTable.insert(row, null);
 
 
         row = new Row();
@@ -126,28 +126,28 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry("Hololive 2nd"));
         entries.add(Entry.generateEntry("Hololive"));
         row.appendEntries(entries);
-        this.groupTable.insert(row);
+        this.groupTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
         entries.add(Entry.generateEntry("Hololive 4th"));
         entries.add(Entry.generateEntry("Hololive"));
         row.appendEntries(entries);
-        this.groupTable.insert(row);
+        this.groupTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
         entries.add(Entry.generateEntry("Nijisanji 2nd"));
         entries.add(Entry.generateEntry("Nijisanji"));
         row.appendEntries(entries);
-        this.groupTable.insert(row);
+        this.groupTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
         entries.add(Entry.generateEntry("Nijisanji Gamer"));
         entries.add(Entry.generateEntry("Nijisanji"));
         row.appendEntries(entries);
-        this.groupTable.insert(row);
+        this.groupTable.insert(row, null);
 
         //
         row = new Row();
@@ -155,21 +155,21 @@ public class statementExecuteTest {
         entries.add(Entry.generateEntry(1));
         entries.add(Entry.generateEntry(1));
         row.appendEntries(entries);
-        this.multiTable.insert(row);
+        this.multiTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
         entries.add(Entry.generateEntry(1));
         entries.add(Entry.generateEntry(2));
         row.appendEntries(entries);
-        this.multiTable.insert(row);
+        this.multiTable.insert(row, null);
 
         row = new Row();
         entries = new ArrayList<Entry>();
         entries.add(Entry.generateEntry(1));
         entries.add(Entry.generateEntry(3));
         row.appendEntries(entries);
-        this.multiTable.insert(row);
+        this.multiTable.insert(row, null);
 
     }
 

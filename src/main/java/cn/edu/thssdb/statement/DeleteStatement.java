@@ -31,6 +31,9 @@ public class DeleteStatement implements Statement{
         Database database = manager.getSessionCurrentDatabase(sessionId);
         Table baseTable = database.getTable(this.name);
 
+        //事务管理
+        TransactionManager tm = TransactionManager.getInstance();
+
         // 建立结果表, 存放更新了多少行数据.
         ArrayList<Column> resultColumn = new ArrayList<>();
         resultColumn.add(new Column("DeleteCount", ColumnType.INT, true, true, 0));
@@ -67,10 +70,8 @@ public class DeleteStatement implements Statement{
                 try {
                     Row deleteRow = baseTable.search(searchKey);
                     if (deleteRow != null) {
-                        baseTable.delete(searchKey);
+                        baseTable.delete(searchKey, tm.getTX());
                         resultTable.rows.add(new Row(1));
-
-                        TransactionManager tm = TransactionManager.getInstance();
 
                         if (tm.getFlag()) { // 事务态
                             tm.getTX().addScript(command);
@@ -103,7 +104,7 @@ public class DeleteStatement implements Statement{
                 try {
                     // 提取出该行的主键, 使用update进行更新.
                     MultiEntry searchKey = rawRow.getMultiEntry(primaryIndices);
-                    baseTable.delete(searchKey);
+                    baseTable.delete(searchKey, tm.getTX());
                     deleteCount = deleteCount + 1;
                 } catch (SQLHandleException e) {
                     throw e;
@@ -112,8 +113,6 @@ public class DeleteStatement implements Statement{
         }
 
         resultTable.rows.add(new Row(deleteCount));
-
-        TransactionManager tm = TransactionManager.getInstance();
 
         if (tm.getFlag()) { // 事务态
             tm.getTX().addScript(command);

@@ -3,6 +3,7 @@ package cn.edu.thssdb.schema;
 import cn.edu.thssdb.exception.*;
 import cn.edu.thssdb.index.BPlusTree;
 import cn.edu.thssdb.query.QueryTable;
+import cn.edu.thssdb.utils.Transaction;
 import javafx.util.Pair;
 
 import java.io.*;
@@ -154,7 +155,7 @@ public class Table implements Iterable<Row> {
      * @param newRow 要插入的新行
      * @throws RuntimeException
      */
-    public void insert(Row newRow) throws SQLHandleException {
+    public void insert(Row newRow, Transaction tx) throws SQLHandleException {
         // TODO
 
         if (newRow.getEntries().size() != this.columns.size()) {
@@ -182,13 +183,22 @@ public class Table implements Iterable<Row> {
             // 可以正确插入新行
 
             this.index.put(primaryKey, newRow);
+            if (tx != null) {
+                tx.addLog(newRow, null);
+            }
         }
     }
-    public void updateByIndicatingRow(Row selectedRow, Row newRow) throws RuntimeException {
-        this.update(selectedRow.getMultiEntry(this.primaryIndices), newRow);
-    }
-    public void deleteByIndicatingRow(Row selectedRow) throws RuntimeException {
-        this.delete(selectedRow.getMultiEntry(this.primaryIndices));
+    public void updateByIndicatingRow(Row oldRow, Row newRow, Transaction tx) throws RuntimeException {
+        if (oldRow == null && newRow == null) {
+            throw new SQLHandleException("Exception: illegal rollback.");
+        } else if (oldRow == null) {
+            this.insert(newRow, tx);
+        } else if (newRow == null) {
+            this.delete(oldRow.getMultiEntry(this.primaryIndices), tx);
+        } else {
+            this.update(oldRow.getMultiEntry(this.primaryIndices), newRow, tx);
+        }
+
     }
     /**
      * 根据主键删除某行
@@ -196,13 +206,17 @@ public class Table implements Iterable<Row> {
      * @param deleteKey 主键
      * @throws RuntimeException
      */
-    public void delete(MultiEntry deleteKey) throws RuntimeException {
+    public void delete(MultiEntry deleteKey, Transaction tx) throws RuntimeException {
         // TODO
         if (!this.index.contains(deleteKey)) {
             // 主键不存在, 返回KeyNotExistException.
             throw new KeyNotExistException();
         } else {
+            Row oldRow = this.findRowByPrimaryKey(deleteKey);
             this.index.remove(deleteKey);
+            if (tx != null) {
+                tx.addLog(null, oldRow);
+            }
         }
     }
 
@@ -213,20 +227,23 @@ public class Table implements Iterable<Row> {
      * @param newRow    新行
      * @throws RuntimeException
      */
-    public void update(MultiEntry updateKey, Row newRow){
+    public void update(MultiEntry updateKey, Row newRow, Transaction tx){
         // TODO
         // 由于可能涉及到主键的更新, 所以这里我们选择删掉该主键然后再插入新的行
         Row locatedRow;
         try {
             locatedRow = this.findRowByPrimaryKey(updateKey);
-            this.delete(updateKey);
+            this.delete(updateKey, null);
         } catch (KeyNotExistException e) {
             throw e;
         }
         try {
-            this.insert(newRow);
+            this.insert(newRow, null);
+            if (tx != null) {
+                tx.addLog(newRow, locatedRow);
+            }
         } catch (RuntimeException e) {
-            this.insert(locatedRow);
+            this.insert(locatedRow, null);
             throw e;
         }
     }

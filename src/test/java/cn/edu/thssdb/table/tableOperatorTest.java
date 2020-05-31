@@ -40,14 +40,14 @@ public class tableOperatorTest {
         entries.add(new Entry(1));
         entries.add(new Entry("Shion"));
         newRow.appendEntries(entries);
-        this.table.insert(newRow);
+        this.table.insert(newRow, null);
 
         newRow = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(2));
         entries.add(new Entry("Ayaka"));
         newRow.appendEntries(entries);
-        this.table.insert(newRow);
+        this.table.insert(newRow, null);
 
         // 重复主键
         Assert.assertThrows(DuplicateKeyException.class, () -> {
@@ -56,7 +56,7 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(1));
             errorEntries.add(new Entry("Duplicate Primary Key"));
             errorRow.appendEntries(errorEntries);
-            this.table.insert(errorRow);
+            this.table.insert(errorRow, null);
         });
 
         // 行的属性个数与列不匹配
@@ -65,7 +65,7 @@ public class tableOperatorTest {
             ArrayList<Entry> errorEntries = new ArrayList<Entry>();
             errorEntries.add(new Entry(3));
             errorRow.appendEntries(errorEntries);
-            this.table.insert(errorRow);
+            this.table.insert(errorRow, null);
         });
 
         // Entry的类型与列定义的不同
@@ -75,7 +75,7 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(4));
             errorEntries.add(new Entry(4396));
             errorRow.appendEntries(errorEntries);
-            this.table.insert(errorRow);
+            this.table.insert(errorRow, null);
         });
 
         // 违反约束
@@ -85,7 +85,7 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(5));
             errorEntries.add(new Entry(null));
             errorRow.appendEntries(errorEntries);
-            this.table.insert(errorRow);
+            this.table.insert(errorRow, null);
         });
     }
 
@@ -98,14 +98,14 @@ public class tableOperatorTest {
         entries.add(new Entry(1));
         entries.add(new Entry("Shion"));
         newRow_1.appendEntries(entries);
-        this.table.insert(newRow_1);
+        this.table.insert(newRow_1, null);
 
         Row newRow_2 = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(2));
         entries.add(new Entry("Ayaka"));
         newRow_2.appendEntries(entries);
-        this.table.insert(newRow_2);
+        this.table.insert(newRow_2, null);
 
         Assert.assertEquals(newRow_1.toString(),
                 this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.getPrimaryIndices())).toString());
@@ -126,28 +126,28 @@ public class tableOperatorTest {
         entries.add(new Entry(1));
         entries.add(new Entry("Shion"));
         newRow.appendEntries(entries);
-        this.table.insert(newRow);
+        this.table.insert(newRow, null);
 
         newRow = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(2));
         entries.add(new Entry("Ayaka"));
         newRow.appendEntries(entries);
-        this.table.insert(newRow);
+        this.table.insert(newRow, null);
 
         // 验证该行确实被删除
-        this.table.delete(new MultiEntry(new Entry(1)));
+        this.table.delete(new MultiEntry(new Entry(1)), null);
         Assert.assertThrows(KeyNotExistException.class, () -> {
             this.table.findRowByPrimaryKey(new MultiEntry(new Entry(1)));
         });
 
         // 不存在的行删除报错
         Assert.assertThrows(KeyNotExistException.class, () -> {
-            this.table.delete(new MultiEntry(new Entry(3)));
+            this.table.delete(new MultiEntry(new Entry(3)), null);
         });
 
         // 验证该行确实被删除
-        this.table.delete(new MultiEntry(new Entry(2)));
+        this.table.delete(new MultiEntry(new Entry(2)), null);
         Assert.assertThrows(KeyNotExistException.class, () -> {
             this.table.findRowByPrimaryKey(new MultiEntry(new Entry(2)));
         });
@@ -162,21 +162,21 @@ public class tableOperatorTest {
         entries.add(new Entry(1));
         entries.add(new Entry("Shion"));
         newRow.appendEntries(entries);
-        this.table.insert(newRow);
+        this.table.insert(newRow, null);
 
         newRow = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(2));
         entries.add(new Entry("Ayaka"));
         newRow.appendEntries(entries);
-        this.table.insert(newRow);
+        this.table.insert(newRow, null);
 
         Row updateRow = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(1));
         entries.add(new Entry("MurasakiShion"));
         updateRow.appendEntries(entries);
-        this.table.update(new MultiEntry(new Entry(1)), updateRow);
+        this.table.update(new MultiEntry(new Entry(1)), updateRow, null);
         Assert.assertEquals(updateRow.toString(),
                 this.table.findRowByPrimaryKey(new MultiEntry(new Entry(1))).toString());
 
@@ -185,7 +185,7 @@ public class tableOperatorTest {
         entries.add(new Entry(3));
         entries.add(new Entry("MurasakiShion"));
         updateRow.appendEntries(entries);
-        this.table.update(new MultiEntry(new Entry(1)), updateRow);
+        this.table.update(new MultiEntry(new Entry(1)), updateRow, null);
         Assert.assertEquals(updateRow.toString(),
                 this.table.findRowByPrimaryKey(new MultiEntry(new Entry(3))).toString());
 
@@ -196,7 +196,7 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(1));
             errorEntries.add(new Entry("MurasakiShion"));
             errorRow.appendEntries(errorEntries);
-            this.table.update(new MultiEntry(new Entry(1)), errorRow);
+            this.table.update(new MultiEntry(new Entry(1)), errorRow, null);
         });
 
         // 修改后的行存在主键重复(出现在insert部分)
@@ -206,7 +206,7 @@ public class tableOperatorTest {
             errorEntries.add(new Entry(2));
             errorEntries.add(new Entry("MurasakiShion"));
             errorRow.appendEntries(errorEntries);
-            this.table.update(new MultiEntry(new Entry(3)), errorRow);
+            this.table.update(new MultiEntry(new Entry(3)), errorRow, null);
         });
 
         // 验证原来的行是否被意外删除.
@@ -230,14 +230,14 @@ public class tableOperatorTest {
         entries.add(new Entry(1));
         entries.add(new Entry("Shion"));
         newRow_1.appendEntries(entries);
-        this.table.insert(newRow_1);
+        this.table.insert(newRow_1, null);
 
         Row newRow_2 = new Row();
         entries = new ArrayList<Entry>();
         entries.add(new Entry(2));
         entries.add(new Entry("Ayaka"));
         newRow_2.appendEntries(entries);
-        this.table.insert(newRow_2);
+        this.table.insert(newRow_2, null);
 
         try {
             this.table.serialize();

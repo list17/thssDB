@@ -30,6 +30,8 @@ public class UpdateStatement implements Statement{
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Database database = manager.getSessionCurrentDatabase(sessionId);
         Table baseTable = database.getTable(this.name);
+        // 事务管理
+        TransactionManager tm = TransactionManager.getInstance();
 
         // 建立结果表, 存放更新了多少行数据.
         ArrayList<Column> resultColumn = new ArrayList<>();
@@ -76,11 +78,9 @@ public class UpdateStatement implements Statement{
                     if (updatedRow != null) {
                         updatedRow = updatedRow.getCopiedRow();
                         updatedRow.getEntries().set(updateIndex, Entry.generateEntry(updateValue));
-                        baseTable.update(searchKey, updatedRow);
+                        baseTable.update(searchKey, updatedRow, tm.getTX());
 
                         resultTable.rows.add(new Row(1));
-
-                        TransactionManager tm = TransactionManager.getInstance();
 
                         if (tm.getFlag()) { // 事务态
                             tm.getTX().addScript(command);
@@ -115,7 +115,7 @@ public class UpdateStatement implements Statement{
                     Row updatedRow = rawRow.getCopiedRow();
                     MultiEntry searchKey = rawRow.getMultiEntry(primaryIndices);
                     updatedRow.getEntries().set(updateIndex, Entry.generateEntry(updateValue));
-                    baseTable.update(searchKey, updatedRow);
+                    baseTable.update(searchKey, updatedRow, tm.getTX());
                     updateCount = updateCount + 1;
 
                 } catch (SQLHandleException e) {
@@ -125,8 +125,6 @@ public class UpdateStatement implements Statement{
         }
 
         resultTable.rows.add(new Row(updateCount));
-
-        TransactionManager tm = TransactionManager.getInstance();
 
         if (tm.getFlag()) { // 事务态
             tm.getTX().addScript(command);
