@@ -26,5 +26,6 @@ hs_err_pid*
 target/
 .DS_Store
 /doc/*.pdf
+data/
 gen-java/
 src/lib
