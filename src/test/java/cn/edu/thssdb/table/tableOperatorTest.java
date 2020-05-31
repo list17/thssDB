@@ -24,11 +24,11 @@ public class tableOperatorTest {
 
         manager = new Manager();
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
+        manager.createDatabaseIfNotExists("db");
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("ID", ColumnType.INT, true, true, 20));
         columns.add(new Column("name", ColumnType.STRING, false, true, 100));
-        this.table = new Table("data/database/table", "table", columns);
+        this.table = new Table("data/db/testtable", "testtable", columns);
     }
 
     @Test

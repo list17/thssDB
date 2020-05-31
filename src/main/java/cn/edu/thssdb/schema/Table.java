@@ -192,11 +192,11 @@ public class Table implements Iterable<Row> {
         if (oldRow == null && newRow == null) {
             throw new SQLHandleException("Exception: illegal rollback.");
         } else if (oldRow == null) {
-            this.insert(newRow, tx);
+            this.insert(newRow, null);
         } else if (newRow == null) {
-            this.delete(oldRow.getMultiEntry(this.primaryIndices), tx);
+            this.delete(oldRow.getMultiEntry(this.primaryIndices), null);
         } else {
-            this.update(oldRow.getMultiEntry(this.primaryIndices), newRow, tx);
+            this.update(oldRow.getMultiEntry(this.primaryIndices), newRow, null);
         }
 
     }
