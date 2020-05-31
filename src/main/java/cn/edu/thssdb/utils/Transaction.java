@@ -3,6 +3,7 @@ package cn.edu.thssdb.utils;
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.schema.Manager;
+import cn.edu.thssdb.schema.Row;
 import com.sun.javafx.iio.ios.IosDescriptor;
 import javafx.util.Pair;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 
 public class Transaction {
     private ArrayList<String> scrtipts;
-    private ArrayList<Pair<String, String>> logs;
+    private ArrayList<Pair<Row, Row>> logs;
     private Long tx_session;
 
     public Transaction(Long tx_session) {
@@ -31,8 +32,8 @@ public class Transaction {
     }
 
     //逆序添加log
-    public void addLog(String now, String ori) {
-        Pair<String, String> log = new Pair<String, String>(now, ori);
+    public void addLog(Row now, Row ori) {
+        Pair<Row, Row> log = new Pair<Row, Row>(now, ori);
         this.logs.add(0, log);
     }
 
