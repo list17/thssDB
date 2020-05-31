@@ -4,6 +4,7 @@ import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
+import cn.edu.thssdb.utils.WriteScript;
 
 public class UseDatabaseStatement implements Statement{
     String name;
@@ -15,6 +16,10 @@ public class UseDatabaseStatement implements Statement{
     @Override
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         manager.switchDatabase(sessionId, this.name);
+
+//        WriteScript ws = new WriteScript();
+//        ws.output(manager, sessionId, command);
+
         return null;
     }
 }
