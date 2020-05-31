@@ -80,7 +80,6 @@ public class Database {
         for (Map.Entry<String, Table> entry : this.tables.entrySet()){
             entry.getValue().serialize();
         }
-        System.exit(0);
     }
 
     public ArrayList<String> getAllTables() {

@@ -5,6 +5,7 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Column;
 import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
+import cn.edu.thssdb.utils.TransactionManager;
 import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
@@ -28,8 +29,15 @@ public class CreateTableStatement implements Statement{
             columnDefinition.attach(columns);
         database.createTable(this.name, columns);
 
-        WriteScript ws = new WriteScript();
-        ws.output(manager, sessionId, command);
+        TransactionManager tm = TransactionManager.getInstance();
+
+        if (tm.getFlag()) { // 事务态
+            tm.getTX().addScript(command);
+        }
+        else { // 非事务态
+            WriteScript ws = new WriteScript();
+            ws.output(manager, sessionId, command);
+        }
         return null;
     }
 }

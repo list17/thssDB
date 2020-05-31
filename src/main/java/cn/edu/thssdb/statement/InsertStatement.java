@@ -5,6 +5,8 @@ import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.expression.ConstantVariable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
+import cn.edu.thssdb.utils.Transaction;
+import cn.edu.thssdb.utils.TransactionManager;
 import cn.edu.thssdb.utils.WriteScript;
 
 import java.io.BufferedWriter;
@@ -41,8 +43,16 @@ public class InsertStatement implements Statement{
             }
             Row row1 = new Row(entries);
             table.insert(row1);
-            WriteScript ws = new WriteScript();
-            ws.output(manager, sessionId, command);
+
+            TransactionManager tm = TransactionManager.getInstance();
+
+            if (tm.getFlag()) { // 事务态
+                tm.getTX().addScript(command);
+            }
+            else { // 非事务态
+                WriteScript ws = new WriteScript();
+                ws.output(manager, sessionId, command);
+            }
         }
         return null;
     }

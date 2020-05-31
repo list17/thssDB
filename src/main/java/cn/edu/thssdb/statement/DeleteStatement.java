@@ -6,6 +6,7 @@ import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
+import cn.edu.thssdb.utils.TransactionManager;
 import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
@@ -69,8 +70,15 @@ public class DeleteStatement implements Statement{
                         baseTable.delete(searchKey);
                         resultTable.rows.add(new Row(1));
 
-                        WriteScript ws = new WriteScript();
-                        ws.output(manager, sessionId, command);
+                        TransactionManager tm = TransactionManager.getInstance();
+
+                        if (tm.getFlag()) { // 事务态
+                            tm.getTX().addScript(command);
+                        }
+                        else { // 非事务态
+                            WriteScript ws = new WriteScript();
+                            ws.output(manager, sessionId, command);
+                        }
                         return resultTable;
                     }
                 } catch (SQLHandleException e) {
@@ -105,8 +113,15 @@ public class DeleteStatement implements Statement{
 
         resultTable.rows.add(new Row(deleteCount));
 
-        WriteScript ws = new WriteScript();
-        ws.output(manager, sessionId, command);
+        TransactionManager tm = TransactionManager.getInstance();
+
+        if (tm.getFlag()) { // 事务态
+            tm.getTX().addScript(command);
+        }
+        else { // 非事务态
+            WriteScript ws = new WriteScript();
+            ws.output(manager, sessionId, command);
+        }
         return resultTable;
     }
 
