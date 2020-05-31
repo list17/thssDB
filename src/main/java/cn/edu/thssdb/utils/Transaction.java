@@ -21,6 +21,7 @@ public class Transaction {
     public Transaction(Long tx_session) {
         this.tx_session = tx_session;
         this.scrtipts = new ArrayList<String>();
+        this.logs = new ArrayList<Pair<Pair<Row, Row>, Table>>();
     }
 
     // 正序添加script
@@ -53,11 +54,12 @@ public class Transaction {
         int len = this.logs.size();
         for (int i = 0; i < len; i++) {
             Pair<Pair<Row, Row>, Table> tmp_log = this.logs.get(0);
-            tmp_log.getValue().updateByIndicatingRow(tmp_log.getKey().getValue(), tmp_log.getKey().getKey(), this);
+
+            tmp_log.getValue().updateByIndicatingRow(tmp_log.getKey().getKey(), tmp_log.getKey().getValue(), this);
 
             this.logs.remove(0);
-            this.scrtipts.remove(this.scrtipts.size() - 1);
         }
+        this.scrtipts.clear();
     }
 
     // commit
