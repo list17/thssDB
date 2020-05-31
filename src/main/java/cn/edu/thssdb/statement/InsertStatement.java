@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InsertStatement implements Statement{
+public class InsertStatement implements Statement {
     String name;
     ArrayList<String> columns;
     ArrayList<ArrayList<ConstantVariable>> rows;
@@ -31,14 +31,26 @@ public class InsertStatement implements Statement{
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Table table = manager.getSessionCurrentDatabase(sessionId).getTable(name);
         HashMap<String, Integer> columnPos = table.getColumnIndicesMap();
-        for(ArrayList<ConstantVariable> row : rows) {
+        for (ArrayList<ConstantVariable> row : rows) {
             Entry[] entries = new Entry[columnPos.size()];
-            for(Map.Entry<String, Integer> entry : columnPos.entrySet()) {
-                int index = columns.indexOf(entry.getKey());
-                if(index != -1) {
-                    entries[index] = new Entry(row.get(index).evaluate());
-                } else {
-                    entries[index] = new Entry(null);
+            if (this.columns.size() == 0) {
+                // 没有指定属性
+                int i = 0;
+                for (i = 0; i < row.size(); i++) {
+                    entries[i] = new Entry(row.get(i).evaluate());
+                }
+                for (; i < columnPos.size(); i++) {
+                    entries[i] = new Entry(null);
+                }
+            } else {
+                for (int i = 0; i < columnPos.size(); i++) {
+                    entries[i] = new Entry(null);
+                }
+                for (Map.Entry<String, Integer> entry : columnPos.entrySet()) {
+                    int index = columns.indexOf(entry.getKey());
+                    if (index != -1) {
+                        entries[index] = new Entry(row.get(index).evaluate());
+                    }
                 }
             }
             Row row1 = new Row(entries);
@@ -47,8 +59,7 @@ public class InsertStatement implements Statement{
 
             if (tm.getFlag()) { // 事务态
                 tm.getTX().addScript(command);
-            }
-            else { // 非事务态
+            } else { // 非事务态
                 WriteScript ws = new WriteScript();
                 ws.output(manager, sessionId, command);
             }
