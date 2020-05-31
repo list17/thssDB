@@ -31,11 +31,22 @@ public class InsertStatement implements Statement {
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         Table table = manager.getSessionCurrentDatabase(sessionId).getTable(name);
         HashMap<String, Integer> columnPos = table.getColumnIndicesMap();
+        for(ArrayList<ConstantVariable> row :rows) {
+            if(row.size() > columnPos.size()) {
+                throw new SQLHandleException("The number of values is more than the columns");
+            }
+            if (columns.size() > columnPos.size()){
+                throw new SQLHandleException("The number of values is more than the table columns");
+            }
+            if(columns.size()!=0 && row.size()!= columns.size()){
+                throw new SQLHandleException("The number of values is not the same with the columns");
+            }
+        }
         for (ArrayList<ConstantVariable> row : rows) {
             Entry[] entries = new Entry[columnPos.size()];
             if (this.columns.size() == 0) {
                 // 没有指定属性
-                int i = 0;
+                int i;
                 for (i = 0; i < row.size(); i++) {
                     entries[i] = new Entry(row.get(i).evaluate());
                 }

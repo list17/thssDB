@@ -1,6 +1,7 @@
 package cn.edu.thssdb.schema;
 
 import cn.edu.thssdb.type.ColumnType;
+
 import java.io.Serializable;
 
 public class Column implements Comparable<Column>, Serializable {
@@ -11,7 +12,7 @@ public class Column implements Comparable<Column>, Serializable {
     private boolean notNull;
     private int maxLength;
 
-    public static class FullName implements Serializable{
+    public static class FullName implements Serializable {
         private static final long serialVersionUID = -6457698203477068938L;
         public String prefix;
         public String name;
@@ -19,6 +20,7 @@ public class Column implements Comparable<Column>, Serializable {
         public FullName(String name) {
             this.name = name;
         }
+
         public FullName(String prefix, String name) {
             this.prefix = prefix;
             this.name = name;
@@ -78,6 +80,9 @@ public class Column implements Comparable<Column>, Serializable {
     }
 
     public void transCompatible(Entry entry) {
+        if (entry.value == null) {
+            return;
+        }
         switch (this.type) {
             case INT:
                 entry.value = ((Number) entry.value).intValue();
@@ -113,7 +118,9 @@ public class Column implements Comparable<Column>, Serializable {
         return this.type;
     }
 
-    public int getMaxLength() { return this.maxLength; }
+    public int getMaxLength() {
+        return this.maxLength;
+    }
 
     public Column getCopiedColumn(boolean withPrefix) {
         Column copiedColumn = new Column(this.fullName.name,
@@ -127,9 +134,13 @@ public class Column implements Comparable<Column>, Serializable {
         return copiedColumn;
     }
 
-    public String getName() { return this.fullName.toString(); }
+    public String getName() {
+        return this.fullName.toString();
+    }
 
-    public FullName getColumnFullName() { return this.fullName; }
+    public FullName getColumnFullName() {
+        return this.fullName;
+    }
 
     public String toString() {
         return this.getName() + ',' + type + ',' + primary + ',' + notNull + ',' + maxLength;

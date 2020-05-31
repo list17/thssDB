@@ -1,6 +1,7 @@
 package cn.edu.thssdb.service;
 
 import cn.edu.thssdb.exception.DisconnectionException;
+import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.rpc.thrift.*;
@@ -96,7 +97,9 @@ public class IServiceHandler implements IService.Iface {
             }
         } catch (SQLHandleException e) {
             errorMessage = e.getMessage();
-        } catch (Exception e) {
+        } catch (ExpressionHandleException e) {
+            errorMessage = e.getMessage();
+        }catch(Exception e) {
             e.printStackTrace();
             errorMessage = "Internal error";
         }

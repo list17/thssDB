@@ -6,7 +6,7 @@ import java.io.IOException;
  * 写文件报错
  */
 
-public class FileWriteException extends RuntimeException {
+public class FileWriteException extends SQLHandleException {
     /**
      * @param message 错误信息
      */
