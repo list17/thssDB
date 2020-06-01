@@ -236,8 +236,10 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitColumn_def(SQLParser.Column_defContext ctx) {
         String name = (String) visit(ctx.column_name());
-        String type = ((String) visit(ctx.type_name())).toUpperCase();
+        ColumnTypeStatement columnTypeStatement = (ColumnTypeStatement) visit(ctx.type_name());
+        String type = columnTypeStatement.getName().toUpperCase();
         ColumnType columnType;
+        int max_length = -1;
         switch (type) {
             case "INT":
                 columnType = ColumnType.INT;
@@ -251,8 +253,9 @@ public class Visitor extends SQLBaseVisitor<Object>{
             case "DOUBLE":
                 columnType = ColumnType.DOUBLE;
                 break;
-            case "STRING":
+            case "VARCHAR":
                 columnType = ColumnType.STRING;
+                max_length = columnTypeStatement.getMax_length();
             default:
                 throw new SQLHandleException("Unknown type in table definition statement");
         }
@@ -271,14 +274,39 @@ public class Visitor extends SQLBaseVisitor<Object>{
                     break;
             }
         }
-        // todo maxlength
-        Column column = new Column(name, columnType, primary_key, not_null, 100);
+        Column column = new Column(name, columnType, primary_key, not_null, max_length);
         return new ColumnStatement(column);
     }
 
     @Override
-    public Object visitType_name(SQLParser.Type_nameContext ctx) {
-        return ctx.getText();
+    public Object visitTypeInt(SQLParser.TypeIntContext ctx) {
+        return new ColumnTypeStatement(ctx.getText());
+    }
+
+    @Override
+    public Object visitTypeLong(SQLParser.TypeLongContext ctx) {
+        return new ColumnTypeStatement(ctx.getText());
+    }
+
+    @Override
+    public Object visitTypeFloat(SQLParser.TypeFloatContext ctx) {
+        return new ColumnTypeStatement(ctx.getText());
+    }
+
+    @Override
+    public Object visitTypeDouble(SQLParser.TypeDoubleContext ctx) {
+        return new ColumnTypeStatement(ctx.getText());
+    }
+
+    @Override
+    public Object visitTypeString(SQLParser.TypeStringContext ctx) {
+        return new ColumnTypeStatement((String) visit(ctx.T_STRING()), (int) visit(ctx.int_value()));
+    }
+
+
+    @Override
+    public Object visitInt_value(SQLParser.Int_valueContext ctx) {
+        return Integer.parseInt(ctx.getText());
     }
 
     @Override
@@ -334,6 +362,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
         return new UnaryExpression(false);
     }
 
+
     @Override
     public Object visitColumnVariable(SQLParser.ColumnVariableContext ctx) {
         return new ColumnVariable((Column.FullName) visit(ctx.column_full_name()));
@@ -351,11 +380,11 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitTable_constraint(SQLParser.Table_constraintContext ctx) {
-        ArrayList<String> names = new ArrayList<>();
+        ArrayList<ColumnTypeStatement> columnTypeStatements = new ArrayList<>();
         for(SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
-            names.add((String) visit(column_nameContext));
+            columnTypeStatements.add((ColumnTypeStatement) visit(column_nameContext));
         }
-        return new ConstraintColumnStatement(names);
+        return new ConstraintColumnStatement(columnTypeStatements);
     }
 
     @Override

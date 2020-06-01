@@ -112,11 +112,12 @@ column_def :
     column_name type_name column_constraint* ;
 
 type_name :
-    T_INT
-    | T_LONG
-    | T_FLOAT
-    | T_DOUBLE
-    | T_STRING '(' NUMERIC_LITERAL ')' ;
+    T_INT                                   # TypeInt
+    | T_LONG                                # TypeLong
+    | T_FLOAT                               # TypeFloat
+    | T_DOUBLE                              # TypeDouble
+    | T_STRING '(' int_value ')'            # TypeString
+    ;
 
 column_constraint :
     K_PRIMARY K_KEY
@@ -125,7 +126,6 @@ column_constraint :
 multiple_condition
     : left=expression comparator right=expression                                 # CompareExpression
     | left=multiple_condition logicalOperator right=multiple_condition            # LogicalExpression
-//    | expression                                                                  # NestedPredicateExpression
     ;
 
 expression
@@ -184,6 +184,10 @@ literal_value
     | K_FALSE               # FalseConstant
     ;
 
+int_value
+    : NUMERIC_L
+    ;
+
 logicalOperator
     : AND       # AndOperator
     | OR        # OrOperator
@@ -217,7 +221,7 @@ T_INT : I N T;
 T_LONG : L O N G;
 T_FLOAT : F L O A T;
 T_DOUBLE : D O U B L E;
-T_STRING : S T R I N G;
+T_STRING : V A R C H A R;
 
 K_ADD : A D D;
 K_ALL : A L L;
@@ -268,6 +272,8 @@ IDENTIFIER :
     [a-zA-Z_] [a-zA-Z_0-9]* ;
 
 DECIMAL_LITERAL:                     DIGIT+;
+
+NUMERIC_L:                           [0-9]+;
 
 REAL_LITERAL:                        (DIGIT+)? '.' DIGIT+
                                      | DIGIT+ '.' EXPONENT

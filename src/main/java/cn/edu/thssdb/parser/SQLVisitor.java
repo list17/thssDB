@@ -179,11 +179,40 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitColumn_def(SQLParser.Column_defContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SQLParser#type_name}.
+	 * Visit a parse tree produced by the {@code TypeInt}
+	 * labeled alternative in {@link SQLParser#type_name}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitType_name(SQLParser.Type_nameContext ctx);
+	T visitTypeInt(SQLParser.TypeIntContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeLong}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeLong(SQLParser.TypeLongContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeFloat}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeFloat(SQLParser.TypeFloatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeDouble}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeDouble(SQLParser.TypeDoubleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeString}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeString(SQLParser.TypeStringContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLParser#column_constraint}.
 	 * @param ctx the parse tree
@@ -353,6 +382,12 @@ public interface SQLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFalseConstant(SQLParser.FalseConstantContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLParser#int_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInt_value(SQLParser.Int_valueContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AndOperator}
 	 * labeled alternative in {@link SQLParser#logicalOperator}.

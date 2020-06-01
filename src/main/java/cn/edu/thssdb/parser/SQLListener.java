@@ -288,15 +288,65 @@ public interface SQLListener extends ParseTreeListener {
 	 */
 	void exitColumn_def(SQLParser.Column_defContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link SQLParser#type_name}.
+	 * Enter a parse tree produced by the {@code TypeInt}
+	 * labeled alternative in {@link SQLParser#type_name}.
 	 * @param ctx the parse tree
 	 */
-	void enterType_name(SQLParser.Type_nameContext ctx);
+	void enterTypeInt(SQLParser.TypeIntContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link SQLParser#type_name}.
+	 * Exit a parse tree produced by the {@code TypeInt}
+	 * labeled alternative in {@link SQLParser#type_name}.
 	 * @param ctx the parse tree
 	 */
-	void exitType_name(SQLParser.Type_nameContext ctx);
+	void exitTypeInt(SQLParser.TypeIntContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypeLong}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeLong(SQLParser.TypeLongContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypeLong}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeLong(SQLParser.TypeLongContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypeFloat}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeFloat(SQLParser.TypeFloatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypeFloat}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeFloat(SQLParser.TypeFloatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypeDouble}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeDouble(SQLParser.TypeDoubleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypeDouble}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeDouble(SQLParser.TypeDoubleContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code TypeString}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeString(SQLParser.TypeStringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code TypeString}
+	 * labeled alternative in {@link SQLParser#type_name}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeString(SQLParser.TypeStringContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLParser#column_constraint}.
 	 * @param ctx the parse tree
@@ -583,6 +633,16 @@ public interface SQLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFalseConstant(SQLParser.FalseConstantContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLParser#int_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterInt_value(SQLParser.Int_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLParser#int_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitInt_value(SQLParser.Int_valueContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AndOperator}
 	 * labeled alternative in {@link SQLParser#logicalOperator}.
