@@ -13,6 +13,7 @@ import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.statement.Statement;
 import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
+import cn.edu.thssdb.utils.ValueInstance;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -214,6 +215,9 @@ public class Manager {
             } else
                 throw new SQLHandleException("Recovery database from script failed");
         }
+        ValueInstance vi = ValueInstance.getInstance();
+        vi.changeIsInit();
+
         this.removeConnection(sessionId);
     }
 

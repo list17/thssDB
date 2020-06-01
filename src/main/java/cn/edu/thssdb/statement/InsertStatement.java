@@ -7,6 +7,7 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.utils.Transaction;
 import cn.edu.thssdb.utils.TransactionManager;
+import cn.edu.thssdb.utils.ValueInstance;
 import cn.edu.thssdb.utils.WriteScript;
 
 import java.io.BufferedWriter;
@@ -68,11 +69,15 @@ public class InsertStatement implements Statement {
             TransactionManager tm = TransactionManager.getInstance();
             table.insert(row1, tm.getTX());
 
-            if (tm.getFlag()) { // 事务态
-                tm.getTX().addScript(command);
-            } else { // 非事务态
-                WriteScript ws = new WriteScript();
-                ws.output(manager, sessionId, command);
+            ValueInstance vi = ValueInstance.getInstance();
+
+            if (!vi.getIsInit()) {
+                if (tm.getFlag()) { // 事务态
+                    tm.getTX().addScript(command);
+                } else { // 非事务态
+                    WriteScript ws = new WriteScript();
+                    ws.output(manager, sessionId, command);
+                }
             }
         }
         return null;

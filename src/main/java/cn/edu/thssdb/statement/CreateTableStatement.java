@@ -6,6 +6,7 @@ import cn.edu.thssdb.schema.Column;
 import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.utils.TransactionManager;
+import cn.edu.thssdb.utils.ValueInstance;
 import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
@@ -30,13 +31,15 @@ public class CreateTableStatement implements Statement{
         database.createTable(this.name, columns);
 
         TransactionManager tm = TransactionManager.getInstance();
+        ValueInstance vi = ValueInstance.getInstance();
 
-        if (tm.getFlag()) { // 事务态
-            tm.getTX().addScript(command);
-        }
-        else { // 非事务态
-            WriteScript ws = new WriteScript();
-            ws.output(manager, sessionId, command);
+        if (!vi.getIsInit()) {
+            if (tm.getFlag()) { // 事务态
+                tm.getTX().addScript(command);
+            } else { // 非事务态
+                WriteScript ws = new WriteScript();
+                ws.output(manager, sessionId, command);
+            }
         }
         return null;
     }

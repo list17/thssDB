@@ -7,6 +7,7 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
 import cn.edu.thssdb.utils.TransactionManager;
+import cn.edu.thssdb.utils.ValueInstance;
 import cn.edu.thssdb.utils.WriteScript;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class DeleteStatement implements Statement{
 
         //事务管理
         TransactionManager tm = TransactionManager.getInstance();
+        ValueInstance vi = ValueInstance.getInstance();
 
         // 建立结果表, 存放更新了多少行数据.
         ArrayList<Column> resultColumn = new ArrayList<>();
@@ -73,12 +75,13 @@ public class DeleteStatement implements Statement{
                         baseTable.delete(searchKey, tm.getTX());
                         resultTable.rows.add(new Row(1));
 
-                        if (tm.getFlag()) { // 事务态
-                            tm.getTX().addScript(command);
-                        }
-                        else { // 非事务态
-                            WriteScript ws = new WriteScript();
-                            ws.output(manager, sessionId, command);
+                        if (!vi.getIsInit()) {
+                            if (tm.getFlag()) { // 事务态
+                                tm.getTX().addScript(command);
+                            } else { // 非事务态
+                                WriteScript ws = new WriteScript();
+                                ws.output(manager, sessionId, command);
+                            }
                         }
                         return resultTable;
                     }
@@ -114,12 +117,13 @@ public class DeleteStatement implements Statement{
 
         resultTable.rows.add(new Row(deleteCount));
 
-        if (tm.getFlag()) { // 事务态
-            tm.getTX().addScript(command);
-        }
-        else { // 非事务态
-            WriteScript ws = new WriteScript();
-            ws.output(manager, sessionId, command);
+        if (!vi.getIsInit()) {
+            if (tm.getFlag()) { // 事务态
+                tm.getTX().addScript(command);
+            } else { // 非事务态
+                WriteScript ws = new WriteScript();
+                ws.output(manager, sessionId, command);
+            }
         }
         return resultTable;
     }
