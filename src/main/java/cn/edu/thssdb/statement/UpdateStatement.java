@@ -35,110 +35,136 @@ public class UpdateStatement implements Statement{
         TransactionManager tm = TransactionManager.getInstance();
         ValueInstance vi = ValueInstance.getInstance();
 
-        // 建立结果表, 存放更新了多少行数据.
-        ArrayList<Column> resultColumn = new ArrayList<>();
-        resultColumn.add(new Column("UpdateCount", ColumnType.INT, true, true, 0));
-        QueryTable resultTable = new QueryTable("Result", resultColumn);
-        int updateCount = 0;
+        if (!vi.getIsInit()) { // 非初始化
+            if (tm.getFlag(sessionId)) { // 事务态
+                tm.setLockX(sessionId, this.name);
+            } else { // 非事务态
+                if (tm.setLockXSingle(sessionId, this.name)) {
 
-        if (baseTable == null) {
-            throw new SQLHandleException("Exception: table " + this.name + " could not be found.");
-        }
-        ArrayList<Integer> primaryIndices = baseTable.getPrimaryIndices();
-        ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
-
-        // 检查该列是否存在
-        if (!baseTable.getColumnIndicesMap().containsKey(column_name)) {
-            throw new SQLHandleException("Exception: the column " + column_name + " does not exist");
-        }
-
-        Integer updateIndex = baseTable.getColumnIndicesMap().get(column_name);
-        Comparable updateValue = constantVariable.evaluate();
-
-        // 查找出所有主键属性.
-        ArrayList<Column.FullName> primaryKeys = new ArrayList<>();
-        for (int index: primaryIndices) {
-            primaryKeys.add(baseColumns.get(index).getColumnFullName());
-        }
-        ArrayList<Comparable> primaryValues = this.expression.tryToGetPrimaryValue(primaryKeys);
-        if (!primaryValues.isEmpty()) {
-            boolean isPrimarySearch = true;
-            for (Comparable value: primaryValues) {
-                if (value == null) {
-                    isPrimarySearch = false;
-                    break;
+                } else {
+                    throw new SQLHandleException("Statement on this table is blocked now");
                 }
             }
-            // 主键所有属性都被指定, 为主键检索.
-            if (isPrimarySearch) {
-                MultiEntry searchKey = new MultiEntry();
-                for (Comparable value: primaryValues) {
-                    searchKey.addEntry(Entry.generateEntry(value));
+        }
+        tm.setSession(sessionId);
+
+        try {
+            // 建立结果表, 存放更新了多少行数据.
+            ArrayList<Column> resultColumn = new ArrayList<>();
+            resultColumn.add(new Column("UpdateCount", ColumnType.INT, true, true, 0));
+            QueryTable resultTable = new QueryTable("Result", resultColumn);
+            int updateCount = 0;
+
+            if (baseTable == null) {
+                throw new SQLHandleException("Exception: table " + this.name + " could not be found.");
+            }
+            ArrayList<Integer> primaryIndices = baseTable.getPrimaryIndices();
+            ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
+
+            // 检查该列是否存在
+            if (!baseTable.getColumnIndicesMap().containsKey(column_name)) {
+                throw new SQLHandleException("Exception: the column " + column_name + " does not exist");
+            }
+
+            Integer updateIndex = baseTable.getColumnIndicesMap().get(column_name);
+            Comparable updateValue = constantVariable.evaluate();
+
+            // 查找出所有主键属性.
+            ArrayList<Column.FullName> primaryKeys = new ArrayList<>();
+            for (int index : primaryIndices) {
+                primaryKeys.add(baseColumns.get(index).getColumnFullName());
+            }
+            ArrayList<Comparable> primaryValues = this.expression.tryToGetPrimaryValue(primaryKeys);
+            if (!primaryValues.isEmpty()) {
+                boolean isPrimarySearch = true;
+                for (Comparable value : primaryValues) {
+                    if (value == null) {
+                        isPrimarySearch = false;
+                        break;
+                    }
                 }
-                try {
-                    Row updatedRow = baseTable.search(searchKey);
-                    if (updatedRow != null) {
-                        updatedRow = updatedRow.getCopiedRow();
+                // 主键所有属性都被指定, 为主键检索.
+                if (isPrimarySearch) {
+                    MultiEntry searchKey = new MultiEntry();
+                    for (Comparable value : primaryValues) {
+                        searchKey.addEntry(Entry.generateEntry(value));
+                    }
+                    try {
+                        Row updatedRow = baseTable.search(searchKey);
+                        if (updatedRow != null) {
+                            updatedRow = updatedRow.getCopiedRow();
+                            updatedRow.getEntries().set(updateIndex, Entry.generateEntry(updateValue));
+                            baseTable.update(searchKey, updatedRow, tm.getTX());
+
+                            resultTable.rows.add(new Row(1));
+
+                            if (!vi.getIsInit()) {
+                                if (tm.getFlag(sessionId)) { // 事务态
+                                    tm.getTX().addScript(command);
+                                } else { // 非事务态
+                                    WriteScript ws = new WriteScript();
+                                    ws.output(manager, sessionId, command);
+                                }
+                            }
+                            return resultTable;
+                        }
+                    } catch (SQLHandleException e) {
+                        throw e;
+                    }
+                }
+            }
+            // 否则将遍历搜索
+            // 获取所有需要赋值的Variable, 以及赋值时需要索引到行的下标.
+            ArrayList<Variable> variables = this.expression.getAllVariables();
+            int variableNum = variables.size();
+            ArrayList<Integer> assignIndices = new ArrayList<>();
+            this.setAssignIndices(variables, baseTable, assignIndices);
+
+            Iterator<Row> iterator = baseTable.iterator();
+            while (iterator.hasNext()) {
+                Row rawRow = iterator.next();
+                for (int i = 0; i < variableNum; i++) {
+                    variables.get(i).assignValue(rawRow.getEntries().get(assignIndices.get(i)).value);
+                }
+                if (this.expression.evaluate()) {
+                    try {
+                        // 提取出该行的主键, 使用update进行更新.
+                        Row updatedRow = rawRow.getCopiedRow();
+                        MultiEntry searchKey = rawRow.getMultiEntry(primaryIndices);
                         updatedRow.getEntries().set(updateIndex, Entry.generateEntry(updateValue));
                         baseTable.update(searchKey, updatedRow, tm.getTX());
+                        updateCount = updateCount + 1;
 
-                        resultTable.rows.add(new Row(1));
-
-                        if (!vi.getIsInit()) {
-                            if (tm.getFlag()) { // 事务态
-                                tm.getTX().addScript(command);
-                            }
-                            else { // 非事务态
-                                WriteScript ws = new WriteScript();
-                                ws.output(manager, sessionId, command);
-                            }
-                        }
-                        return resultTable;
+                    } catch (SQLHandleException e) {
+                        throw e;
                     }
-                } catch (SQLHandleException e) {
-                    throw e;
+                }
+            }
+
+            resultTable.rows.add(new Row(updateCount));
+
+            if (!vi.getIsInit()) {
+                if (tm.getFlag(sessionId)) { // 事务态
+                    tm.getTX().addScript(command);
+                } else { // 非事务态
+                    WriteScript ws = new WriteScript();
+                    ws.output(manager, sessionId, command);
+                }
+            }
+            return resultTable;
+        } catch (Exception e) {
+
+        } finally {
+            if (!vi.getIsInit()) {
+                if (tm.getFlag(sessionId)) { // 事务态
+
+                } else { // 非事务态
+                    tm.releaseTXLock(sessionId);
+                    tm.destroyTransaction(sessionId);
                 }
             }
         }
-        // 否则将遍历搜索
-        // 获取所有需要赋值的Variable, 以及赋值时需要索引到行的下标.
-        ArrayList<Variable> variables = this.expression.getAllVariables();
-        int variableNum = variables.size();
-        ArrayList<Integer> assignIndices = new ArrayList<>();
-        this.setAssignIndices(variables, baseTable, assignIndices);
-
-        Iterator<Row> iterator = baseTable.iterator();
-        while (iterator.hasNext()) {
-            Row rawRow = iterator.next();
-            for (int i = 0; i < variableNum; i++) {
-                variables.get(i).assignValue(rawRow.getEntries().get(assignIndices.get(i)).value);
-            }
-            if (this.expression.evaluate()) {
-                try {
-                    // 提取出该行的主键, 使用update进行更新.
-                    Row updatedRow = rawRow.getCopiedRow();
-                    MultiEntry searchKey = rawRow.getMultiEntry(primaryIndices);
-                    updatedRow.getEntries().set(updateIndex, Entry.generateEntry(updateValue));
-                    baseTable.update(searchKey, updatedRow, tm.getTX());
-                    updateCount = updateCount + 1;
-
-                } catch (SQLHandleException e) {
-                    throw e;
-                }
-            }
-        }
-
-        resultTable.rows.add(new Row(updateCount));
-
-        if (!vi.getIsInit()) {
-            if (tm.getFlag()) { // 事务态
-                tm.getTX().addScript(command);
-            } else { // 非事务态
-                WriteScript ws = new WriteScript();
-                ws.output(manager, sessionId, command);
-            }
-        }
-        return resultTable;
+        return null;
     }
 
     public void setAssignIndices(ArrayList<Variable> variables,

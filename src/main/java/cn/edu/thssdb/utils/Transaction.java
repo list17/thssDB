@@ -13,13 +13,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static cn.edu.thssdb.utils.Global.NO_LOCK;
+
 public class Transaction {
     private ArrayList<String> scrtipts;
     private ArrayList<Pair<Pair<Row, Row>, Table>> logs;
     private Long tx_session;
+    private Boolean isBlocked;
+    private int blockType;
+    private String blockTable;
 
     public Transaction(Long tx_session) {
         this.tx_session = tx_session;
+        this.isBlocked = false;
+        this.blockType = NO_LOCK;
+        this.blockTable = null;
         this.scrtipts = new ArrayList<String>();
         this.logs = new ArrayList<Pair<Pair<Row, Row>, Table>>();
     }
@@ -94,4 +102,31 @@ public class Transaction {
             }
         }
     }
+
+    public int getBlockType() {
+        return this.blockType;
+    }
+
+    public String getBlockTable() {
+        return this.blockTable;
+    }
+
+    public void setBlock(boolean b, String table, int type) {
+        this.isBlocked = b;
+        if (this.isBlocked) {
+
+            this.blockType = type;
+            this.blockTable = table;
+            int a = 0;
+            while (this.isBlocked) {
+                // loop to block
+                System.out.print("");
+            }
+        } else {
+            this.blockTable = null;
+            this.blockType = NO_LOCK;
+        }
+
+    }
+
 }

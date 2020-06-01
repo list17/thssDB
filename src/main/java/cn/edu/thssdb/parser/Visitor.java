@@ -137,7 +137,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitDrop_table_stmt(SQLParser.Drop_table_stmtContext ctx) {
-        return new DropDatabaseStatement((String) visit(ctx.table_name()));
+        return new DropTableStatement((String) visit(ctx.table_name()));
     }
 
     @Override

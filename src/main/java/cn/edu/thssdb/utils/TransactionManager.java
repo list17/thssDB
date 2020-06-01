@@ -1,20 +1,57 @@
 package cn.edu.thssdb.utils;
 
+import cn.edu.thssdb.schema.Table;
+import javafx.util.Pair;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
+
+import static cn.edu.thssdb.utils.Global.NO_LOCK;
+import static cn.edu.thssdb.utils.Global.LOCK_S;
+import static cn.edu.thssdb.utils.Global.LOCK_X;
 
 public class TransactionManager {
     private static TransactionManager instance = null;
 
     private final Random random = new Random();
 
+    // 事务的session表
     private HashMap<Long, Transaction> transactionMap;
-    private Boolean Flag; // false: 非事务态，true：事务态，需要存scripts、logs
+
+    /*
+    * 表对应的锁
+    * Pair.key: 持有该表共享锁的事务列表 lockS
+    * Pair.value: 持有该表排它锁的事务 lockX
+    */
+    private HashMap<String, Pair<ArrayList<Transaction>, ArrayList<Transaction>>> tableLocks;
+
+    /*
+    * 事务拥有的锁
+    * Pair.key: 事务持有lockS的table列表
+    * Pair.value: 事务持有lockX的table列表
+    */
+//    private HashMap<Transaction, Pair<ArrayList<String>, ArrayList<String>>> txLocks;
+
+    // 阻塞事务列表
+    private ArrayList<Transaction> blockedTXs;
+
+    private HashMap<Long, Boolean> Flags; // false: 非事务态，true：事务态，需要存scripts、logs
     private Long cur_tx_session;
 
     private TransactionManager() {
-        this.Flag = false;
-        this.transactionMap = new HashMap<>();
+        this.Flags = new HashMap<Long, Boolean>();
+
+        // 事务表
+        this.transactionMap = new HashMap<Long, Transaction>();
+
+        // 锁表
+        this.tableLocks = new HashMap<String, Pair<ArrayList<Transaction>, ArrayList<Transaction>>>();
+//        this.txLocks = new HashMap<Transaction, Pair<ArrayList<String>, ArrayList<String>>>();
+
+        // 阻塞列表
+        this.blockedTXs = new ArrayList<Transaction>();
     }
 
     public static TransactionManager getInstance() {
@@ -28,8 +65,7 @@ public class TransactionManager {
         return instance;
     }
 
-    public Long createTransaction() {
-        Long tx_session = random.nextLong();
+    public Long createTransaction(Long tx_session) {
         Transaction tx = new Transaction(tx_session);
 
         this.cur_tx_session = tx_session;
@@ -38,19 +74,271 @@ public class TransactionManager {
         return tx_session;
     }
 
-    public void destroyTransaction() {
-        this.transactionMap.remove(this.cur_tx_session);
+    public void destroyTransaction(Long tx_session) {
+        this.cur_tx_session = tx_session;
+        this.transactionMap.remove(tx_session);
+    }
+
+    public boolean checkTransaction(Long tx_session) {
+        this.cur_tx_session = tx_session;
+        return this.transactionMap.get(tx_session) == null ? false : true;
+    }
+
+    public void blockTX(Transaction tx, String table, int type) {
+        tx.setBlock(true, table, type);
+    }
+
+    public void continueBlockedTX() {
+        int size = this.blockedTXs.size();
+        for (int i = 0; i < size; i++) {
+            Transaction tx = this.blockedTXs.get(i);
+            if (resetLock(tx, tx.getBlockTable(), tx.getBlockType())) {
+                tx.setBlock(false, null, NO_LOCK);
+            }
+        }
+    }
+
+    public boolean resetLock(Transaction tx, String table, int type) {
+        if (type == LOCK_S) {
+            int lockType = checkTableHasLock(table);
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+            if (txList == null) {
+                ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+                ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+                Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+                txList = tmpPair;
+                this.tableLocks.put(table, tmpPair);
+            }
+
+            if (lockType == 0) {
+                txList.getKey().add(tx);
+                return true;
+            } else if (lockType == 1) {
+                if (!txList.getKey().contains(tx)) {
+                    txList.getKey().add(tx);
+                    return true;
+                }
+            } else {
+                if (txList.getValue().contains(tx)) {
+                    return true;
+                }
+            }
+        }
+        else if (type == LOCK_X) {
+            int lockType = checkTableHasLock(table);
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+            if (txList == null) {
+                ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+                ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+                Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+                txList = tmpPair;
+                this.tableLocks.put(table, tmpPair);
+            }
+
+            if (lockType == 0) {
+                txList.getValue().add(tx);
+                return true;
+            } else if (lockType == 1) {
+                if (txList.getKey().contains(tx) && txList.getKey().size() == 1) {
+                    txList.getKey().remove(tx);
+                    txList.getValue().add(tx);
+                    return true;
+                }
+            } else {
+                if (txList.getValue().contains(tx)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public int checkTableHasLock(String table) {
+        Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+        if (txList == null) {
+            ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+            ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+            txList = tmpPair;
+            this.tableLocks.put(table, tmpPair);
+        }
+
+        int num_s = txList.getKey().size();
+        int num_x = txList.getValue().size();
+//        System.out.println("s " + num_s);
+//        System.out.println("x " + num_x);
+
+        if (num_x == 1) {
+            return LOCK_X;
+        } else if (num_s > 0) {
+            return LOCK_S;
+        } else {
+            return NO_LOCK;
+        }
+    }
+
+    public void setLockS(Long tx_session, String table) {
+        this.cur_tx_session = tx_session;
+        Transaction tx = this.transactionMap.get(this.cur_tx_session);
+        int lockType = checkTableHasLock(table);
+        Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+        if (txList == null) {
+            ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+            ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+            txList = tmpPair;
+            this.tableLocks.put(table, tmpPair);
+        }
+
+        System.out.println(tx_session);
+        System.out.println("type" + lockType);
+
+        if (lockType == 0) {
+            txList.getKey().add(tx);
+            return;
+        } else if (lockType == 1) {
+            if (!txList.getKey().contains(tx)) {
+                txList.getKey().add(tx);
+                return;
+            }
+        } else {
+            if (txList.getValue().contains(tx)) {
+                return;
+            }
+        }
+        this.blockedTXs.add(tx);
+        this.blockTX(tx, table, LOCK_S);
+        return;
+    }
+
+    public void setLockX(Long tx_session, String table) {
+        this.cur_tx_session = tx_session;
+        Transaction tx = this.transactionMap.get(this.cur_tx_session);
+        int lockType = checkTableHasLock(table);
+        Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+        if (txList == null) {
+            ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+            ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+            txList = tmpPair;
+            this.tableLocks.put(table, tmpPair);
+        }
+
+        if (lockType == 0) {
+            txList.getValue().add(tx);
+            return;
+        } else if (lockType == 1) {
+            if (txList.getKey().contains(tx) && txList.getKey().size() == 1) {
+                txList.getKey().remove(tx);
+                txList.getValue().add(tx);
+                return;
+            }
+        } else {
+            if (txList.getValue().contains(tx)) {
+                return;
+            }
+        }
+        this.blockedTXs.add(tx);
+        this.blockTX(tx, table ,LOCK_X);
+        return;
+    }
+
+
+    public boolean setLockSSingle(Long tx_session, String table) {
+        this.cur_tx_session = tx_session;
+        this.createTransaction(tx_session);
+        Transaction tx = this.transactionMap.get(tx_session);
+        int lockType = checkTableHasLock(table);
+        Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+        if (txList == null) {
+            ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+            ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+            txList = tmpPair;
+            this.tableLocks.put(table, tmpPair);
+        }
+
+        if (lockType == 0) {
+            txList.getKey().add(tx);
+            return true;
+        } else if (lockType == 1) {
+            if (!txList.getKey().contains(tx)) {
+                txList.getKey().add(tx);
+                return true;
+            }
+        } else {
+            if (txList.getValue().contains(tx)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean setLockXSingle(Long tx_session, String table) {
+        this.cur_tx_session = tx_session;
+        this.createTransaction(tx_session);
+        Transaction tx = this.transactionMap.get(this.cur_tx_session);
+        int lockType = checkTableHasLock(table);
+        Pair<ArrayList<Transaction>, ArrayList<Transaction>> txList = this.tableLocks.get(table);
+        if (txList == null) {
+            ArrayList<Transaction> tmpS = new ArrayList<Transaction>();
+            ArrayList<Transaction> tmpX = new ArrayList<Transaction>();
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = new Pair<ArrayList<Transaction>, ArrayList<Transaction>>(tmpS, tmpX);
+            txList = tmpPair;
+            this.tableLocks.put(table, tmpPair);
+        }
+
+        if (lockType == 0) {
+            txList.getValue().add(tx);
+            return true;
+        } else if (lockType == 1) {
+            if (txList.getKey().contains(tx) && txList.getKey().size() == 1) {
+                txList.getKey().remove(tx);
+                txList.getValue().add(tx);
+                return true;
+            }
+        } else {
+            if (txList.getValue().contains(tx)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void releaseTXLock(Long tx_session) {
+        this.cur_tx_session = tx_session;
+        Transaction tx = this.transactionMap.get(this.cur_tx_session);
+        for (HashMap.Entry<String, Pair<ArrayList<Transaction>, ArrayList<Transaction>>> entry : tableLocks.entrySet()) {
+            Pair<ArrayList<Transaction>, ArrayList<Transaction>> tmpPair = entry.getValue();
+            tmpPair.getKey().remove(tx);
+            tmpPair.getValue().remove(tx);
+        }
+    }
+
+    public void releaseLock(Transaction tx, String table) {
+        // TODO: remove single record
     }
 
     public Transaction getTX() {
         return this.transactionMap.get(this.cur_tx_session);
     }
 
-    public void changeFlag() {
-        this.Flag = !this.Flag;
+    public void initFlag(Long tx_session) {
+        this.cur_tx_session = tx_session;
+        this.Flags.put(tx_session, false);
     }
 
-    public boolean getFlag() {
-        return this.Flag;
+    public void changeFlag(Long tx_session) {
+        this.cur_tx_session = tx_session;
+        this.Flags.replace(tx_session, !this.Flags.get(tx_session));
+    }
+
+    public boolean getFlag(Long tx_session) {
+        this.cur_tx_session = tx_session;
+        return this.Flags.get(tx_session);
+    }
+
+    public void setSession(Long tx_session) {
+        this.cur_tx_session = tx_session;
     }
 }

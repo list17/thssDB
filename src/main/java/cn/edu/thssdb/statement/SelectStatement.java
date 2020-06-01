@@ -6,6 +6,9 @@ import cn.edu.thssdb.expression.SourceTable;
 import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
+import cn.edu.thssdb.utils.TransactionManager;
+import cn.edu.thssdb.utils.ValueInstance;
+import cn.edu.thssdb.utils.WriteScript;
 import javafx.util.Pair;
 
 import javax.management.Query;
@@ -42,98 +45,138 @@ public class SelectStatement implements Statement {
         Database database = manager.getSessionCurrentDatabase(sessionId);
         QueryTable resultTable;
 
-        if (sourceTable.joinOps.isEmpty()) {
-            // 没有join或者cartesian操作, 单表源, 可以尝试主键检索.
-            Table baseTable = database.getTable(sourceTable.tableName);
-            if (baseTable == null) {
-                throw new SQLHandleException("Exception: table " + sourceTable.tableName + " could not be found.");
-            }
-            ArrayList<Integer> primaryIndices = baseTable.getPrimaryIndices();
-            ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
-            HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
-
-            //先获取选择后的列以及排列顺序. 然后建立结果空表.
-            ArrayList<Column> resultColumns = new ArrayList<>();
-            ArrayList<Integer> resultIndices = new ArrayList<>();
-            this.setColumnsAndIndices(this.selectedColumns, baseTable, resultColumns, resultIndices);
-            resultTable = new QueryTable("Result", resultColumns);
-
-            // 查找出所有主键属性.
-            ArrayList<Column.FullName> primaryKeys = new ArrayList<>();
-            if (sourceTable.alias != null) {
-                for (Column c: baseColumns) {
-                    c.setPrefix(sourceTable.alias);
-                }
-            }
-            for (int index: primaryIndices) {
-                primaryKeys.add(baseColumns.get(index).getColumnFullName());
-            }
-            ArrayList<Comparable> primaryValues = this.expression.tryToGetPrimaryValue(primaryKeys);
-            if (!primaryValues.isEmpty()) {
-                boolean isPrimarySearch = true;
-                for (Comparable value: primaryValues) {
-                    if (value == null) {
-                        isPrimarySearch = false;
-                        break;
-                    }
-                }
-                // 主键所有属性都被指定, 为主键检索.
-                if (isPrimarySearch) {
-                    MultiEntry searchKey = new MultiEntry();
-                    for (Comparable value: primaryValues) {
-                        searchKey.addEntry(Entry.generateEntry(value));
-                    }
-                    Row searchRow = baseTable.search(searchKey);
-                    if (searchRow != null) {
-                        resultTable.rows.add(this.permuteRow(searchRow, resultIndices));
-                        return resultTable;
-                    }
-                }
-            }
-            // 否则将遍历搜索
-            // 获取所有需要赋值的Variable, 以及赋值时需要索引到行的下标.
-            ArrayList<Variable> variables = this.expression.getAllVariables();
-            int variableNum = variables.size();
-            ArrayList<Integer> assignIndices = new ArrayList<>();
-            this.setAssignIndices(variables, baseTable, assignIndices);
-
-            Iterator<Row> iterator = baseTable.iterator();
-            while (iterator.hasNext()) {
-                Row rawRow = iterator.next();
-                for (int i = 0; i < variableNum; i++) {
-                    variables.get(i).assignValue(rawRow.getEntries().get(assignIndices.get(i)).value);
-                }
-                if (this.expression.evaluate()) {
-                    resultTable.rows.add(this.permuteRow(rawRow, resultIndices));
-                }
-            }
-            return resultTable;
-        } else {
-            // 获取Join后的总源表
-            QueryTable baseQueryTable = sourceTable.getQueryTable(database);
-            ArrayList<Column> resultColumns = new ArrayList<>();
-            ArrayList<Integer> resultIndices = new ArrayList<>();
-            this.setColumnsAndIndices(this.selectedColumns, baseQueryTable, resultColumns, resultIndices);
-            resultTable = new QueryTable("Result", resultColumns);
-
-            // 同样遍历搜索
-            // 获取所有需要赋值的Variable.
-            ArrayList<Integer> assignIndices = new ArrayList<>();
-            ArrayList<Variable> variables = this.expression.getAllVariables();
-            this.setAssignIndices(variables, baseQueryTable, assignIndices);
-            int variableNum = assignIndices.size();
-
-            // 判断每一行是否满足条件
-            for (Row rawRow: baseQueryTable.rows) {
-                for (int i = 0; i < variableNum; i++) {
-                    variables.get(i).assignValue(rawRow.getEntries().get(assignIndices.get(i)).value);
-                }
-                if (this.expression.evaluate()) {
-                    resultTable.rows.add(this.permuteRow(rawRow, resultIndices));
-                }
-            }
-            return resultTable;
+        ArrayList<String> allTableName = new ArrayList<>();
+        allTableName.add(sourceTable.tableName);
+        for (SourceTable.JoinOperator joinOperator : sourceTable.joinOps) {
+            allTableName.add(joinOperator.joinedTableName);
         }
+
+        TransactionManager tm = TransactionManager.getInstance();
+        ValueInstance vi = ValueInstance.getInstance();
+
+        if (!vi.getIsInit()) { // 非初始化
+            if (tm.getFlag(sessionId)) { // 事务态
+                for (int i = 0; i < allTableName.size(); i++) {
+                    tm.setLockS(sessionId, allTableName.get(i));
+                }
+            } else { // 非事务态
+                for (int i = 0; i < allTableName.size(); i++) {
+                    if (tm.setLockSSingle(sessionId, allTableName.get(i))) {
+
+                    } else {
+                        throw new SQLHandleException("Statement on this table is blocked now");
+                    }
+                }
+            }
+        }
+        tm.setSession(sessionId);
+
+        try {
+            if (sourceTable.joinOps.isEmpty()) {
+                // 没有join或者cartesian操作, 单表源, 可以尝试主键检索.
+                Table baseTable = database.getTable(sourceTable.tableName);
+                if (baseTable == null) {
+                    throw new SQLHandleException("Exception: table " + sourceTable.tableName + " could not be found.");
+                }
+                ArrayList<Integer> primaryIndices = baseTable.getPrimaryIndices();
+                ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
+                HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
+
+                //先获取选择后的列以及排列顺序. 然后建立结果空表.
+                ArrayList<Column> resultColumns = new ArrayList<>();
+                ArrayList<Integer> resultIndices = new ArrayList<>();
+                this.setColumnsAndIndices(this.selectedColumns, baseTable, resultColumns, resultIndices);
+                resultTable = new QueryTable("Result", resultColumns);
+
+                // 查找出所有主键属性.
+                ArrayList<Column.FullName> primaryKeys = new ArrayList<>();
+                if (sourceTable.alias != null) {
+                    for (Column c : baseColumns) {
+                        c.setPrefix(sourceTable.alias);
+                    }
+                }
+                for (int index : primaryIndices) {
+                    primaryKeys.add(baseColumns.get(index).getColumnFullName());
+                }
+                ArrayList<Comparable> primaryValues = this.expression.tryToGetPrimaryValue(primaryKeys);
+                if (!primaryValues.isEmpty()) {
+                    boolean isPrimarySearch = true;
+                    for (Comparable value : primaryValues) {
+                        if (value == null) {
+                            isPrimarySearch = false;
+                            break;
+                        }
+                    }
+                    // 主键所有属性都被指定, 为主键检索.
+                    if (isPrimarySearch) {
+                        MultiEntry searchKey = new MultiEntry();
+                        for (Comparable value : primaryValues) {
+                            searchKey.addEntry(Entry.generateEntry(value));
+                        }
+                        Row searchRow = baseTable.search(searchKey);
+                        if (searchRow != null) {
+                            resultTable.rows.add(this.permuteRow(searchRow, resultIndices));
+                            return resultTable;
+                        }
+                    }
+                }
+                // 否则将遍历搜索
+                // 获取所有需要赋值的Variable, 以及赋值时需要索引到行的下标.
+                ArrayList<Variable> variables = this.expression.getAllVariables();
+                int variableNum = variables.size();
+                ArrayList<Integer> assignIndices = new ArrayList<>();
+                this.setAssignIndices(variables, baseTable, assignIndices);
+
+                Iterator<Row> iterator = baseTable.iterator();
+                while (iterator.hasNext()) {
+                    Row rawRow = iterator.next();
+                    for (int i = 0; i < variableNum; i++) {
+                        variables.get(i).assignValue(rawRow.getEntries().get(assignIndices.get(i)).value);
+                    }
+                    if (this.expression.evaluate()) {
+                        resultTable.rows.add(this.permuteRow(rawRow, resultIndices));
+                    }
+                }
+                return resultTable;
+            } else {
+                // 获取Join后的总源表
+                QueryTable baseQueryTable = sourceTable.getQueryTable(database);
+                ArrayList<Column> resultColumns = new ArrayList<>();
+                ArrayList<Integer> resultIndices = new ArrayList<>();
+                this.setColumnsAndIndices(this.selectedColumns, baseQueryTable, resultColumns, resultIndices);
+                resultTable = new QueryTable("Result", resultColumns);
+
+                // 同样遍历搜索
+                // 获取所有需要赋值的Variable.
+                ArrayList<Integer> assignIndices = new ArrayList<>();
+                ArrayList<Variable> variables = this.expression.getAllVariables();
+                this.setAssignIndices(variables, baseQueryTable, assignIndices);
+                int variableNum = assignIndices.size();
+
+                // 判断每一行是否满足条件
+                for (Row rawRow : baseQueryTable.rows) {
+                    for (int i = 0; i < variableNum; i++) {
+                        variables.get(i).assignValue(rawRow.getEntries().get(assignIndices.get(i)).value);
+                    }
+                    if (this.expression.evaluate()) {
+                        resultTable.rows.add(this.permuteRow(rawRow, resultIndices));
+                    }
+                }
+                return resultTable;
+            }
+        } catch (Exception e) {
+
+        } finally {
+            if (!vi.getIsInit()) {
+                if (tm.getFlag(sessionId)) { // 事务态
+
+                } else { // 非事务态
+                    tm.releaseTXLock(sessionId);
+                    tm.destroyTransaction(sessionId);
+                }
+            }
+        }
+        return null;
     }
     public void setColumnsAndIndices(ArrayList<Column.FullName> selectedColumns,
                                      Table baseTable,

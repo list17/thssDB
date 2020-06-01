@@ -12,6 +12,8 @@ import cn.edu.thssdb.parser.SQLLexer;
 import cn.edu.thssdb.parser.Visitor;
 import cn.edu.thssdb.statement.Statement;
 import cn.edu.thssdb.exception.SQLThrowErrorListener;
+import cn.edu.thssdb.utils.Transaction;
+import cn.edu.thssdb.utils.TransactionManager;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -40,6 +42,8 @@ public class IServiceHandler implements IService.Iface {
     public ConnectResp connect(ConnectReq req) throws TException {
         // TODO
         long sessionId = random.nextLong();
+        TransactionManager tm = TransactionManager.getInstance();
+        tm.initFlag(sessionId);
         ConnectResp resp = new ConnectResp();
         Status status = new Status();
         status.code = Global.SUCCESS_CODE;

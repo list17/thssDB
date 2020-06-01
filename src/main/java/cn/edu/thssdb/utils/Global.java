@@ -14,5 +14,9 @@ public class Global {
     public static final String SHOW_TIME = "show time;";
     public static final String QUIT = "quit;";
 
+    public static int NO_LOCK = 0;
+    public static int LOCK_S = 1;
+    public static int LOCK_X = 2;
+
     public static final String S_URL_INTERNAL = "jdbc:default:connection";
 }

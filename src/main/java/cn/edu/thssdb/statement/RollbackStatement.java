@@ -11,8 +11,9 @@ public class RollbackStatement implements Statement{
     @Override
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         TransactionManager tm = TransactionManager.getInstance();
+        tm.setSession(sessionId);
 
-        if (!tm.getFlag()) {
+        if (!tm.getFlag(sessionId)) {
             throw new SQLHandleException("Please rollback in a transaction!");
         }
         else {
