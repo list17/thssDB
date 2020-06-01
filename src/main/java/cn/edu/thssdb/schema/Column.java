@@ -149,4 +149,8 @@ public class Column implements Comparable<Column>, Serializable {
     public void setPrimary() {
         this.primary = true;
     }
+
+    public void setNotNull() {
+        this.notNull = true;
+    }
 }

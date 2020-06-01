@@ -67,7 +67,8 @@ public class Row implements Serializable {
             return "EMPTY";
         StringJoiner sj = new StringJoiner(", ");
         for (Entry e : entries)
-            sj.add(e.toString());
+            if(e.value != null)
+                sj.add(e.toString());
         return sj.toString();
     }
 }

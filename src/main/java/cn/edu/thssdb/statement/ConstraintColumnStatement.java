@@ -20,6 +20,7 @@ public class ConstraintColumnStatement implements ColumnDefinition{
                 if (column.getName().equals(column_type)) {
                     found = true;
                     column.setPrimary();
+                    column.setNotNull();
                     break;
                 }
             }
