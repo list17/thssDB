@@ -19,7 +19,7 @@ public class ShutdownStatement implements Statement{
         TransactionManager tm = TransactionManager.getInstance();
 
         if (tm.getFlag(sessionId)) { // 事务态
-            tm.getTX().output(manager, sessionId);
+            tm.getTX().rollback();
         }
 
         for (String name : database_names) {
