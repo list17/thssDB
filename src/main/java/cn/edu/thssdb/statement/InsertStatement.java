@@ -43,7 +43,7 @@ public class InsertStatement implements Statement {
                 throw new SQLHandleException("The number of values is not the same with the columns");
             }
         }
-        
+
         TransactionManager tm = TransactionManager.getInstance();
         ValueInstance vi = ValueInstance.getInstance();
 
@@ -86,7 +86,7 @@ public class InsertStatement implements Statement {
                 Row row1 = new Row(entries);
                 table.insert(row1, tm.getTX());
             }
-        } catch (Exception e) {
+        } catch (FileWriteException e) {
 
         } finally {
             if (!vi.getIsInit()) {

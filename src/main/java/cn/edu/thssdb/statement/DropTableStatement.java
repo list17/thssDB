@@ -1,5 +1,6 @@
 package cn.edu.thssdb.statement;
 
+import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Database;
@@ -37,7 +38,7 @@ public class DropTableStatement implements Statement{
 
         try {
             database.dropTable(this.name);
-        } catch (Exception e) {
+        } catch (FileWriteException e) {
 
         } finally {
             if (!vi.getIsInit()) {

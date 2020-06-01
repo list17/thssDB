@@ -1,5 +1,6 @@
 package cn.edu.thssdb.statement;
 
+import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Column;
@@ -47,7 +48,7 @@ public class CreateTableStatement implements Statement{
 
         try {
             database.createTable(this.name, columns);
-        } catch (Exception e) {
+        } catch (FileWriteException e) {
 
         } finally {
             if (!vi.getIsInit()) {

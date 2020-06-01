@@ -1,5 +1,6 @@
 package cn.edu.thssdb.statement;
 
+import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.expression.Expression;
 import cn.edu.thssdb.expression.SourceTable;
@@ -164,7 +165,7 @@ public class SelectStatement implements Statement {
                 }
                 return resultTable;
             }
-        } catch (Exception e) {
+        } catch (FileWriteException e) {
 
         } finally {
             if (!vi.getIsInit()) {
