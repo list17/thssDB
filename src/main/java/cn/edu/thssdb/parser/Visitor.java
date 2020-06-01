@@ -8,7 +8,7 @@ import cn.edu.thssdb.type.ColumnType;
 
 import java.util.ArrayList;
 
-public class Visitor extends SQLBaseVisitor<Object>{
+public class Visitor extends SQLBaseVisitor<Object> {
 
     private enum ColumnConstraint {
         NOT_NULL,
@@ -18,7 +18,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitParse(SQLParser.ParseContext ctx) {
         SQLParser.Sql_stmt_listContext sql_stmt_listContext = ctx.sql_stmt_list();
-        if(sql_stmt_listContext == null) {
+        if (sql_stmt_listContext == null) {
             return new ArrayList<>();
         }
         return visit(sql_stmt_listContext);
@@ -83,13 +83,12 @@ public class Visitor extends SQLBaseVisitor<Object>{
     public Object visitCreate_table_stmt(SQLParser.Create_table_stmtContext ctx) {
         String name = (String) visit(ctx.table_name());
         ArrayList<ColumnDefinition> columnDefinitions = new ArrayList<>();
-        for(SQLParser.Column_defContext column_defContext :ctx.column_def()) {
+        for (SQLParser.Column_defContext column_defContext : ctx.column_def()) {
             columnDefinitions.add((ColumnDefinition) visit(column_defContext));
         }
-        if(ctx.table_constraint() != null) {
-            for(SQLParser.Column_nameContext column_nameContext : ((SQLParser.Table_constraintContext) visit(ctx.table_constraint())).column_name()) {
-                columnDefinitions.add((ColumnDefinition) visit(column_nameContext));
-            }
+        if (ctx.table_constraint() != null) {
+            ConstraintColumnStatement constraintColumnStatement = (ConstraintColumnStatement) visit(ctx.table_constraint());
+            columnDefinitions.add(constraintColumnStatement);
         }
         return new CreateTableStatement(name, columnDefinitions);
     }
@@ -97,7 +96,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitShow_meta_stmt(SQLParser.Show_meta_stmtContext ctx) {
         return new SelectStatement(
-                new ArrayList<Column.FullName>(){
+                new ArrayList<Column.FullName>() {
                     {
                         add(new Column.FullName("*"));
                     }
@@ -127,7 +126,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitDelete_stmt(SQLParser.Delete_stmtContext ctx) {
         String name = (String) visit(ctx.table_name());
-        if(ctx.multiple_condition()!= null ){
+        if (ctx.multiple_condition() != null) {
             Expression expression = (Expression) visit(ctx.multiple_condition());
             return new DeleteStatement(name, expression);
         } else {
@@ -160,10 +159,10 @@ public class Visitor extends SQLBaseVisitor<Object>{
         String name = (String) visit(ctx.table_name());
         ArrayList<String> columns = new ArrayList<>();
         ArrayList<ArrayList<ConstantVariable>> rows = new ArrayList<>();
-        for(SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
+        for (SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
             columns.add((String) visit(column_nameContext));
         }
-        for(SQLParser.Value_entryContext value_entryContext : ctx.value_entry()) {
+        for (SQLParser.Value_entryContext value_entryContext : ctx.value_entry()) {
             rows.add((ArrayList<ConstantVariable>) visit(value_entryContext));
         }
         return new InsertStatement(name, columns, rows);
@@ -172,7 +171,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitValue_entry(SQLParser.Value_entryContext ctx) {
         ArrayList<ConstantVariable> row = new ArrayList<>();
-        for(SQLParser.Literal_valueContext literal_valueContext : ctx.literal_value()) {
+        for (SQLParser.Literal_valueContext literal_valueContext : ctx.literal_value()) {
             row.add((ConstantVariable) visit(literal_valueContext));
         }
         return row;
@@ -181,9 +180,9 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitSelect_stmt(SQLParser.Select_stmtContext ctx) {
         ArrayList<Column.FullName> selectedColumns = new ArrayList<>();
-        for(SQLParser.Result_columnContext result_columnContext : ctx.result_column()) {
+        for (SQLParser.Result_columnContext result_columnContext : ctx.result_column()) {
             Object object = visit(result_columnContext);
-            if(object == null) {
+            if (object == null) {
                 selectedColumns.clear();
                 break;
             } else {
@@ -201,12 +200,12 @@ public class Visitor extends SQLBaseVisitor<Object>{
             }
             operators.addAll(tableQueryStatement.getOperators());
         }
-        if(sourceTablename == null){
+        if (sourceTablename == null) {
             throw new SQLHandleException("Source table missed");
         }
         SourceTable sourceTable = new SourceTable(sourceTablename, operators);
         Expression expression = null;
-        if(ctx.multiple_condition() != null) {
+        if (ctx.multiple_condition() != null) {
             expression = (Expression) visit(ctx.multiple_condition());
         } else {
             expression = new UnaryExpression(true);
@@ -256,6 +255,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
             case "VARCHAR":
                 columnType = ColumnType.STRING;
                 max_length = columnTypeStatement.getMax_length();
+                break;
             default:
                 throw new SQLHandleException("Unknown type in table definition statement");
         }
@@ -300,7 +300,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitTypeString(SQLParser.TypeStringContext ctx) {
-        return new ColumnTypeStatement((String) visit(ctx.T_STRING()), (int) visit(ctx.int_value()));
+        return new ColumnTypeStatement(ctx.T_STRING().getText(), (ConstantVariable) visit(ctx.literal_value()));
     }
 
 
@@ -380,9 +380,9 @@ public class Visitor extends SQLBaseVisitor<Object>{
 
     @Override
     public Object visitTable_constraint(SQLParser.Table_constraintContext ctx) {
-        ArrayList<ColumnTypeStatement> columnTypeStatements = new ArrayList<>();
-        for(SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
-            columnTypeStatements.add((ColumnTypeStatement) visit(column_nameContext));
+        ArrayList<String> columnTypeStatements = new ArrayList<>();
+        for (SQLParser.Column_nameContext column_nameContext : ctx.column_name()) {
+            columnTypeStatements.add((String) visit(column_nameContext));
         }
         return new ConstraintColumnStatement(columnTypeStatements);
     }
@@ -406,13 +406,13 @@ public class Visitor extends SQLBaseVisitor<Object>{
     public Object visitTable_query(SQLParser.Table_queryContext ctx) {
         ArrayList<SourceTable.JoinOperator> joinOperators = new ArrayList<>();
         TableFullName tableFullName = (TableFullName) visit(ctx.getChild(0));
-        for(int i = 2;i < ctx.getChildCount();) {
+        for (int i = 2; i < ctx.getChildCount(); ) {
             TableFullName tableFullName1 = (TableFullName) visit(ctx.getChild(i));
-            if(i + 1 < ctx.getChildCount() &&  (String) visit(ctx.getChild(i + 1)) == "ON") {
+            if (i + 1 < ctx.getChildCount() && (String) visit(ctx.getChild(i + 1)) == "ON") {
                 Expression expression = (Expression) visit(ctx.getChild(i + 2));
                 joinOperators.add(new SourceTable.JoinOperator(tableFullName1.getName(), expression, tableFullName1.getAlias()));
                 i += 4;
-            } else if (i + 1 < ctx.getChildCount() && (String) visit(ctx.getChild(i+1)) == "JOIN") {
+            } else if (i + 1 < ctx.getChildCount() && (String) visit(ctx.getChild(i + 1)) == "JOIN") {
                 UnaryExpression unaryExpression = new UnaryExpression(true);
                 joinOperators.add(new SourceTable.JoinOperator(tableFullName1.getName(), unaryExpression, tableFullName1.getAlias()));
                 i += 2;
@@ -429,7 +429,7 @@ public class Visitor extends SQLBaseVisitor<Object>{
     @Override
     public Object visitColumn_full_name(SQLParser.Column_full_nameContext ctx) {
         String column_name = (String) visit(ctx.column_name());
-        if(ctx.table_name() != null){
+        if (ctx.table_name() != null) {
             return new Column.FullName((String) visit(ctx.table_name()), column_name);
         } else {
             return new Column.FullName(column_name);

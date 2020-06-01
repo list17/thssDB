@@ -2263,8 +2263,8 @@ public class SQLParser extends Parser {
 	}
 	public static class TypeStringContext extends Type_nameContext {
 		public TerminalNode T_STRING() { return getToken(SQLParser.T_STRING, 0); }
-		public Int_valueContext int_value() {
-			return getRuleContext(Int_valueContext.class,0);
+		public Literal_valueContext literal_value() {
+			return getRuleContext(Literal_valueContext.class,0);
 		}
 		public TypeStringContext(Type_nameContext ctx) { copyFrom(ctx); }
 		@Override
@@ -2330,7 +2330,7 @@ public class SQLParser extends Parser {
 				setState(360);
 				match(T__1);
 				setState(361);
-				int_value();
+				literal_value();
 				setState(362);
 				match(T__3);
 				}
@@ -4043,7 +4043,7 @@ public class SQLParser extends Parser {
 		"\u015f\3\2\2\2\u0161\u0164\3\2\2\2\u0162\u0160\3\2\2\2\u0162\u0163\3\2"+
 		"\2\2\u01639\3\2\2\2\u0164\u0162\3\2\2\2\u0165\u016f\7\24\2\2\u0166\u016f"+
 		"\7\25\2\2\u0167\u016f\7\26\2\2\u0168\u016f\7\27\2\2\u0169\u016a\7\30\2"+
-		"\2\u016a\u016b\7\4\2\2\u016b\u016c\5^\60\2\u016c\u016d\7\6\2\2\u016d\u016f"+
+		"\2\u016a\u016b\7\4\2\2\u016b\u016c\5\\/\2\u016c\u016d\7\6\2\2\u016d\u016f"+
 		"\3\2\2\2\u016e\u0165\3\2\2\2\u016e\u0166\3\2\2\2\u016e\u0167\3\2\2\2\u016e"+
 		"\u0168\3\2\2\2\u016e\u0169\3\2\2\2\u016f;\3\2\2\2\u0170\u0171\7\60\2\2"+
 		"\u0171\u0175\7,\2\2\u0172\u0173\7-\2\2\u0173\u0175\7.\2\2\u0174\u0170"+

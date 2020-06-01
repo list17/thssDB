@@ -116,7 +116,7 @@ type_name :
     | T_LONG                                # TypeLong
     | T_FLOAT                               # TypeFloat
     | T_DOUBLE                              # TypeDouble
-    | T_STRING '(' int_value ')'            # TypeString
+    | T_STRING '(' literal_value ')'            # TypeString
     ;
 
 column_constraint :

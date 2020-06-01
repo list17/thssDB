@@ -6,8 +6,8 @@ public class ColumnTypeStatement {
     private String name;
     private int max_length;
 
-    public ColumnTypeStatement(String name, int max_length){
-        this.max_length = max_length;
+    public ColumnTypeStatement(String name, ConstantVariable max_length){
+        this.max_length = Integer.parseInt(max_length.evaluate().toString());
         this.name = name;
     }
 
