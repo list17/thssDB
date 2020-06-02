@@ -19,6 +19,10 @@ public class TableQueryStatement {
         return table_name;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
     public ArrayList<SourceTable.JoinOperator> getOperators() {
         return operators;
     }

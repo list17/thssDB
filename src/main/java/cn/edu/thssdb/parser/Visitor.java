@@ -190,11 +190,13 @@ public class Visitor extends SQLBaseVisitor<Object> {
             }
         }
         String sourceTablename = null;
+        String alias = null;
         ArrayList<SourceTable.JoinOperator> operators = new ArrayList<>();
         for (int i = 0; i < ctx.table_query().size(); i++) {
             TableQueryStatement tableQueryStatement = (TableQueryStatement) visit(ctx.table_query(i));
             if (i == 0) {
                 sourceTablename = tableQueryStatement.getTable_name();
+                alias = tableQueryStatement.getAlias();
             } else {
                 operators.add(new SourceTable.JoinOperator(tableQueryStatement.getTable_name(), new UnaryExpression(true)));
             }
@@ -203,7 +205,7 @@ public class Visitor extends SQLBaseVisitor<Object> {
         if (sourceTablename == null) {
             throw new SQLHandleException("Source table missed");
         }
-        SourceTable sourceTable = new SourceTable(sourceTablename, operators);
+        SourceTable sourceTable = new SourceTable(sourceTablename, operators, alias);
         Expression expression = null;
         if (ctx.multiple_condition() != null) {
             expression = (Expression) visit(ctx.multiple_condition());
@@ -405,19 +407,7 @@ public class Visitor extends SQLBaseVisitor<Object> {
     @Override
     public Object visitTable_query(SQLParser.Table_queryContext ctx) {
         ArrayList<SourceTable.JoinOperator> joinOperators = new ArrayList<>();
-        TableFullName tableFullName = (TableFullName) visit(ctx.getChild(0));
-//        for (int i = 2; i < ctx.getChildCount(); ) {
-//            TableFullName tableFullName1 = (TableFullName) visit(ctx.getChild(i));
-//            if (i + 1 < ctx.getChildCount() && ((String) visit(ctx.getChild(i + 1))).equals("ON")) {
-//                Expression expression = (Expression) visit(ctx.getChild(i + 2));
-//                joinOperators.add(new SourceTable.JoinOperator(tableFullName1.getName(), expression, tableFullName1.getAlias()));
-//                i += 4;
-//            } else if (i + 1 < ctx.getChildCount() && ((String) visit(ctx.getChild(i + 1))).equals("JOIN")) {
-//                UnaryExpression unaryExpression = new UnaryExpression(true);
-//                joinOperators.add(new SourceTable.JoinOperator(tableFullName1.getName(), unaryExpression, tableFullName1.getAlias()));
-//                i += 2;
-//            }
-//        }
+        TableFullName tableFullName = (TableFullName) visit(ctx.table_full_name(0));
         for (int i = 1; i < ctx.table_full_name().size(); i++) {
             TableFullName tableFullName1 = (TableFullName) visit(ctx.table_full_name(i));
             Expression expression = (Expression) visit(ctx.multiple_condition(i - 1));
