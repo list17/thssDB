@@ -1,8 +1,10 @@
 ```sql
 create database testDatabase;
 show databases;
+
 use testDatabase;
 show database testDatabase;
+
 create table student (id int primary key, name varchar(25), school varchar(25), height int, primary key (name));
 create table school (sid int primary key, schoolname varchar(25) primary key);
 create table instructor(iid int primary key,name varchar(25) not null, salary double, school varchar(25));
@@ -49,4 +51,74 @@ select * from student;
 select * from school;
 select * from instructor;
 查看数据是否有无，然后执行你的事务就行了
+
+create database testDatabase;
+use testDatabase;
+create table student (id int primary key, name varchar(25), school varchar(25), height int, primary key (name));
+select * from testTable;
+
+-- 对照*.script，会写入
+insert into testTable (id, name, income) values (21, "name21", 21.21);
+
+-- 对照*.script，暂时未写入
+start transaction;
+insert into testTable (id, name, income) values (32, "name32", 32.32);
+select * from testTable;
+
+delete from testTable where id = 21;
+select * from testTable;
+
+update testTable set income = 323.2 where id = 32;
+select * from testTable;
+
+rollback;
+select * from testTable;
+
+update testTable set income = 212.1 where id = 21;
+select * from testTable;
+
+-- 对照*.script，写入update
+commit;
+select * from testTable;
+
+-- 关闭server
+
+-- 重启，数据恢复
+use testDatabase;
+select * from testTable;
+
+-- 生成data文件，*.script被删除
+shutdown;
+
+-- 重启，数据恢复 (client 1)
+use testDatabase;
+select * from testTable;
+
+-- 启动另一个client (client 2)，数据一致
+use testDatabase;
+select * from testTable;
+
+-- client 1
+insert into testTable (id, name, income) values (43, "name43", 43.43);
+select * from testTable;
+
+-- client 2，数据也增加
+select * from testTable;
+-- 启动事务
+start transaction;
+select * from testTable;
+
+-- client 1
+-- 被阻塞报错
+update testTable set name = "newname43" where id = 43;
+-- 未被阻塞
+select * from testTable;
+-- 被阻塞但不报错
+insert into testTable (id, name, income) values (54, "name54", 54.54);
+
+-- client 2，client 1被执行
+commit;
+
+-- client 1，数据增加
+select * from testTable;
 ```
