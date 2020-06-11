@@ -86,8 +86,8 @@ public class Client {
                         getTime();
                         break;
                     case Global.QUIT:
-                        DisconnetReq req = new DisconnetReq(resp.sessionId);
-                        DisconnetResp resp1 = client.disconnect(req);
+                        DisconnectReq req = new DisconnectReq(resp.sessionId);
+                        DisconnectResp resp1 = client.disconnect(req);
                         println(ANSI_RED + resp1.status.msg + ANSI_RESET);
                         open = false;
                         break;

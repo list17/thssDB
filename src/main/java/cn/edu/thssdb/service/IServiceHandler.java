@@ -60,9 +60,9 @@ public class IServiceHandler implements IService.Iface {
     }
 
     @Override
-    public DisconnetResp disconnect(DisconnetReq req) {
+    public DisconnectResp disconnect(DisconnectReq req) {
         long sessionId = req.sessionId;
-        DisconnetResp resp = new DisconnetResp();
+        DisconnectResp resp = new DisconnectResp();
         resp.status = this.manager.getConnection(sessionId).status;
         String errorMessage = "Exit successfully";
         try {
