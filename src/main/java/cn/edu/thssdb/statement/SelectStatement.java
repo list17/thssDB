@@ -2,14 +2,13 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
+import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.expression.Expression;
 import cn.edu.thssdb.expression.SourceTable;
 import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
-import cn.edu.thssdb.utils.TransactionManager;
-import cn.edu.thssdb.utils.ValueInstance;
-import cn.edu.thssdb.utils.WriteScript;
+import cn.edu.thssdb.utils.*;
 import javafx.util.Pair;
 
 import javax.management.Query;
@@ -43,6 +42,14 @@ public class SelectStatement implements Statement {
 
     @Override
     public QueryTable execute(Manager manager, Long sessionId, String command) {
+        UserManager um = UserManager.getInstance();
+        String cur_db_name = manager.getSessionCurrentDatabase(sessionId).getName();
+        String cur_user = um.getCurUsername(sessionId);
+
+        if (!um.checkReadable(cur_db_name, sessionId) && !cur_user.equals(Global.DEFAULT_USER)) {
+            throw new SQLHandleException("Current user has no read authority on database " + cur_db_name);
+        }
+
         Database database = manager.getSessionCurrentDatabase(sessionId);
         QueryTable resultTable;
 

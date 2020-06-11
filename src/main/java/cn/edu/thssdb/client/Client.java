@@ -33,8 +33,8 @@ public class Client {
     static final String PORT_ARGS = "p";
     static final String PORT_NAME = "port";
 
-    static final String USER_NAME = "user";
-    static final String USER_PASS = "pass";
+    static final String USER_NAME = "u";
+    static final String USER_PASS = "w";
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
@@ -64,19 +64,23 @@ public class Client {
         try {
             echoStarting();
             String host = commandLine.getOptionValue(HOST_ARGS, Global.DEFAULT_SERVER_HOST);
-//            String username = commandLine.getOptionValue(USER_NAME);
-//            String password = commandLine.getOptionValue(USER_PASS);
+            String username = commandLine.getOptionValue(USER_NAME, Global.DEFAULT_USER);
+            String password = commandLine.getOptionValue(USER_PASS, Global.DEFAULT_USER_PASSWORD);
             int port = Integer.parseInt(commandLine.getOptionValue(PORT_ARGS, String.valueOf(Global.DEFAULT_SERVER_PORT)));
             transport = new TSocket(host, port);
             transport.open();
             protocol = new TBinaryProtocol(transport);
             client = new IService.Client(protocol);
             boolean open = false;
-//            ConnectResp resp = client.connect(new ConnectReq(username, password));
-            ConnectResp resp = client.connect(new ConnectReq("username", "password"));
+//            ConnectResp resp = client.connect(new ConnectReq(args[0], args[1]));
+            ConnectResp resp = client.connect(new ConnectReq("asdf", "123456"));
             if (resp.status.code == Global.SUCCESS_CODE){
                 sessionId = resp.sessionId;
                 open = true;
+            }
+            if (resp.status.code == Global.FAILURE_CODE) {
+                println(ANSI_RED + resp.status.msg + ANSI_RESET);
+                return;
             }
             while (true) {
                 print(Global.CLI_PREFIX);

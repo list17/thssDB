@@ -1,8 +1,6 @@
 package cn.edu.thssdb.service;
 
-import cn.edu.thssdb.exception.DisconnectionException;
-import cn.edu.thssdb.exception.ExpressionHandleException;
-import cn.edu.thssdb.exception.SQLHandleException;
+import cn.edu.thssdb.exception.*;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.rpc.thrift.*;
 import cn.edu.thssdb.schema.Manager;
@@ -11,9 +9,9 @@ import cn.edu.thssdb.parser.SQLParser;
 import cn.edu.thssdb.parser.SQLLexer;
 import cn.edu.thssdb.parser.Visitor;
 import cn.edu.thssdb.statement.Statement;
-import cn.edu.thssdb.exception.SQLThrowErrorListener;
 import cn.edu.thssdb.utils.Transaction;
 import cn.edu.thssdb.utils.TransactionManager;
+import cn.edu.thssdb.utils.UserManager;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -44,18 +42,31 @@ public class IServiceHandler implements IService.Iface {
         String username = req.username;
         String password = req.password;
 
+        UserManager um = UserManager.getInstance();
+
+        if (!um.login(username, password)) {
+            ConnectResp resp = new ConnectResp();
+            Status status = new Status();
+            status.msg = "Wrong username or password.";
+            status.code = Global.FAILURE_CODE;
+            status.currentDatabase = "";
+            resp.status = status;
+            return resp;
+        }
+
         long sessionId = random.nextLong();
         TransactionManager tm = TransactionManager.getInstance();
         tm.initFlag(sessionId);
         ConnectResp resp = new ConnectResp();
         Status status = new Status();
-        status.msg = "";
+        status.msg = "Current user: " + username;
         status.code = Global.SUCCESS_CODE;
         status.currentDatabase = "";
         resp.sessionId = sessionId;
         resp.status = status;
         this.manager.addConnection(sessionId, resp);
-        System.out.println(sessionId+"已连接");
+        um.addSessionUser(sessionId, username);
+        System.out.println(sessionId+" 已连接, user: " + username);
         return resp;
     }
 
@@ -71,7 +82,7 @@ public class IServiceHandler implements IService.Iface {
             errorMessage = e.getMessage();
         }
         resp.status.msg = errorMessage;
-        System.out.println(sessionId+"已断开");
+        System.out.println(sessionId+" 已断开");
         return resp;
     }
 

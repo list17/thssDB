@@ -13,6 +13,8 @@ import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.statement.Statement;
 import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
+import cn.edu.thssdb.utils.User;
+import cn.edu.thssdb.utils.UserManager;
 import cn.edu.thssdb.utils.ValueInstance;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -46,6 +48,10 @@ public class Manager {
             throw new SQLHandleException("Cannot find root");
         this.loadDatabase();
         this.loadFromScript();
+
+        UserManager um = UserManager.getInstance();
+        um.deserialize();
+        um.initUserTable();
     }
 
     public void createDatabaseIfNotExists(String databaseName){
@@ -237,5 +243,12 @@ public class Manager {
 
     public String getRoot() {
         return this.root;
+    }
+
+    public boolean checkDatabaseExist(String db_name) {
+        if (this.databases.get(db_name) != null) {
+            return true;
+        }
+        return false;
     }
 }

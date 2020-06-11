@@ -168,9 +168,9 @@ public class TransactionManager {
 
         int num_s = txList.getKey().size();
         int num_x = txList.getValue().size();
-        System.out.println("check lock" + table);
-        System.out.println("s " + num_s);
-        System.out.println("x " + num_x);
+//        System.out.println("check lock" + table);
+//        System.out.println("s " + num_s);
+//        System.out.println("x " + num_x);
 
         if (num_x == 1) {
             return LOCK_X;
@@ -261,7 +261,7 @@ public class TransactionManager {
             this.tableLocks.put(table, tmpPair);
         }
 
-        System.out.println("SLSS type" + lockType);
+//        System.out.println("SLSS type" + lockType);
 
         if (lockType == 0) {
             txList.getKey().add(tx_session);
@@ -315,9 +315,9 @@ public class TransactionManager {
 
         for (HashMap.Entry<String, Pair<ArrayList<Long>, ArrayList<Long>>> entry : tableLocks.entrySet()) {
             Pair<ArrayList<Long>, ArrayList<Long>> tmpPair = entry.getValue();
-            System.out.println(entry.getKey());
-            System.out.println("s " + tmpPair.getKey().remove(tx_session));
-            System.out.println("x " + tmpPair.getValue().remove(tx_session));
+//            System.out.println(entry.getKey());
+//            System.out.println("s " + tmpPair.getKey().remove(tx_session));
+//            System.out.println("x " + tmpPair.getValue().remove(tx_session));
         }
     }
 

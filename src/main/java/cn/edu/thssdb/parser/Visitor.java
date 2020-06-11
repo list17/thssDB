@@ -110,16 +110,27 @@ public class Visitor extends SQLBaseVisitor<Object> {
     @Override
     public Object visitGrant_stmt(SQLParser.Grant_stmtContext ctx) {
         ArrayList<String> authLevels = new ArrayList<>();
-        for (SQLParser.Auth_levelContext auth_levelContext : ctx.auth_level()) {
-            authLevels.add((String) visit(auth_levelContext));
+        for (int i = 0; i < ctx.auth_level().size(); i++) {
+            authLevels.add(ctx.auth_level().get(i).getText());
         }
-        return super.visitGrant_stmt(ctx);
+
+        String username = (String) visit(ctx.user_name());
+        String database_name = (String) visit(ctx.database_name());
+
+        return new GrantStatement(authLevels, username, database_name);
     }
 
     @Override
     public Object visitRevoke_stmt(SQLParser.Revoke_stmtContext ctx) {
-        // todo
-        return super.visitRevoke_stmt(ctx);
+        ArrayList<String> authLevels = new ArrayList<>();
+        for (int i = 0; i < ctx.auth_level().size(); i++) {
+            authLevels.add(ctx.auth_level().get(i).getText());
+        }
+
+        String username = (String) visit(ctx.user_name());
+        String database_name = (String) visit(ctx.database_name());
+
+        return new RevokeStatement(authLevels, username, database_name);
     }
 
     @Override

@@ -2,15 +2,14 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
+import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.expression.ConstantVariable;
 import cn.edu.thssdb.expression.Expression;
 import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
-import cn.edu.thssdb.utils.TransactionManager;
-import cn.edu.thssdb.utils.ValueInstance;
-import cn.edu.thssdb.utils.WriteScript;
+import cn.edu.thssdb.utils.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +29,19 @@ public class UpdateStatement implements Statement{
 
     @Override
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
+        UserManager um = UserManager.getInstance();
+        ValueInstance vi = ValueInstance.getInstance();
+        String cur_db_name = manager.getSessionCurrentDatabase(sessionId).getName();
+        String cur_user = um.getCurUsername(sessionId);
+
+        if (!vi.getIsInit() && !um.checkWritable(cur_db_name, sessionId) && !cur_user.equals(Global.DEFAULT_USER)) {
+            throw new SQLHandleException("Current user has no write authority on database " + cur_db_name);
+        }
+
         Database database = manager.getSessionCurrentDatabase(sessionId);
         Table baseTable = database.getTable(this.name);
         // 事务管理
         TransactionManager tm = TransactionManager.getInstance();
-        ValueInstance vi = ValueInstance.getInstance();
 
         if (!vi.getIsInit()) { // 非初始化
             if (tm.getFlag(sessionId)) { // 事务态
