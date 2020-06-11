@@ -64,10 +64,10 @@ show_meta_stmt :
     K_SHOW K_TABLE table_name ;
 
 grant_stmt :
-    K_GRANT auth_level ( ',' auth_level )* K_ON table_name K_TO user_name ;
+    K_GRANT auth_level ( ',' auth_level )* K_ON database_name K_TO user_name ;
 
 revoke_stmt :
-    K_REVOKE auth_level ( ',' auth_level )* K_ON table_name K_FROM user_name ;
+    K_REVOKE auth_level ( ',' auth_level )* K_ON database_name K_FROM user_name ;
 
 use_db_stmt :
     K_USE database_name;
