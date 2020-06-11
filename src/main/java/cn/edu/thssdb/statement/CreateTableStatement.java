@@ -48,17 +48,24 @@ public class CreateTableStatement implements Statement{
 
         try {
             database.createTable(this.name, columns);
+
+            if (!vi.getIsInit()) {
+                if (tm.getFlag(sessionId)) { // 事务态
+                    tm.getTX().addScript(command);
+                } else { // 非事务态
+                    WriteScript ws = new WriteScript();
+                    ws.output(manager, sessionId, command);
+                }
+            }
         } catch (FileWriteException e) {
 
         } finally {
             if (!vi.getIsInit()) {
                 if (tm.getFlag(sessionId)) { // 事务态
-                    tm.getTX().addScript(command);
+
                 } else { // 非事务态
                     tm.releaseTXLock(sessionId);
                     tm.destroyTransaction(sessionId);
-                    WriteScript ws = new WriteScript();
-                    ws.output(manager, sessionId, command);
                 }
             }
         }
