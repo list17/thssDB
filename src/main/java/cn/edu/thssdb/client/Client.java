@@ -64,15 +64,16 @@ public class Client {
         try {
             echoStarting();
             String host = commandLine.getOptionValue(HOST_ARGS, Global.DEFAULT_SERVER_HOST);
-            String username = commandLine.getOptionValue(USER_NAME);
-            String password = commandLine.getOptionValue(USER_PASS);
+//            String username = commandLine.getOptionValue(USER_NAME);
+//            String password = commandLine.getOptionValue(USER_PASS);
             int port = Integer.parseInt(commandLine.getOptionValue(PORT_ARGS, String.valueOf(Global.DEFAULT_SERVER_PORT)));
             transport = new TSocket(host, port);
             transport.open();
             protocol = new TBinaryProtocol(transport);
             client = new IService.Client(protocol);
             boolean open = false;
-            ConnectResp resp = client.connect(new ConnectReq(username, password));
+//            ConnectResp resp = client.connect(new ConnectReq(username, password));
+            ConnectResp resp = client.connect(new ConnectReq("username", "password"));
             if (resp.status.code == Global.SUCCESS_CODE){
                 sessionId = resp.sessionId;
                 open = true;
