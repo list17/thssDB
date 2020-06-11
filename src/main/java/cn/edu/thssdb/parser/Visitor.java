@@ -69,14 +69,15 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitCreate_user_stmt(SQLParser.Create_user_stmtContext ctx) {
-        // todo
-        return super.visitCreate_user_stmt(ctx);
+        String username = (String) visit(ctx.user_name());
+        String password = (String) visit(ctx.password());
+        return new CreateUserStatement(username, password);
     }
 
     @Override
     public Object visitDrop_user_stmt(SQLParser.Drop_user_stmtContext ctx) {
-        // todo
-        return super.visitDrop_user_stmt(ctx);
+        String username = (String) visit(ctx.user_name());
+        return new DropUserStatement(username);
     }
 
     @Override
@@ -108,7 +109,10 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitGrant_stmt(SQLParser.Grant_stmtContext ctx) {
-        // todo
+        ArrayList<String> authLevels = new ArrayList<>();
+        for (SQLParser.Auth_levelContext auth_levelContext : ctx.auth_level()) {
+            authLevels.add((String) visit(auth_levelContext));
+        }
         return super.visitGrant_stmt(ctx);
     }
 

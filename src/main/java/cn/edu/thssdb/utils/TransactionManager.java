@@ -341,7 +341,10 @@ public class TransactionManager {
 
     public boolean getFlag(Long tx_session) {
         this.cur_tx_session = tx_session;
-        return this.Flags.get(tx_session);
+        if (this.Flags.get(tx_session) == null) {
+            this.initFlag(tx_session);
+        }
+        return this.Flags.get(tx_session) == null;
     }
 
     public void setSession(Long tx_session) {
