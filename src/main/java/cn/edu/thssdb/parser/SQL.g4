@@ -147,7 +147,7 @@ table_query :
     table_full_name ( K_JOIN table_full_name K_ON multiple_condition)*;
 
 auth_level :
-    K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_DROP ;
+    K_READ | K_WRITE ;
 
 column_full_name:
     ( table_name '.' )? column_name ;
@@ -267,6 +267,8 @@ K_TRANSACTION: T R A N S A C T I O N;
 K_COMMIT: C O M M I T;
 K_ROLLBACK: R O L L B A C K;
 K_SHUTDOWN: S H U T D O W N;
+K_READ: R E A D;
+K_WRITE: W R I T E;
 
 IDENTIFIER :
     [a-zA-Z_] [a-zA-Z_0-9]* ;

@@ -41,11 +41,15 @@ public class IServiceHandler implements IService.Iface {
     @Override
     public ConnectResp connect(ConnectReq req) throws TException {
         // TODO
+        String username = req.username;
+        String password = req.password;
+
         long sessionId = random.nextLong();
         TransactionManager tm = TransactionManager.getInstance();
         tm.initFlag(sessionId);
         ConnectResp resp = new ConnectResp();
         Status status = new Status();
+        status.msg = "";
         status.code = Global.SUCCESS_CODE;
         status.currentDatabase = "";
         resp.sessionId = sessionId;
