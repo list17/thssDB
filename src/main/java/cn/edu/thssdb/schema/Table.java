@@ -265,6 +265,7 @@ public class Table implements Iterable<Row> {
                 objectOutputStream.writeObject(rowIterator.next());
             }
             objectOutputStream.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLHandleException("Exception: Save table " + this.tableName + " failed.");
@@ -273,6 +274,7 @@ public class Table implements Iterable<Row> {
 
     public synchronized void deserialize(){
         // TODO
+
         try {
             this.index = new BPlusTree<MultiEntry, Row>();
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(this.root));
@@ -297,6 +299,7 @@ public class Table implements Iterable<Row> {
                 this.index.put(loadRow.getMultiEntry(primaryIndices), loadRow);
 
             }
+            objectInputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
             throw new SQLHandleException("Exception: Load table " + this.tableName + " failed.");

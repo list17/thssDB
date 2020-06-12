@@ -53,8 +53,8 @@ public class TestClient {
     }
 
     private static long connect() throws TException {
-        String username = "username";
-        String password = "password";
+        String username = "root";
+        String password = "123456";
         ConnectReq req = new ConnectReq(username, password);
         ConnectResp resp = client.connect(req);
         if (resp.getStatus().code == Global.SUCCESS_CODE) {
@@ -82,7 +82,7 @@ public class TestClient {
     }
 
     private static void createTable(long sessionId) throws TException {
-        String statement = "create table person (name String(256), ID Int not null, primary key(ID));";
+        String statement = "create table person (name varchar(256), ID Int not null, primary key(ID));";
         ExecuteStatementReq req = new ExecuteStatementReq(sessionId, statement);
         ExecuteStatementResp resp = client.executeStatement(req);
         if (resp.getStatus().code == Global.SUCCESS_CODE) {
