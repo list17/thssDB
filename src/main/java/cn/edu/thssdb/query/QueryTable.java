@@ -2,13 +2,12 @@ package cn.edu.thssdb.query;
 
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.schema.Column;
+import cn.edu.thssdb.schema.Entry;
 import cn.edu.thssdb.schema.Row;
+import cn.edu.thssdb.type.ColumnType;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 public class QueryTable {
 
@@ -44,7 +43,7 @@ public class QueryTable {
 
     public ArrayList<Column> getCopiedColumns() {
         ArrayList<Column> copy = new ArrayList<>();
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             copy.add(col.getCopiedColumn(true));
         }
         // 此处不加QueryTable的前缀.
@@ -54,6 +53,7 @@ public class QueryTable {
     /**
      * 将QueryTable改为别名.
      * 注意不可以对合成的QueryTable(如Join操作或者Cartesian操作后得到的表)设置别名.
+     *
      * @param alias
      */
     public void setAlias(String alias) {
@@ -66,7 +66,7 @@ public class QueryTable {
      */
     public void updatePrefix() {
         //设置前缀
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             col.setPrefix(this.queryTableName);
         }
         //清空Hash表, 重新建立映射
@@ -82,7 +82,7 @@ public class QueryTable {
      */
     public void clearPrefix() {
         //设置前缀为null
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             col.setPrefix(null);
         }
         //清空Hash表, 重新建立映射
@@ -95,26 +95,46 @@ public class QueryTable {
 
     public void display() {
         String header = "";
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             header += col.getName() + " ";
         }
         System.out.println(header);
 
-        for (Row row: this.rows) {
+        for (Row row : this.rows) {
             System.out.println(row.toString());
         }
     }
 
-    public String toString(){
+    public String toString() {
         String result = "";
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             result += col.getName() + " ";
         }
-        for (Row row: this.rows) {
+        for (Row row : this.rows) {
             result += '\n';
             result += row.toString();
         }
         return result;
+    }
+
+    public ArrayList<String> getColumns() {
+        ArrayList<String> columns = new ArrayList<>();
+        for (Column col : this.columns) {
+            columns.add(col.getName());
+        }
+        return columns;
+    }
+
+    public ArrayList<List<String>> getRows() {
+        ArrayList<List<String>> rows = new ArrayList<>();
+        for (Row row : this.rows) {
+            ArrayList<String> rowArray = new ArrayList<>();
+            for (Entry entry : row.getEntries()) {
+                rowArray.add(entry.toString());
+            }
+            rows.add(rowArray);
+        }
+        return rows;
     }
 
     public boolean hasNext() {
