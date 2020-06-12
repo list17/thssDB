@@ -170,6 +170,7 @@ public class UserManager {
                 this.userMap.put(tmpUser.getUsername(), tmpUser);
             }
 
+            objectInputStream.close();
         } catch (Exception e) {
 //            e.printStackTrace();
 //            throw new SQLHandleException("Exception: Load user info failed.");

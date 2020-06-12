@@ -73,7 +73,7 @@ public class Client {
             client = new IService.Client(protocol);
             boolean open = false;
 //            ConnectResp resp = client.connect(new ConnectReq(args[0], args[1]));
-            ConnectResp resp = client.connect(new ConnectReq("asdf", "123456"));
+            ConnectResp resp = client.connect(new ConnectReq("roo", "123456"));
             if (resp.status.code == Global.SUCCESS_CODE){
                 sessionId = resp.sessionId;
                 open = true;
