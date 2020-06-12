@@ -1,6 +1,9 @@
 package cn.edu.thssdb.client;
 
 import cn.edu.thssdb.rpc.thrift.*;
+import cn.edu.thssdb.schema.Column;
+import cn.edu.thssdb.schema.Entry;
+import cn.edu.thssdb.schema.Row;
 import cn.edu.thssdb.utils.Global;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -18,7 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.StringJoiner;
 
 public class Client {
 
@@ -73,8 +79,10 @@ public class Client {
             client = new IService.Client(protocol);
             boolean open = false;
 //            ConnectResp resp = client.connect(new ConnectReq(args[0], args[1]));
-            ConnectResp resp = client.connect(new ConnectReq("roo", "123456"));
-            if (resp.status.code == Global.SUCCESS_CODE){
+
+            ConnectResp resp = client.connect(new ConnectReq("root", "123456"));
+            if (resp.status.code == Global.SUCCESS_CODE) {
+                
                 sessionId = resp.sessionId;
                 open = true;
             }
@@ -101,12 +109,14 @@ public class Client {
                         executeStatementReq.statement = msg;
                         executeStatementReq.sessionId = resp.sessionId;
                         ExecuteStatementResp executeStatementResp = client.executeStatement(executeStatementReq);
-                        if(executeStatementResp.status.msg.equals("success")){
+                        if (executeStatementResp.status.msg.equals("success")) {
                             println(ANSI_GREEN + executeStatementResp.status.msg + ANSI_RESET);
                         } else {
                             println(ANSI_RED + executeStatementResp.status.msg + ANSI_RESET);
                         }
-                        println(executeStatementResp.status.result);
+//                        println(executeStatementResp.status.result);
+                        if (executeStatementResp.rowList != null && executeStatementResp.columnsList != null)
+                            println(resultToString(executeStatementResp.columnsList, executeStatementResp.rowList));
                         break;
                 }
                 long endTime = System.currentTimeMillis();
@@ -194,5 +204,27 @@ public class Client {
 
     static void println(String msg) {
         SCREEN_PRINTER.println(msg);
+    }
+
+    static String resultToString(List<String> columns, List<List<String>> rows) {
+        String result = "";
+        for (String col : columns) {
+            result += col + " ";
+        }
+        for (List<String> row : rows) {
+            result += '\n';
+            result += rowToString(row);
+        }
+        return result;
+    }
+
+    static String rowToString(List<String> row) {
+        if (row.size() == 0)
+            return "EMPTY";
+        StringJoiner sj = new StringJoiner(", ");
+        for (String e : row)
+            if (e != null)
+                sj.add(e);
+        return sj.toString();
     }
 }

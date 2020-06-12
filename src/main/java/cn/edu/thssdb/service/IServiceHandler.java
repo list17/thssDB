@@ -66,7 +66,7 @@ public class IServiceHandler implements IService.Iface {
         resp.status = status;
         this.manager.addConnection(sessionId, resp);
         um.addSessionUser(sessionId, username);
-        System.out.println(sessionId+" 已连接, user: " + username);
+        System.out.println(sessionId + " 已连接, user: " + username);
         return resp;
     }
 
@@ -78,16 +78,16 @@ public class IServiceHandler implements IService.Iface {
         String errorMessage = "Exit successfully";
         try {
             manager.removeConnection(sessionId);
-        } catch (DisconnectionException e){
+        } catch (DisconnectionException e) {
             errorMessage = e.getMessage();
         }
         resp.status.msg = errorMessage;
-        System.out.println(sessionId+" 已断开");
+        System.out.println(sessionId + " 已断开");
         return resp;
     }
 
     @Override
-    public ExecuteStatementResp executeStatement(ExecuteStatementReq req) throws TException{
+    public ExecuteStatementResp executeStatement(ExecuteStatementReq req) throws TException {
         String command = req.statement;
         long sessionId = req.sessionId;
 
@@ -95,7 +95,7 @@ public class IServiceHandler implements IService.Iface {
         // 解析命令
         String errorMessage = "success";
         QueryTable result = null;
-        try{
+        try {
             SQLThrowErrorListener listener = new SQLThrowErrorListener();
             SQLLexer lexer = new SQLLexer(CharStreams.fromString(command));
             lexer.removeErrorListeners();
@@ -110,22 +110,24 @@ public class IServiceHandler implements IService.Iface {
             ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
             // 执行语句
             int i = 0;
-            for (Statement statement: statements){
-               result = statement.execute(this.manager, sessionId, commands[i]);
-               i++;
+            for (Statement statement : statements) {
+                result = statement.execute(this.manager, sessionId, commands[i]);
+                i++;
             }
         } catch (SQLHandleException e) {
             errorMessage = e.getMessage();
         } catch (ExpressionHandleException e) {
             errorMessage = e.getMessage();
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             errorMessage = "Internal error";
         }
         ExecuteStatementResp executeStatementResp = new ExecuteStatementResp();
         executeStatementResp.status = this.manager.getConnection(sessionId).status;
         executeStatementResp.status.msg = errorMessage;
-        if(result!=null && req.toString()!=null){
+        if (result != null && req.toString() != null) {
+            executeStatementResp.columnsList = result.getColumns();
+            executeStatementResp.rowList = result.getRows();
             executeStatementResp.status.result = result.toString();
             result = null;
         } else {
