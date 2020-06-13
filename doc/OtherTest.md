@@ -116,3 +116,30 @@ create table school (sid int primary key, schoolname varchar(25) primary key);
 use roodb
 select * from school
 ```
+
+# select支持多种语法
+# 单表情况
+select dept_name from department; # 显示所有院系的名字
+select dept_name, building, budget from department; # 显示department的所有列
+select * from department; # 可以使用*号显示所有列
+# where支持多个子句
+select * from department where building = 'Palmer'; # 单个条件 
+select * from department where building = 'Palmer' && budget >= 500000; # 多个条件
+select * from department where building = 'Palmer' || building = 'Candlestick';
+select * from department where building = 'Palmer' || building = 'Candlestick' && budget >= 500000;
+# 多表情况
+# 两个表的join
+# 选择的列前面可以用表名当前缀
+select student.name, department.dept_name, department.building from student join department on student.dept_name = department.dept_name;
+# 也可以不用表名当前缀.
+select name, department.dept_name, building from student join department on student.dept_name = department.dept_name;
+# 同时可以使用表名.*来选择某个表的所有列
+select student.*, building from student join department on student.dept_name = department.dept_name;
+
+# 同时还支持超过2个表的join(查看所有instructor教授的课程, 地点, 以及属于哪个院系)
+select instructor.name, department.dept_name, department.building, course.title from instructor join department on instructor.dept_name = department.dept_name join course on course.dept_name = department.dept_name;
+# 所有进阶特性(多表join, where多个子句, select的选择)
+select instructor.*, department.dept_name, building, title from instructor join department on instructor.dept_name = department.dept_name join course on course.dept_name = department.dept_name where dept_name = 'Statistics' || dept_name = 'Cybernetics';
+
+# 支持笛卡尔积
+select * from instructor, department;
