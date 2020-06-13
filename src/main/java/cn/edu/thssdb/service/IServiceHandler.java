@@ -128,12 +128,10 @@ public class IServiceHandler implements IService.Iface {
         if (result != null && req.toString() != null) {
             executeStatementResp.columnsList = result.getColumns();
             executeStatementResp.rowList = result.getRows();
-            executeStatementResp.status.result = result.toString();
-            result = null;
         } else {
-            executeStatementResp.status.result = "";
+            executeStatementResp.columnsList = null;
+            executeStatementResp.rowList = null;
         }
-//        executeStatementResp.rowList = result.rows;
         return executeStatementResp;
     }
 }

@@ -42,7 +42,7 @@ public class InsertStatement implements Statement {
         for (ArrayList<ConstantVariable> row : rows) {
             if (row.size() > columnPos.size()) {
                 throw new SQLHandleException("The number of values is more than the columns");
-            }
+               }
             if (columns.size() > columnPos.size()) {
                 throw new SQLHandleException("The number of values is more than the table columns");
             }
@@ -82,10 +82,10 @@ public class InsertStatement implements Statement {
                     for (int i = 0; i < columnPos.size(); i++) {
                         entries[i] = new Entry(null);
                     }
-                    for (Map.Entry<String, Integer> entry : columnPos.entrySet()) {
-                        int index = columns.indexOf(entry.getKey());
+                    for(String column : columns){
+                        int index = columnPos.get(column);
                         if (index != -1) {
-                            entries[index] = new Entry(row.get(index).evaluate());
+                            entries[index] = new Entry(row.get(columns.indexOf(column)).evaluate());
                         }
                     }
                 }

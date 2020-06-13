@@ -297,27 +297,27 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitTypeInt(SQLParser.TypeIntContext ctx) {
-        return new ColumnTypeStatement(ctx.getText());
+        return new ColumnTypeStatement(ctx.getText().toUpperCase());
     }
 
     @Override
     public Object visitTypeLong(SQLParser.TypeLongContext ctx) {
-        return new ColumnTypeStatement(ctx.getText());
+        return new ColumnTypeStatement(ctx.getText().toUpperCase());
     }
 
     @Override
     public Object visitTypeFloat(SQLParser.TypeFloatContext ctx) {
-        return new ColumnTypeStatement(ctx.getText());
+        return new ColumnTypeStatement(ctx.getText().toUpperCase());
     }
 
     @Override
     public Object visitTypeDouble(SQLParser.TypeDoubleContext ctx) {
-        return new ColumnTypeStatement(ctx.getText());
+        return new ColumnTypeStatement(ctx.getText().toUpperCase());
     }
 
     @Override
     public Object visitTypeString(SQLParser.TypeStringContext ctx) {
-        return new ColumnTypeStatement(ctx.T_STRING().getText(), (ConstantVariable) visit(ctx.literal_value()));
+        return new ColumnTypeStatement(ctx.T_STRING().getText().toUpperCase(), (ConstantVariable) visit(ctx.literal_value()));
     }
 
 
@@ -356,7 +356,7 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitStringConstant(SQLParser.StringConstantContext ctx) {
-        return new ConstantVariable(ctx.getText());
+        return new ConstantVariable(ctx.getText().substring(1, ctx.getText().length()-1));
     }
 
     @Override
@@ -448,7 +448,7 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitDatabase_name(SQLParser.Database_nameContext ctx) {
-        return ctx.getText();
+        return ctx.getText().toUpperCase();
     }
 
     @Override
@@ -461,12 +461,12 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitTable_alias_name(SQLParser.Table_alias_nameContext ctx) {
-        return ctx.getText();
+        return ctx.getText().toUpperCase();
     }
 
     @Override
     public Object visitTable_name(SQLParser.Table_nameContext ctx) {
-        return ctx.getText();
+        return ctx.getText().toUpperCase();
     }
 
     @Override
@@ -476,12 +476,12 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitColumn_name(SQLParser.Column_nameContext ctx) {
-        return ctx.getText();
+        return ctx.getText().toUpperCase();
     }
 
     @Override
     public Object visitView_name(SQLParser.View_nameContext ctx) {
-        return ctx.getText();
+        return ctx.getText().toUpperCase();
     }
 
     @Override

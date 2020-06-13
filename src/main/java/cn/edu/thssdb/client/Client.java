@@ -39,8 +39,10 @@ public class Client {
     static final String PORT_ARGS = "p";
     static final String PORT_NAME = "port";
 
-    static final String USER_NAME = "u";
-    static final String USER_PASS = "w";
+    static final String USER_ARGS = "u";
+    static final String USER_NAME = "user";
+    static final String PASS_ARGS = "w";
+    static final String PASS_NAME = "pass";
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
@@ -70,17 +72,15 @@ public class Client {
         try {
             echoStarting();
             String host = commandLine.getOptionValue(HOST_ARGS, Global.DEFAULT_SERVER_HOST);
-            String username = commandLine.getOptionValue(USER_NAME, Global.DEFAULT_USER);
-            String password = commandLine.getOptionValue(USER_PASS, Global.DEFAULT_USER_PASSWORD);
             int port = Integer.parseInt(commandLine.getOptionValue(PORT_ARGS, String.valueOf(Global.DEFAULT_SERVER_PORT)));
+            String username = commandLine.getOptionValue(USER_ARGS, Global.DEFAULT_USER);
+            String password = commandLine.getOptionValue(PASS_ARGS, Global.DEFAULT_USER_PASSWORD);
             transport = new TSocket(host, port);
             transport.open();
             protocol = new TBinaryProtocol(transport);
             client = new IService.Client(protocol);
             boolean open = false;
-//            ConnectResp resp = client.connect(new ConnectReq(args[0], args[1]));
-
-            ConnectResp resp = client.connect(new ConnectReq("root", "123456"));
+            ConnectResp resp = client.connect(new ConnectReq(username, password));
             if (resp.status.code == Global.SUCCESS_CODE) {
                 
                 sessionId = resp.sessionId;
@@ -114,7 +114,6 @@ public class Client {
                         } else {
                             println(ANSI_RED + executeStatementResp.status.msg + ANSI_RESET);
                         }
-//                        println(executeStatementResp.status.result);
                         if (executeStatementResp.rowList != null && executeStatementResp.columnsList != null)
                             println(resultToString(executeStatementResp.columnsList, executeStatementResp.rowList));
                         break;
@@ -162,6 +161,20 @@ public class Client {
         options.addOption(Option.builder(PORT_ARGS)
                 .argName(PORT_NAME)
                 .desc("Port (optional, default 6667)")
+                .hasArg(false)
+                .required(false)
+                .build()
+        );
+        options.addOption(Option.builder(USER_ARGS)
+                .argName(USER_NAME)
+                .desc("User name(optional, default root)")
+                .hasArg(false)
+                .required(false)
+                .build()
+        );
+        options.addOption(Option.builder(PASS_ARGS)
+                .argName(PASS_NAME)
+                .desc("Password(optional, default 123456)")
                 .hasArg(false)
                 .required(false)
                 .build()
