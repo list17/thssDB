@@ -168,15 +168,15 @@ public class Client {
         options.addOption(Option.builder(USER_ARGS)
                 .argName(USER_NAME)
                 .desc("User name(optional, default root)")
-                .hasArg(false)
-                .required(false)
+                .hasArg(true)
+                .required(true)
                 .build()
         );
         options.addOption(Option.builder(PASS_ARGS)
                 .argName(PASS_NAME)
                 .desc("Password(optional, default 123456)")
-                .hasArg(false)
-                .required(false)
+                .hasArg(true)
+                .required(true)
                 .build()
         );
         return options;
