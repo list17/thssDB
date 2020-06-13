@@ -122,3 +122,6 @@ select * from testTable;
 
 use testDatabase
 start transaction
+select * from school
+insert into school values(645, 'Fudan University');
+insert into school values(64, 'Fudan University');

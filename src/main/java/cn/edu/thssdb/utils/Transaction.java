@@ -129,4 +129,7 @@ public class Transaction {
 
     }
 
+    public void breakLoop() {
+        this.isBlocked = false;
+    }
 }
