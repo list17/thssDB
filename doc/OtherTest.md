@@ -1,6 +1,6 @@
 # 这个文件是那个其他测试语句pdf稍微修改了一下列名
 insert into student(id, dept_name, tot_cred) values ('1', 'Math', 50); # 提示name不能为空
-insert into student values('66008', 'Szczerban', 'Languages', 25); # 提示s_id为66008的记录已存在
+insert into student values('66008', 'Szczerban', 'Languages', 25); # 提示id为66008的记录已存在
 
 select name from student where id = '66008';
 delete from student where id = '66008';
@@ -17,14 +17,42 @@ select s_id from advisor; # 提示advisor表不存在
 start transaction;
 insert into department values('thss', 'tsinghua', 1000000.00);
 # 第二个客户端执行
-select building from department where dept_name = 'thss'; # 客户端卡住，第一个客户端commit后输出结果
+select building from department where dept_name = 'thss'; # 客户端报错 第一个客户端commit后输出结果
 commit;
 # 第二个客户端执行
 select building from department where dept_name = 'thss'; # 返回结果为tsinghua
 
-# 之后你们的额外功能
+# 额外功能
+
+# select支持多种语法
+# 单表情况
+select dept_name from department; # 显示所有院系的名字
+select dept_name, building, budget from department; # 显示department的所有列
+select * from department; # 可以使用*号显示所有列
+# where支持多个子句
+select * from department where building = 'Palmer'; # 单个条件 
+select * from department where building = 'Palmer' && budget >= 500000; # 多个条件
+select * from department where building = 'Palmer' || building = 'Candlestick';
+select * from department where building = 'Palmer' || building = 'Candlestick' && budget >= 500000;
+# 多表情况
+# 两个表的join
+# 选择的列前面可以用表名当前缀
+select student.name, department.dept_name, department.building from student join department on student.dept_name = department.dept_name;
+# 也可以不用表名当前缀.
+select name, department.dept_name, building from student join department on student.dept_name = department.dept_name;
+# 同时可以使用表名.*来选择某个表的所有列
+select student.*, building from student join department on student.dept_name = department.dept_name;
+
+# 同时还支持超过2个表的join(查看所有instructor教授的课程, 地点, 以及属于哪个院系)
+select instructor.name, department.dept_name, department.building, course.title from instructor join department on instructor.dept_name = department.dept_name join course on course.dept_name = department.dept_name;
+# 所有进阶特性(多表join, where多个子句, select的选择)
+select instructor.*, department.dept_name, building, title from instructor join department on instructor.dept_name = department.dept_name join course on course.dept_name = department.dept_name where dept_name = 'Statistics' || dept_name = 'Cybernetics';
+
+# 支持笛卡尔积
+select * from instructor, department;
+
 ## rollback，WAL机制，数据恢复
- ```sql
+
 create database testDatabase;
 use testDatabase;
 create table testTable (id int primary key, name varchar(25), income float, primary key (name));
@@ -64,10 +92,8 @@ select * from testTable;
 
 -- 生成data文件，*.script被删除
 shutdown;
-```
 
 ## 用户模块
-``` sql
 -- client 1, root登录, server输出用户名
 use testDatabase;
 create table testschool (sid int primary key, schoolname varchar(25) primary key);
@@ -75,6 +101,7 @@ create user roo identified by '123456';
 
 -- client 2, roo登录，server输出用户名
 use testDatabase;
+
 -- 报错，无读权限
 select * from testschool
 -- 报错，无写权限
@@ -115,31 +142,3 @@ create table school (sid int primary key, schoolname varchar(25) primary key);
 -- 正确密码登录roo, 正常执行
 use roodb
 select * from school
-```
-
-# select支持多种语法
-# 单表情况
-select dept_name from department; # 显示所有院系的名字
-select dept_name, building, budget from department; # 显示department的所有列
-select * from department; # 可以使用*号显示所有列
-# where支持多个子句
-select * from department where building = 'Palmer'; # 单个条件 
-select * from department where building = 'Palmer' && budget >= 500000; # 多个条件
-select * from department where building = 'Palmer' || building = 'Candlestick';
-select * from department where building = 'Palmer' || building = 'Candlestick' && budget >= 500000;
-# 多表情况
-# 两个表的join
-# 选择的列前面可以用表名当前缀
-select student.name, department.dept_name, department.building from student join department on student.dept_name = department.dept_name;
-# 也可以不用表名当前缀.
-select name, department.dept_name, building from student join department on student.dept_name = department.dept_name;
-# 同时可以使用表名.*来选择某个表的所有列
-select student.*, building from student join department on student.dept_name = department.dept_name;
-
-# 同时还支持超过2个表的join(查看所有instructor教授的课程, 地点, 以及属于哪个院系)
-select instructor.name, department.dept_name, department.building, course.title from instructor join department on instructor.dept_name = department.dept_name join course on course.dept_name = department.dept_name;
-# 所有进阶特性(多表join, where多个子句, select的选择)
-select instructor.*, department.dept_name, building, title from instructor join department on instructor.dept_name = department.dept_name join course on course.dept_name = department.dept_name where dept_name = 'Statistics' || dept_name = 'Cybernetics';
-
-# 支持笛卡尔积
-select * from instructor, department;
