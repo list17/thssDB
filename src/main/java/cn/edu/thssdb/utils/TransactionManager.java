@@ -81,7 +81,7 @@ public class TransactionManager {
 
     public boolean checkTransaction(Long tx_session) {
         this.cur_tx_session = tx_session;
-        return this.transactionMap.get(tx_session) == null ? false : true;
+        return this.transactionMap.get(tx_session) != null;
     }
 
     public void blockTX(Long tx_session, String table, int type) {
@@ -95,6 +95,9 @@ public class TransactionManager {
             Long tx_session = this.blockedTXs.get(i);
             this.cur_tx_session = tx_session;
             Transaction tx = this.transactionMap.get(tx_session);
+            if (tx == null) {
+                return;
+            }
             if (resetLock(tx_session, tx.getBlockTable(), tx.getBlockType())) {
                 tx.setBlock(false, null, NO_LOCK);
             }
@@ -196,14 +199,14 @@ public class TransactionManager {
 //        System.out.println(tx_session);
 //        System.out.println("type" + lockType);
 
-        if (lockType == 0) {
+        if (lockType == NO_LOCK) {
             txList.getKey().add(tx_session);
             return;
-        } else if (lockType == 1) {
+        } else if (lockType == LOCK_S) {
             if (!txList.getKey().contains(tx_session)) {
                 txList.getKey().add(tx_session);
-                return;
             }
+            return;
         } else {
             if (txList.getValue().contains(tx_session)) {
                 return;
@@ -227,10 +230,10 @@ public class TransactionManager {
             this.tableLocks.put(table, tmpPair);
         }
 
-        if (lockType == 0) {
+        if (lockType == NO_LOCK) {
             txList.getValue().add(tx_session);
             return;
-        } else if (lockType == 1) {
+        } else if (lockType == LOCK_S) {
             if (txList.getKey().contains(tx_session) && txList.getKey().size() == 1) {
                 txList.getKey().remove(tx_session);
                 txList.getValue().add(tx_session);
@@ -263,14 +266,14 @@ public class TransactionManager {
 
 //        System.out.println("SLSS type" + lockType);
 
-        if (lockType == 0) {
+        if (lockType == NO_LOCK) {
             txList.getKey().add(tx_session);
             return true;
-        } else if (lockType == 1) {
+        } else if (lockType == LOCK_S) {
             if (!txList.getKey().contains(tx_session)) {
                 txList.getKey().add(tx_session);
-                return true;
             }
+            return true;
         } else {
             if (txList.getValue().contains(tx_session)) {
                 return true;
@@ -293,10 +296,10 @@ public class TransactionManager {
             this.tableLocks.put(table, tmpPair);
         }
 
-        if (lockType == 0) {
+        if (lockType == NO_LOCK) {
             txList.getValue().add(tx_session);
             return true;
-        } else if (lockType == 1) {
+        } else if (lockType == LOCK_S) {
             if (txList.getKey().contains(tx_session) && txList.getKey().size() == 1) {
                 txList.getKey().remove(tx_session);
                 txList.getValue().add(tx_session);
@@ -315,6 +318,10 @@ public class TransactionManager {
 
         for (HashMap.Entry<String, Pair<ArrayList<Long>, ArrayList<Long>>> entry : tableLocks.entrySet()) {
             Pair<ArrayList<Long>, ArrayList<Long>> tmpPair = entry.getValue();
+
+            // 注意输出里的remove也会remove
+            tmpPair.getKey().remove(tx_session);
+            tmpPair.getValue().remove(tx_session);
 //            System.out.println(entry.getKey());
 //            System.out.println("s " + tmpPair.getKey().remove(tx_session));
 //            System.out.println("x " + tmpPair.getValue().remove(tx_session));
@@ -342,9 +349,10 @@ public class TransactionManager {
     public boolean getFlag(Long tx_session) {
         this.cur_tx_session = tx_session;
         if (this.Flags.get(tx_session) == null) {
+//            System.out.println("init flags");
             this.initFlag(tx_session);
         }
-        return this.Flags.get(tx_session) == null;
+        return this.Flags.get(tx_session);
     }
 
     public void setSession(Long tx_session) {

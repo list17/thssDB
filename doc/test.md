@@ -119,3 +119,6 @@ commit;
 -- client 1，数据增加
 select * from testTable;
 ```
+
+use testDatabase
+start transaction

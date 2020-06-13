@@ -70,7 +70,7 @@ public class SelectStatement implements Statement {
             } else { // 非事务态
                 for (int i = 0; i < allTableName.size(); i++) {
                     if (tm.setLockSSingle(sessionId, allTableName.get(i))) {
-                        System.out.println("set lock: " + allTableName.get(i));
+//                        System.out.println("set lockS: " + allTableName.get(i));
                     } else {
                         throw new SQLHandleException("Statement on this table is blocked now");
                     }
