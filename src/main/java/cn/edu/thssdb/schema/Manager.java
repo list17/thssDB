@@ -152,7 +152,7 @@ public class Manager {
         String[] list = new File(root).list();
         if (list != null) {
             for (String item : list)
-                databases.put(item, new Database(item, Paths.get(root, item).toString()));
+                databases.put(item.toUpperCase(), new Database(item.toUpperCase(), Paths.get(root, item.toUpperCase()).toString()));
         } else
             throw new RuntimeException("List databases failed");
     }

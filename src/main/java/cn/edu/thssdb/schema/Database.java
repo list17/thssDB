@@ -67,9 +67,9 @@ public class Database {
         if (list != null) {
             for (String item : list) {
                 if (!item.endsWith(".script") && ! item.endsWith(".log")){
-                    Table table = new Table(Paths.get(this.root, item).toString(), item);
+                    Table table = new Table(Paths.get(this.root, item.toUpperCase()).toString(), item.toUpperCase());
                     table.recover();
-                    this.tables.put(item, table);
+                    this.tables.put(item.toUpperCase(), table);
                 }
             }
         } else
