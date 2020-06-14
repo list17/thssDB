@@ -198,7 +198,7 @@ public class Client {
 
     static void showHelp() {
         // TODO
-        println("DO IT YOURSELF");
+        println("-u username \n-w password \n-h host \n-p port");
     }
 
     static void echoStarting() {

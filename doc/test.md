@@ -1,4 +1,3 @@
-```sql
 create database testDatabase;
 show databases;
 
@@ -24,10 +23,6 @@ insert into instructor values (4, 'd', 10003, 'Tsinghua University');
 insert into instructor values (5, 'e', 10004, 'Peking University');
 insert into instructor values (6, 'f', 10005, 'Fudan University');
 
-insert into student values (4); /展示多列主键的限制作用
-insert into student values (4, '213', 234, 3); / 数据过多
-insert into student values (1, 'lee'); /重复插入
-
 select * from school;
 select * from instructor;
 select * from student;
@@ -36,9 +31,7 @@ update student set school = 'Tsinghua University' where school <> 'Tsinghua Univ
 select * from student;
 
 select id, name, sid from student as a, school as b where a.school = b.schoolname && b.schoolname = 'Tsinghua University';
-
 select a.id, b.sid, c.salary from student as a join school as b on a.school = b.schoolname join instructor as c on c.school = b.schoolname where b.schoolname = 'Tsinghua University';
-/查看结果 结果学校全部变为清华
 
 delete from instructor where salary > 10003;
 select * from instructor; -- 查看结果 只剩下4个
@@ -49,15 +42,16 @@ drop database testDatabase;
 show databases; -- 查看结果 没有database
 quit;
 
+## rollback，WAL机制，数据恢复
 create database testDatabase;
 use testDatabase;
 create table testTable (id int primary key, name varchar(25), income float, primary key (name));
 select * from testTable;
 
--- 对照*.script，会写入
+-- 对照testDatabase.script，会写入
 insert into testTable (id, name, income) values (21, 'name21', 21.21);
 
--- 对照*.script，暂时未写入
+-- 对照testDatabase.script，暂时未写入
 start transaction;
 insert into testTable (id, name, income) values (32, 'name32', 32.32);
 select * from testTable;
@@ -68,13 +62,15 @@ select * from testTable;
 update testTable set income = 323.2 where id = 32;
 select * from testTable;
 
+-- 回滚成功 显示结果
 rollback;
 select * from testTable;
 
+-- 修改数据，验证commit成功
 update testTable set income = 212.1 where id = 21;
 select * from testTable;
 
--- 对照*.script，写入update
+-- 对照testDatabase.script，写入update
 commit;
 select * from testTable;
 
@@ -87,41 +83,52 @@ select * from testTable;
 -- 生成data文件，*.script被删除
 shutdown;
 
--- 重启，数据恢复 (client 1)
+## 用户模块
+-- client 1, root登录, server输出用户名
 use testDatabase;
-select * from testTable;
+create table testschool (sid int primary key, schoolname varchar(25) primary key);
+create user roo identified by '123456';
 
--- 启动另一个client (client 2)，数据一致
+-- client 2, roo登录，server输出用户名
 use testDatabase;
-select * from testTable;
 
--- client 1
-insert into testTable (id, name, income) values (43, 'name43', 43.43);
-select * from testTable;
+-- 报错，无读权限
+select * from testschool
+-- 报错，无写权限
+create table school (sid int primary key, schoolname varchar(25) primary key);
 
--- client 2，数据也增加
-select * from testTable;
--- 启动事务
-start transaction;
-select * from testTable;
+-- client 1, 授权读
+grant read on testDatabase to roo
 
--- client 1
--- 被阻塞报错
-update testTable set name = 'newname43' where id = 43;
--- 未被阻塞
-select * from testTable;
--- 被阻塞但不报错
-insert into testTable (id, name, income) values (54, 'name54', 54.54);
+-- client 2
+-- 正常执行
+select * from testschool
+-- 报错，无写权限
+create table school (sid int primary key, schoolname varchar(25) primary key);
 
--- client 2，client 1被执行
-commit;
+-- client 1, 授权写
+grant write on testDatabase to roo
 
--- client 1，数据增加
-select * from testTable;
-```
+-- client2, 正常执行
+create table school (sid int primary key, schoolname varchar(25) primary key);
 
-use testDatabase
-start transaction
+-- client1, 收回权限读，写
+revoke read, write on testDatabase from roo
+
+-- client2
+-- 报错, 无读权限
+select * from testschool
+-- 报错, 无写权限
+create table school (sid int primary key, schoolname varchar(25) primary key);
+-- 创建数据库
+create database roodb
+
+-- client1
+use roodb 
+-- 正常执行，说明root有对其他用户所拥有的数据库的操作权限
+create table school (sid int primary key, schoolname varchar(25) primary key);
+
+-- 关闭server, 使用错误密码登录roo, 提示密码错误
+-- 正确密码登录roo, 正常执行
+use roodb
 select * from school
-insert into school values(645, 'Fudan University');
-insert into school values(64, 'Fudan University');
