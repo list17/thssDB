@@ -14,10 +14,10 @@ public class TransactionManager {
     private static TransactionManager instance = null;
 
     // 计时器
-//    private Timer DLTimer;
+    private Timer DLTimer;
 
     // 死锁回滚
-//    private DLRollbackTask DLTask = null;
+    private DLRollbackTask DLTask = null;
 
     private final Random random = new Random();
 
@@ -45,7 +45,7 @@ public class TransactionManager {
     private Long cur_tx_session;
 
     private TransactionManager() {
-//        this.DLTimer = new Timer();
+        this.DLTimer = new Timer();
 
         this.Flags = new HashMap<Long, Boolean>();
 
@@ -91,11 +91,11 @@ public class TransactionManager {
     }
 
     public void blockTX(Long tx_session, String table, int type) {
-//        if (this.DLTask == null) {
+        if (this.DLTask == null) {
 //            System.out.println("Time up");
-//            this.DLTask = new DLRollbackTask();
-//            this.DLTimer.schedule(this.DLTask, Global.DEAD_LOCK_DELAY);
-//        }
+            this.DLTask = new DLRollbackTask();
+            this.DLTimer.schedule(this.DLTask, Global.DEAD_LOCK_DELAY);
+        }
 
         Transaction tx = this.transactionMap.get(tx_session);
         tx.setBlock(true, table, type);
@@ -103,9 +103,11 @@ public class TransactionManager {
 
     public void continueBlockedTX() {
         // 中断计时器
-//        System.out.println("Time off");
-//        this.DLTask.cancel();
-//        this.DLTask = null;
+        if (this.DLTask != null) {
+            System.out.println("Time off");
+            this.DLTask.cancel();
+            this.DLTask = null;
+        }
 
         int size = this.blockedTXs.size();
         for (int i = 0; i < size; i++) {
@@ -375,22 +377,20 @@ public class TransactionManager {
         this.cur_tx_session = tx_session;
     }
 
-//    class DLRollbackTask extends TimerTask {
-//        public void run() {
-//            for (Long txSession : blockedTXs) {
-//                Transaction tx = transactionMap.get(txSession);
-//                if (tx != null) {
-//                    System.out.println("rollback");
-//                    releaseTXLock(txSession);
-//                    tx.setBlock(false, null, NO_LOCK);
-//                    tx.clearScripts();
-//                    tx.rollback();
-//                }
-//            }
-//            blockedTXs.clear();
-//            throw new SQLHandleException("Dead lock occurred, rollback all transactions.");
-//        }
-//    }
+    class DLRollbackTask extends TimerTask {
+        public void run() {
+            for (Long txSession : blockedTXs) {
+                Transaction tx = transactionMap.get(txSession);
+                if (tx != null) {
+                    tx.deadLockHandle(txSession);
+                }
+            }
+        }
+    }
+
+    public void removeBlock(Long tx_session) {
+        this.blockedTXs.remove(tx_session);
+    }
 
     public void checkDeadLock() {
 
