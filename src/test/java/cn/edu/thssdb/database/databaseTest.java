@@ -1,6 +1,7 @@
 package cn.edu.thssdb.database;
 
-import cn.edu.thssdb.exception.*;
+import cn.edu.thssdb.exception.SQLHandleException;
+import cn.edu.thssdb.exception.SessionLostException;
 import cn.edu.thssdb.rpc.thrift.ConnectResp;
 import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.schema.*;
@@ -10,12 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
 
 public class databaseTest {
     private Manager manager;
