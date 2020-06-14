@@ -22,10 +22,12 @@ public class Transaction {
     private Boolean isBlocked;
     private int blockType;
     private String blockTable;
+    private boolean DLFlag;
 
     public Transaction(Long tx_session) {
         this.tx_session = tx_session;
         this.isBlocked = false;
+        this.DLFlag = false;
         this.blockType = NO_LOCK;
         this.blockTable = null;
         this.scrtipts = new ArrayList<String>();
@@ -122,6 +124,15 @@ public class Transaction {
                 // loop to block
                 System.out.print("");
             }
+            if (this.DLFlag) {
+                this.clearScripts();
+                this.rollback();
+                TransactionManager tm = TransactionManager.getInstance();
+                tm.releaseTXLock(this.tx_session);
+                tm.removeBlock(this.tx_session);
+                this.DLFlag = false;
+                throw new SQLHandleException("Dead lock occurred, rollback all transactions.");
+            }
         } else {
             this.blockTable = null;
             this.blockType = NO_LOCK;
@@ -129,7 +140,8 @@ public class Transaction {
 
     }
 
-    public void breakLoop() {
+    public void deadLockHandle(Long tx_session) {
+        this.DLFlag = true;
         this.isBlocked = false;
     }
 }

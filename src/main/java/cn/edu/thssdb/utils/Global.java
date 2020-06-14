@@ -21,7 +21,7 @@ public class Global {
     public static int LOCK_S = 1;
     public static int LOCK_X = 2;
 
-    public static int DEAD_LOCK_DELAY = 60000; // ms
+    public static int DEAD_LOCK_DELAY = 10000; // ms
 
     public static final String S_URL_INTERNAL = "jdbc:default:connection";
 }
