@@ -1,7 +1,6 @@
 package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.utils.Global;
@@ -9,7 +8,7 @@ import cn.edu.thssdb.utils.UserManager;
 
 import java.util.ArrayList;
 
-public class RevokeStatement implements Statement{
+public class RevokeStatement implements Statement {
     private ArrayList<String> auth_levels;
     private String database_name;
     private String username;
@@ -35,7 +34,7 @@ public class RevokeStatement implements Statement{
         }
 
         if (cur_user.equals(this.username)) {
-            throw  new SQLHandleException(this.username + "cannot revoke itself.");
+            throw new SQLHandleException(this.username + "cannot revoke itself.");
         }
 
         if (um.checkAuthable(this.database_name, sessionId) || cur_user.equals(Global.DEFAULT_USER)) {
@@ -47,8 +46,7 @@ public class RevokeStatement implements Statement{
                     um.deAuthRead(this.database_name, this.username);
                 }
             }
-        }
-        else {
+        } else {
             throw new SQLHandleException("Current user " + cur_user + " cannot revoke on " + this.database_name + ".");
         }
         return null;

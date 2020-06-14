@@ -1,15 +1,17 @@
 package cn.edu.thssdb.service;
 
-import cn.edu.thssdb.exception.*;
+import cn.edu.thssdb.exception.DisconnectionException;
+import cn.edu.thssdb.exception.ExpressionHandleException;
+import cn.edu.thssdb.exception.SQLHandleException;
+import cn.edu.thssdb.exception.SQLThrowErrorListener;
+import cn.edu.thssdb.parser.SQLLexer;
+import cn.edu.thssdb.parser.SQLParser;
+import cn.edu.thssdb.parser.Visitor;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.rpc.thrift.*;
 import cn.edu.thssdb.schema.Manager;
-import cn.edu.thssdb.utils.Global;
-import cn.edu.thssdb.parser.SQLParser;
-import cn.edu.thssdb.parser.SQLLexer;
-import cn.edu.thssdb.parser.Visitor;
 import cn.edu.thssdb.statement.Statement;
-import cn.edu.thssdb.utils.Transaction;
+import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.utils.TransactionManager;
 import cn.edu.thssdb.utils.UserManager;
 import org.antlr.v4.runtime.CharStreams;
@@ -17,11 +19,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Date;
-import java.util.Arrays;
+import java.util.Random;
 
 public class IServiceHandler implements IService.Iface {
 

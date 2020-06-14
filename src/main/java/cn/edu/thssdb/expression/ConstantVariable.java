@@ -2,7 +2,7 @@ package cn.edu.thssdb.expression;
 
 import cn.edu.thssdb.schema.Column;
 
-public class ConstantVariable implements Variable{
+public class ConstantVariable implements Variable {
 
     private Comparable value;
 

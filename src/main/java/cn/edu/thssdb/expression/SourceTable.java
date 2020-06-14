@@ -7,10 +7,7 @@ import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Row;
 import cn.edu.thssdb.schema.Table;
 
-import javax.management.Query;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class SourceTable {
     public static class JoinOperator {
@@ -23,6 +20,7 @@ public class SourceTable {
             this.expression = expression;
             this.alias = alias;
         }
+
         public JoinOperator(String joinedTableName, Expression expression) {
             this.joinedTableName = joinedTableName;
             this.expression = expression;
@@ -39,6 +37,7 @@ public class SourceTable {
         this.joinOps = joinOps;
         this.alias = alias;
     }
+
     public SourceTable(String tableName, ArrayList<JoinOperator> joinOps) {
         this.tableName = tableName;
         this.joinOps = joinOps;
@@ -47,6 +46,7 @@ public class SourceTable {
     /**
      * 根据Join后得到的所有数据生成一个queryTable用于遍历.
      * 生成的queryTable, 其所有列名都强制加上源表的前缀.
+     *
      * @param database
      * @return
      */
@@ -61,7 +61,7 @@ public class SourceTable {
             baseTable.setAlias(this.alias);
         }
 
-        for (JoinOperator joinOp: joinOps) {
+        for (JoinOperator joinOp : joinOps) {
             tempTable = database.getTable(joinOp.joinedTableName);
             if (tempTable == null) {
                 throw new SQLHandleException("Exception: table " + joinOp.joinedTableName + " could not be found.");
@@ -100,8 +100,8 @@ public class SourceTable {
                 }
             }
             //开始join, 给每个变量赋值判断是否join.
-            for (Row baseRow: baseTable.rows) {
-                for (Row toJoinRow: toJoinTable.rows) {
+            for (Row baseRow : baseTable.rows) {
+                for (Row toJoinRow : toJoinTable.rows) {
                     Row joinedRow = new Row();
                     joinedRow.appendEntries(baseRow.getEntries());
                     joinedRow.appendEntries(toJoinRow.getEntries());

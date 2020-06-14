@@ -1,7 +1,5 @@
 package cn.edu.thssdb.schema;
 
-import cn.edu.thssdb.type.ColumnType;
-
 import java.io.Serializable;
 
 public class Entry implements Comparable<Entry>, Serializable {
@@ -48,7 +46,7 @@ public class Entry implements Comparable<Entry>, Serializable {
         if (thisClass == thatClass) {
             return a.equals(b);
         }
-        
+
         if (thisClass != String.class && thatClass != String.class) {
             if (thisClass == Double.class || thisClass == Float.class) {
                 thisValue = ((Number) a).doubleValue();
@@ -91,6 +89,9 @@ public class Entry implements Comparable<Entry>, Serializable {
     }
 
     public String toString() {
+        if (value == null) {
+            return "NULL";
+        }
         return value.toString();
     }
 

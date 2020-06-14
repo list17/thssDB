@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class WriteScript {
-    public WriteScript(){
+    public WriteScript() {
 
     }
 
@@ -25,16 +25,13 @@ public class WriteScript {
             bw.write(command);
             bw.newLine();
             bw.flush();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new FileWriteException("Write file *.script failed.");
-        }
-        finally {
+        } finally {
             try {
                 bw.close();
                 fw.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new FileWriteException("Close file *.script output-stream failed.");
             }
         }

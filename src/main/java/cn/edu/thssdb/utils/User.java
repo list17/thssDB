@@ -40,18 +40,15 @@ public class User implements Serializable {
     public boolean checkReadAuth(String db_name) {
         if (this.create.contains(db_name)) {
             return true;
-        }
-        else if (this.writeAuth.contains(db_name)) {
+        } else if (this.writeAuth.contains(db_name)) {
             return true;
-        }
-        else return this.readAuth.contains(db_name);
+        } else return this.readAuth.contains(db_name);
     }
 
     public boolean checkWriteAuth(String db_name) {
         if (this.create.contains(db_name)) {
             return true;
-        }
-        else return this.writeAuth.contains(db_name);
+        } else return this.writeAuth.contains(db_name);
     }
 
     public boolean checkCreate(String db_name) {

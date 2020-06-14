@@ -7,13 +7,10 @@ import cn.edu.thssdb.exception.SessionLostException;
 import cn.edu.thssdb.parser.SQLLexer;
 import cn.edu.thssdb.parser.SQLParser;
 import cn.edu.thssdb.parser.Visitor;
-import cn.edu.thssdb.rpc.thrift.ConnectReq;
-import cn.edu.thssdb.rpc.thrift.ExecuteStatementReq;
+import cn.edu.thssdb.rpc.thrift.ConnectResp;
 import cn.edu.thssdb.rpc.thrift.Status;
 import cn.edu.thssdb.statement.Statement;
 import cn.edu.thssdb.utils.Global;
-import cn.edu.thssdb.rpc.thrift.ConnectResp;
-import cn.edu.thssdb.utils.User;
 import cn.edu.thssdb.utils.UserManager;
 import cn.edu.thssdb.utils.ValueInstance;
 import org.antlr.v4.runtime.CharStreams;
@@ -54,7 +51,7 @@ public class Manager {
         um.initUserTable();
     }
 
-    public void createDatabaseIfNotExists(String databaseName){
+    public void createDatabaseIfNotExists(String databaseName) {
         if (this.databases.containsKey(databaseName)) {
             throw new SQLHandleException("Database " + databaseName + " already exists.");
         } else {
@@ -65,44 +62,41 @@ public class Manager {
         }
     }
 
-    public void deleteDatabase(String databaseName){
+    public void deleteDatabase(String databaseName) {
         // TODO
         if (!databases.containsKey(databaseName))
             throw new SQLHandleException("Database does not exist");
         Database database = databases.get(databaseName);
         if (!deleteRecursive(new File(database.getRoot())))
             throw new SQLHandleException("Failed to delete database");
-        for(Map.Entry<Long, ConnectResp> entry : this.connections.entrySet()){
-            if(entry.getValue().status.currentDatabase != null && entry.getValue().status.currentDatabase.equals(databaseName)) {
+        for (Map.Entry<Long, ConnectResp> entry : this.connections.entrySet()) {
+            if (entry.getValue().status.currentDatabase != null && entry.getValue().status.currentDatabase.equals(databaseName)) {
                 entry.getValue().status.currentDatabase = "";
             }
         }
         databases.remove(databaseName);
     }
 
-    public void switchDatabase(long sessionId, String databaseName){
+    public void switchDatabase(long sessionId, String databaseName) {
         // TODO
-        if(this.connections.containsKey(sessionId)){
-            if(this.databases.containsKey(databaseName)){
+        if (this.connections.containsKey(sessionId)) {
+            if (this.databases.containsKey(databaseName)) {
                 this.connections.get(sessionId).status.currentDatabase = databaseName;
             } else {
                 throw new SQLHandleException("Database " + databaseName + " not exists");
             }
-        }
-        else throw new SessionLostException(sessionId);
+        } else throw new SessionLostException(sessionId);
     }
 
     public Database getSessionCurrentDatabase(long sessionId) {
-        if(this.connections.containsKey(sessionId))
-        {
-            if(this.databases.containsKey(this.connections.get(sessionId).status.currentDatabase))
+        if (this.connections.containsKey(sessionId)) {
+            if (this.databases.containsKey(this.connections.get(sessionId).status.currentDatabase))
                 return this.databases.get(this.connections.get(sessionId).status.currentDatabase);
-            else if(this.connections.get(sessionId).status.currentDatabase.equals(""))
+            else if (this.connections.get(sessionId).status.currentDatabase.equals(""))
                 throw new SQLHandleException("Use database first");
             else
                 throw new SQLHandleException("Database " + this.connections.get(sessionId).status.currentDatabase + " not exists");
-        }
-        else
+        } else
             throw new SessionLostException(sessionId);
     }
 
@@ -116,12 +110,13 @@ public class Manager {
 
     /**
      * delete the file under the folder recursively
+     *
      * @param path 待删除的目录
      * @return 是否成功删除
      */
     private static boolean deleteRecursive(File path) {
         boolean ret = true;
-        if (path.isDirectory()){
+        if (path.isDirectory()) {
             File[] files = path.listFiles();
             if (files != null)
                 for (File f : files)
@@ -135,13 +130,13 @@ public class Manager {
     }
 
     public synchronized void removeConnection(long sessionId) throws DisconnectionException {
-        if(this.connections.containsKey(sessionId))
+        if (this.connections.containsKey(sessionId))
             this.connections.remove(sessionId);
         else throw new DisconnectionException(sessionId);
     }
 
     public ConnectResp getConnection(long sessionId) {
-        if(this.connections.containsKey(sessionId))
+        if (this.connections.containsKey(sessionId))
             return this.connections.get(sessionId);
         else
             throw new SessionLostException(sessionId);
@@ -157,7 +152,7 @@ public class Manager {
             throw new RuntimeException("List databases failed");
     }
 
-    public void loadFromScript(){
+    public void loadFromScript() {
         long sessionId = 12334545;
         ConnectResp resp = new ConnectResp();
         Status status = new Status();
@@ -166,20 +161,20 @@ public class Manager {
         resp.sessionId = sessionId;
         resp.status = status;
         this.addConnection(sessionId, resp);
-        for (Map.Entry<String, Database> entry : this.databases.entrySet()){
+        for (Map.Entry<String, Database> entry : this.databases.entrySet()) {
             this.switchDatabase(sessionId, entry.getKey());
             // 找到这个数据库目录下的所有.script文件
             String[] list = new File(this.root + "/" + entry.getKey()).list();
             if (list != null) {
                 for (String item : list) {
-                    if (item.endsWith(".script")){
+                    if (item.endsWith(".script")) {
                         // 按行读取script文件并执行
                         Scanner scanner = null;
                         try {
                             scanner = new Scanner(new File(this.root + "/" + entry.getKey() + "/" + item));
                             while (scanner.hasNextLine()) {
                                 String command = scanner.nextLine();
-                                try{
+                                try {
                                     SQLThrowErrorListener listener = new SQLThrowErrorListener();
                                     SQLLexer lexer = new SQLLexer(CharStreams.fromString(command));
                                     lexer.removeErrorListeners();
@@ -193,7 +188,7 @@ public class Manager {
                                     Visitor visitor = new Visitor();
                                     ArrayList<Statement> statements = (ArrayList<Statement>) visitor.visit(tree);
                                     // 执行语句
-                                    for (Statement statement: statements){
+                                    for (Statement statement : statements) {
                                         statement.execute(this, sessionId, command);
                                     }
                                 } catch (Exception e) {
@@ -232,7 +227,7 @@ public class Manager {
     }
 
     public void deleteAllDatabase() {
-        for(Map.Entry<String, Database> entry : this.databases.entrySet()){
+        for (Map.Entry<String, Database> entry : this.databases.entrySet()) {
             this.deleteDatabase(entry.getKey());
         }
     }

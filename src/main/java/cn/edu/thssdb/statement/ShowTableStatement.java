@@ -1,7 +1,6 @@
 package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
@@ -10,7 +9,7 @@ import cn.edu.thssdb.utils.UserManager;
 
 import java.util.ArrayList;
 
-public class ShowTableStatement implements Statement{
+public class ShowTableStatement implements Statement {
     private String name;
 
     public ShowTableStatement(String name) {
@@ -27,7 +26,7 @@ public class ShowTableStatement implements Statement{
             throw new SQLHandleException("Current user has no read authority on database " + cur_db_name);
         }
 
-        if(!manager.getAllDatabases().contains(this.name)) {
+        if (!manager.getAllDatabases().contains(this.name)) {
             throw new SQLHandleException("Database " + this.name + "does not exist.");
         }
         Database database = manager.getDatabase(this.name);
@@ -35,8 +34,8 @@ public class ShowTableStatement implements Statement{
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("TABLES", ColumnType.STRING, false, true, 100));
         QueryTable queryTable = new QueryTable("ShowTableResult", columns);
-        for(String name: databaseArrayList) {
-            Entry[] entries = new Entry[] {new Entry(name)};
+        for (String name : databaseArrayList) {
+            Entry[] entries = new Entry[]{new Entry(name)};
             queryTable.rows.add(new Row(entries));
         }
         return queryTable;

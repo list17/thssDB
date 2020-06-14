@@ -5,13 +5,11 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.utils.TransactionManager;
-import cn.edu.thssdb.utils.WriteScript;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.util.ArrayList;
 
-public class ShutdownStatement implements Statement{
+public class ShutdownStatement implements Statement {
     @Override
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         ArrayList<String> database_names = manager.getAllDatabases();
@@ -27,16 +25,14 @@ public class ShutdownStatement implements Statement{
             Database database = manager.getDatabase(name);
             database.saveData();
             // 删除script
-            try{
+            try {
                 File file = new File("./data/" + name + "/" + name + ".script");
-                if(file.delete()){
+                if (file.delete()) {
                     System.out.println("Delete files" + name + ".script successfully");
-                }
-                else{
+                } else {
                     System.out.println("Delete files" + name + ".script failed");
                 }
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

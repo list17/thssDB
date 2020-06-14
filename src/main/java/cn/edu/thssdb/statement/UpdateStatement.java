@@ -2,7 +2,6 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.expression.ConstantVariable;
 import cn.edu.thssdb.expression.Expression;
 import cn.edu.thssdb.expression.Variable;
@@ -12,14 +11,14 @@ import cn.edu.thssdb.type.ColumnType;
 import cn.edu.thssdb.utils.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
-public class UpdateStatement implements Statement{
+public class UpdateStatement implements Statement {
     private String name;
     private String column_name;
     private Expression expression;
     private ConstantVariable constantVariable;
+
     public UpdateStatement(String name, String column_name, ConstantVariable constantVariable, Expression expression) {
         this.name = name;
         this.column_name = column_name;

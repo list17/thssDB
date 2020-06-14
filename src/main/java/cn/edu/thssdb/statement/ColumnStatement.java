@@ -5,7 +5,7 @@ import cn.edu.thssdb.schema.Column;
 
 import java.util.ArrayList;
 
-public class ColumnStatement implements ColumnDefinition{
+public class ColumnStatement implements ColumnDefinition {
 
     private Column column;
 
@@ -15,7 +15,7 @@ public class ColumnStatement implements ColumnDefinition{
 
     @Override
     public void attach(ArrayList<Column> columns) throws SQLHandleException {
-        for (Column item: columns)
+        for (Column item : columns)
             if (item.getName().equals(column.getName()))
                 throw new SQLHandleException("Duplicated column name");
         columns.add(column);

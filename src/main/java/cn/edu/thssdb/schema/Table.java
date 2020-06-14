@@ -6,8 +6,13 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.utils.Transaction;
 import javafx.util.Pair;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Table implements Iterable<Row> {
@@ -73,16 +78,17 @@ public class Table implements Iterable<Row> {
 
     /**
      * 获取该表的列属性复制.
+     *
      * @param withPrefix
      * @return
      */
     public ArrayList<Column> getCopiedColumns(boolean withPrefix) {
         ArrayList<Column> copy = new ArrayList<>();
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             copy.add(col.getCopiedColumn(withPrefix));
         }
         if (withPrefix) {
-            for (Column col: copy) {
+            for (Column col : copy) {
                 col.setPrefix(this.tableName);
             }
         }
@@ -94,7 +100,7 @@ public class Table implements Iterable<Row> {
      */
     public void updatePrefix() {
         //设置前缀
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             col.setPrefix(this.tableName);
         }
     }
@@ -104,13 +110,13 @@ public class Table implements Iterable<Row> {
      */
     public void clearPrefix() {
         //设置前缀为null
-        for (Column col: this.columns) {
+        for (Column col : this.columns) {
             col.setPrefix(null);
         }
     }
 
 
-    public synchronized void recover(){
+    public synchronized void recover() {
         this.deserialize();
     }
 
@@ -149,6 +155,7 @@ public class Table implements Iterable<Row> {
             return this.index.get(primaryKey);
         }
     }
+
     /**
      * 往该数据表插入一条新行.
      *
@@ -188,6 +195,7 @@ public class Table implements Iterable<Row> {
             }
         }
     }
+
     public void updateByIndicatingRow(Row oldRow, Row newRow, Transaction tx) throws RuntimeException {
         if (oldRow == null && newRow == null) {
             throw new SQLHandleException("Exception: illegal rollback.");
@@ -200,6 +208,7 @@ public class Table implements Iterable<Row> {
         }
 
     }
+
     /**
      * 根据主键删除某行
      *
@@ -227,7 +236,7 @@ public class Table implements Iterable<Row> {
      * @param newRow    新行
      * @throws RuntimeException
      */
-    public void update(MultiEntry updateKey, Row newRow, Transaction tx){
+    public void update(MultiEntry updateKey, Row newRow, Transaction tx) {
         // TODO
         // 由于可能涉及到主键的更新, 所以这里我们选择删掉该主键然后再插入新的行
         Row locatedRow;
@@ -272,7 +281,7 @@ public class Table implements Iterable<Row> {
         }
     }
 
-    public synchronized void deserialize(){
+    public synchronized void deserialize() {
         // TODO
 
         try {
@@ -317,6 +326,7 @@ public class Table implements Iterable<Row> {
     public HashMap<String, Integer> getColumnIndicesMap() {
         return this.columnIndicesMap;
     }
+
     public ArrayList<Integer> getPrimaryIndices() {
         return this.primaryIndices;
     }

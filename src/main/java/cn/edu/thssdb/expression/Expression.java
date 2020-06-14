@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public interface Expression {
 
     public boolean evaluate() throws ExpressionHandleException;
+
     public ArrayList<Variable> getAllVariables();
 
     public ArrayList<Comparable> tryToGetPrimaryValue(ArrayList<Column.FullName> primaryKeys);

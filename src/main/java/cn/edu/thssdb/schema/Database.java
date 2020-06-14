@@ -66,7 +66,7 @@ public class Database {
         String[] list = new File(this.root).list();
         if (list != null) {
             for (String item : list) {
-                if (!item.endsWith(".script") && ! item.endsWith(".log")){
+                if (!item.endsWith(".script") && !item.endsWith(".log")) {
                     Table table = new Table(Paths.get(this.root, item.toUpperCase()).toString(), item.toUpperCase());
                     table.recover();
                     this.tables.put(item.toUpperCase(), table);
@@ -77,7 +77,7 @@ public class Database {
     }
 
     public void saveData() {
-        for (Map.Entry<String, Table> entry : this.tables.entrySet()){
+        for (Map.Entry<String, Table> entry : this.tables.entrySet()) {
             entry.getValue().serialize();
         }
     }

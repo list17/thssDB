@@ -2,19 +2,17 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.expression.Expression;
 import cn.edu.thssdb.expression.SourceTable;
 import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.*;
-import cn.edu.thssdb.utils.*;
-import javafx.util.Pair;
+import cn.edu.thssdb.utils.Global;
+import cn.edu.thssdb.utils.TransactionManager;
+import cn.edu.thssdb.utils.UserManager;
+import cn.edu.thssdb.utils.ValueInstance;
 
-import javax.management.Query;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -34,7 +32,7 @@ public class SelectStatement implements Statement {
 
     public Row permuteRow(Row rawRow, ArrayList<Integer> permute) {
         Row resultRow = new Row();
-        for (Integer index: permute) {
+        for (Integer index : permute) {
             resultRow.appendEntry(rawRow.getEntries().get(index));
         }
         return resultRow;
@@ -186,6 +184,7 @@ public class SelectStatement implements Statement {
         }
         return null;
     }
+
     public void setColumnsAndIndices(ArrayList<Column.FullName> selectedColumns,
                                      Table baseTable,
                                      ArrayList<Column> resultColumns,
@@ -196,11 +195,11 @@ public class SelectStatement implements Statement {
         ArrayList<Column> baseColumns = baseTable.getCopiedColumns(true);
         HashMap<String, Integer> columnMap = baseTable.getColumnIndicesMap();
 
-        for (Column.FullName selectedCol: selectedColumns) {
+        for (Column.FullName selectedCol : selectedColumns) {
             if (selectedCol.name.equals("*")) {
                 if (selectedCol.prefix == null || selectedCol.equals(baseTable.getTableName())) {
                     ArrayList<Column> toAddColumns = baseTable.getCopiedColumns(false);
-                    for (Column col: toAddColumns) {
+                    for (Column col : toAddColumns) {
                         resultIndices.add(columnMap.get(col.getColumnFullName().name));
                     }
                     resultColumns.addAll(toAddColumns);
@@ -216,21 +215,22 @@ public class SelectStatement implements Statement {
             }
         }
     }
+
     public void setColumnsAndIndices(ArrayList<Column.FullName> selectedColumns,
-                                                  QueryTable baseQueryTable,
-                                                  ArrayList<Column> resultColumns,
-                                                  ArrayList<Integer> resultIndices) throws SQLHandleException {
+                                     QueryTable baseQueryTable,
+                                     ArrayList<Column> resultColumns,
+                                     ArrayList<Integer> resultIndices) throws SQLHandleException {
         //先获取选择后的列. 然后建立结果空表.(注意要查两个HashMap)
         ArrayList<Column> baseColumns = baseQueryTable.getCopiedColumns();
         resultColumns.clear();
         resultIndices.clear();
 
-        for (Column.FullName selectedCol: selectedColumns) {
+        for (Column.FullName selectedCol : selectedColumns) {
             if (selectedCol.name.equals("*")) {
                 if (selectedCol.prefix == null) {
                     // 列全选
                     ArrayList<Column> toAddColumns = baseQueryTable.getCopiedColumns();
-                    for (Column col: toAddColumns) {
+                    for (Column col : toAddColumns) {
                         resultIndices.add(baseQueryTable.columnIndicesMap.get(col.getColumnFullName().toString()));
                     }
                     resultColumns.addAll(toAddColumns);
@@ -238,7 +238,7 @@ public class SelectStatement implements Statement {
                 } else {
                     ArrayList<Column> toAddColumns = new ArrayList<>();
                     ArrayList<Integer> toAddIndices = new ArrayList<>();
-                    for (Column col: baseColumns) {
+                    for (Column col : baseColumns) {
                         if (col.getColumnFullName().prefix.equals(selectedCol.prefix)) {
                             toAddColumns.add(col.getCopiedColumn(true));
                             toAddIndices.add(baseQueryTable.columnIndicesMap.get(col.getColumnFullName().toString()));
@@ -266,6 +266,7 @@ public class SelectStatement implements Statement {
         }
 //        }
     }
+
     public void setAssignIndices(ArrayList<Variable> variables,
                                  Table baseTable,
                                  ArrayList<Integer> assignIndices) {

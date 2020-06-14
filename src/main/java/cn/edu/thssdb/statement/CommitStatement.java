@@ -5,7 +5,7 @@ import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.utils.TransactionManager;
 
-public class CommitStatement implements Statement{
+public class CommitStatement implements Statement {
     @Override
     public QueryTable execute(Manager manager, Long sessionId, String command) throws SQLHandleException {
         TransactionManager tm = TransactionManager.getInstance();
@@ -13,8 +13,7 @@ public class CommitStatement implements Statement{
 
         if (!tm.getFlag(sessionId)) {
             throw new SQLHandleException("Please commit in a transaction!");
-        }
-        else {
+        } else {
             // 释放事务的所有锁
             tm.releaseTXLock(sessionId);
 

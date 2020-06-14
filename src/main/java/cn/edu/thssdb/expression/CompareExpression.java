@@ -65,6 +65,7 @@ public class CompareExpression implements Expression {
         }
         return result;
     }
+
     @Override
     public ArrayList<Variable> getAllVariables() {
         ArrayList<Variable> result = new ArrayList<>();

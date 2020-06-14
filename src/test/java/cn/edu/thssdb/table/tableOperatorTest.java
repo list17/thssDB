@@ -1,18 +1,13 @@
 package cn.edu.thssdb.table;
 
 import cn.edu.thssdb.exception.*;
-import cn.edu.thssdb.index.BPlusTree;
 import cn.edu.thssdb.schema.*;
 import cn.edu.thssdb.type.ColumnType;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Assert.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class tableOperatorTest {
     private Table table;
@@ -24,11 +19,11 @@ public class tableOperatorTest {
 
         manager = new Manager();
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("db");
+        manager.createDatabaseIfNotExists("DB");
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("ID", ColumnType.INT, true, true, 20));
         columns.add(new Column("name", ColumnType.STRING, false, true, 100));
-        this.table = new Table("data/db/testtable", "testtable", columns);
+        this.table = new Table("data/DB/TESTTABLE", "TESTTABLE", columns);
     }
 
     @Test
@@ -247,7 +242,7 @@ public class tableOperatorTest {
                     this.table.findRowByPrimaryKey(newRow_1.getMultiEntry(this.table.getPrimaryIndices())).toString());
             Assert.assertEquals(newRow_2.toString(),
                     this.table.findRowByPrimaryKey(newRow_2.getMultiEntry(this.table.getPrimaryIndices())).toString());
-            
+
         } catch (SQLHandleException e) {
             e.printStackTrace();
         }

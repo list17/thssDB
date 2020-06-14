@@ -22,7 +22,7 @@ public class MultiEntry implements Comparable<MultiEntry> {
         this.entries = new ArrayList<Entry>();
         this.valueCount = 0;
 
-        for (Entry entry: entries) {
+        for (Entry entry : entries) {
             addEntry(entry);
         }
     }
@@ -72,7 +72,7 @@ public class MultiEntry implements Comparable<MultiEntry> {
 
     public String toString() {
         String str = "";
-        for (Entry e: entries) {
+        for (Entry e : entries) {
             str += e.toString();
         }
         return str;
@@ -81,7 +81,7 @@ public class MultiEntry implements Comparable<MultiEntry> {
     @Override
     public int hashCode() {
         int code = 0;
-        for (Entry e: entries) {
+        for (Entry e : entries) {
             code += e.hashCode();
         }
         return code;

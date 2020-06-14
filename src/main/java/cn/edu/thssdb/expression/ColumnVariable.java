@@ -2,9 +2,6 @@ package cn.edu.thssdb.expression;
 
 import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.schema.Column;
-import cn.edu.thssdb.schema.Row;
-
-import java.util.HashMap;
 
 public class ColumnVariable implements Variable {
 

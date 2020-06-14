@@ -1,7 +1,5 @@
 package cn.edu.thssdb.exception;
 
-import java.io.IOException;
-
 /**
  * 写文件报错
  */

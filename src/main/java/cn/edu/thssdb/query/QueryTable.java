@@ -4,10 +4,11 @@ import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.schema.Column;
 import cn.edu.thssdb.schema.Entry;
 import cn.edu.thssdb.schema.Row;
-import cn.edu.thssdb.type.ColumnType;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class QueryTable {
 

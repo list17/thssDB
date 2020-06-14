@@ -2,13 +2,9 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.query.QueryTable;
-import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
-import cn.edu.thssdb.utils.Global;
-import cn.edu.thssdb.utils.UserManager;
-import cn.edu.thssdb.utils.WriteScript;
 
-public class UseDatabaseStatement implements Statement{
+public class UseDatabaseStatement implements Statement {
     String name;
 
     public UseDatabaseStatement(String name) {

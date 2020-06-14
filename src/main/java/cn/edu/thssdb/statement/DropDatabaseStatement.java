@@ -1,14 +1,12 @@
 package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.query.QueryTable;
-import cn.edu.thssdb.schema.Database;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.utils.Global;
 import cn.edu.thssdb.utils.UserManager;
 
-public class DropDatabaseStatement implements Statement{
+public class DropDatabaseStatement implements Statement {
     private String name;
 
     public DropDatabaseStatement(String name) {

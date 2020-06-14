@@ -1,16 +1,8 @@
 package cn.edu.thssdb.client;
 
 import cn.edu.thssdb.rpc.thrift.*;
-import cn.edu.thssdb.schema.Column;
-import cn.edu.thssdb.schema.Entry;
-import cn.edu.thssdb.schema.Row;
 import cn.edu.thssdb.utils.Global;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -21,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
@@ -82,7 +73,7 @@ public class Client {
             boolean open = false;
             ConnectResp resp = client.connect(new ConnectReq(username, password));
             if (resp.status.code == Global.SUCCESS_CODE) {
-                
+
                 sessionId = resp.sessionId;
                 open = true;
             }
