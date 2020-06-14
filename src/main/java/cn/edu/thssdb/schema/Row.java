@@ -16,7 +16,7 @@ public class Row implements Serializable {
 
     public Row(Comparable... values) {
         this.entries = new ArrayList<>();
-        for (Comparable v: values) {
+        for (Comparable v : values) {
             this.entries.add(Entry.generateEntry(v));
         }
     }
@@ -39,14 +39,15 @@ public class Row implements Serializable {
 
     public MultiEntry getMultiEntry(ArrayList<Integer> indices) {
         ArrayList<Entry> selectedEntries = new ArrayList<Entry>();
-        for (Integer i: indices) {
+        for (Integer i : indices) {
             selectedEntries.add(this.entries.get(i));
         }
         return new MultiEntry(selectedEntries);
     }
+
     public MultiEntry getMultiEntry(int... indices) {
         ArrayList<Entry> selectedEntries = new ArrayList<Entry>();
-        for (int i: indices) {
+        for (int i : indices) {
             selectedEntries.add(this.entries.get(i));
         }
         return new MultiEntry(selectedEntries);
@@ -54,7 +55,7 @@ public class Row implements Serializable {
 
     public Row getCopiedRow() {
         ArrayList<Entry> copiedEntries = new ArrayList<>();
-        for (Entry e: this.entries) {
+        for (Entry e : this.entries) {
             copiedEntries.add(Entry.generateEntry(e.value));
         }
         Row copiedRow = new Row();
@@ -67,7 +68,7 @@ public class Row implements Serializable {
             return "EMPTY";
         StringJoiner sj = new StringJoiner(", ");
         for (Entry e : entries)
-            if(e.value != null)
+            if (e.value != null)
                 sj.add(e.toString());
         return sj.toString();
     }

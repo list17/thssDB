@@ -2,18 +2,16 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.expression.ConstantVariable;
 import cn.edu.thssdb.query.QueryTable;
-import cn.edu.thssdb.schema.*;
+import cn.edu.thssdb.schema.Entry;
+import cn.edu.thssdb.schema.Manager;
+import cn.edu.thssdb.schema.Row;
+import cn.edu.thssdb.schema.Table;
 import cn.edu.thssdb.utils.*;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class InsertStatement implements Statement {
     String name;
@@ -42,7 +40,7 @@ public class InsertStatement implements Statement {
         for (ArrayList<ConstantVariable> row : rows) {
             if (row.size() > columnPos.size()) {
                 throw new SQLHandleException("The number of values is more than the columns");
-               }
+            }
             if (columns.size() > columnPos.size()) {
                 throw new SQLHandleException("The number of values is more than the table columns");
             }
@@ -82,7 +80,7 @@ public class InsertStatement implements Statement {
                     for (int i = 0; i < columnPos.size(); i++) {
                         entries[i] = new Entry(null);
                     }
-                    for(String column : columns){
+                    for (String column : columns) {
                         int index = columnPos.get(column);
                         if (index != -1) {
                             entries[index] = new Entry(row.get(columns.indexOf(column)).evaluate());

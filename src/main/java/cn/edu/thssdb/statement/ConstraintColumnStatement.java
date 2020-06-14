@@ -5,13 +5,14 @@ import cn.edu.thssdb.schema.Column;
 
 import java.util.ArrayList;
 
-public class ConstraintColumnStatement implements ColumnDefinition{
+public class ConstraintColumnStatement implements ColumnDefinition {
 
     private ArrayList<String> column_types;
 
-    public ConstraintColumnStatement(ArrayList<String> column_types){
+    public ConstraintColumnStatement(ArrayList<String> column_types) {
         this.column_types = column_types;
     }
+
     @Override
     public void attach(ArrayList<Column> columns) throws SQLHandleException {
         for (String column_type : column_types) {

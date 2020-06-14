@@ -6,7 +6,7 @@ import cn.edu.thssdb.schema.Column;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class LogicalExpression implements Expression{
+public class LogicalExpression implements Expression {
     public enum Operator {
         AND,
         OR;

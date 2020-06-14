@@ -2,7 +2,6 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.expression.Expression;
 import cn.edu.thssdb.expression.Variable;
 import cn.edu.thssdb.query.QueryTable;
@@ -13,7 +12,7 @@ import cn.edu.thssdb.utils.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class DeleteStatement implements Statement{
+public class DeleteStatement implements Statement {
 
     String name;
     Expression expression;

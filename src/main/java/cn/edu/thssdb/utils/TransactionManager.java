@@ -1,14 +1,10 @@
 package cn.edu.thssdb.utils;
 
-import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.schema.Table;
 import javafx.util.Pair;
 
 import java.util.*;
 
-import static cn.edu.thssdb.utils.Global.NO_LOCK;
-import static cn.edu.thssdb.utils.Global.LOCK_S;
-import static cn.edu.thssdb.utils.Global.LOCK_X;
+import static cn.edu.thssdb.utils.Global.*;
 
 public class TransactionManager {
     private static TransactionManager instance = null;
@@ -25,17 +21,17 @@ public class TransactionManager {
     private HashMap<Long, Transaction> transactionMap;
 
     /*
-    * 表对应的锁
-    * Pair.key: 持有该表共享锁的事务列表 lockS
-    * Pair.value: 持有该表排它锁的事务 lockX
-    */
+     * 表对应的锁
+     * Pair.key: 持有该表共享锁的事务列表 lockS
+     * Pair.value: 持有该表排它锁的事务 lockX
+     */
     private HashMap<String, Pair<ArrayList<Long>, ArrayList<Long>>> tableLocks;
 
     /*
-    * 事务拥有的锁
-    * Pair.key: 事务持有lockS的table列表
-    * Pair.value: 事务持有lockX的table列表
-    */
+     * 事务拥有的锁
+     * Pair.key: 事务持有lockS的table列表
+     * Pair.value: 事务持有lockX的table列表
+     */
 //    private HashMap<Transaction, Pair<ArrayList<String>, ArrayList<String>>> txLocks;
 
     // 阻塞事务列表
@@ -76,7 +72,7 @@ public class TransactionManager {
 
         this.cur_tx_session = tx_session;
 
-        transactionMap.put(tx_session, tx) ;
+        transactionMap.put(tx_session, tx);
         return tx_session;
     }
 
@@ -148,8 +144,7 @@ public class TransactionManager {
                     return true;
                 }
             }
-        }
-        else if (type == LOCK_X) {
+        } else if (type == LOCK_X) {
             int lockType = checkTableHasLock(table);
             Pair<ArrayList<Long>, ArrayList<Long>> txList = this.tableLocks.get(table);
             if (txList == null) {
@@ -264,7 +259,7 @@ public class TransactionManager {
             }
         }
         this.blockedTXs.add(tx_session);
-        this.blockTX(tx_session, table ,LOCK_X);
+        this.blockTX(tx_session, table, LOCK_X);
     }
 
 

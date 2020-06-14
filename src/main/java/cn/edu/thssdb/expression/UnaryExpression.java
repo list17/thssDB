@@ -3,7 +3,6 @@ package cn.edu.thssdb.expression;
 import cn.edu.thssdb.exception.ExpressionHandleException;
 import cn.edu.thssdb.schema.Column;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class UnaryExpression implements Expression {

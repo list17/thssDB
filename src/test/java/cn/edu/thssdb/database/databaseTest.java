@@ -28,15 +28,15 @@ public class databaseTest {
     public void testCreateTable() {
         System.out.println("----------testCreateTable----------");
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
-        Database database = new Database("database", Paths.get(manager.getRoot(), "database").toString());
+        manager.createDatabaseIfNotExists("TESTDATABASE");
+        Database database = new Database("TESTDATABASE", Paths.get(manager.getRoot(), "TESTDATABASE").toString());
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("ID", ColumnType.INT, true, true, 20));
         columns.add(new Column("name", ColumnType.STRING, false, true, 100));
-        database.createTable("table", columns);
+        database.createTable("TABLETEST", columns);
 
-        Assert.assertThrows(SQLHandleException.class, ()->{
-            database.createTable("table", columns);
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            database.createTable("TABLETEST", columns);
         });
     }
 
@@ -44,16 +44,16 @@ public class databaseTest {
     public void testDeleteTable() {
         System.out.println("----------testDeleteTable----------");
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
-        Database database = new Database("database", Paths.get(manager.getRoot(), "database").toString());
+        manager.createDatabaseIfNotExists("TESTDATABASE");
+        Database database = new Database("TESTDATABASE", Paths.get(manager.getRoot(), "TESTDATABASE").toString());
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("ID", ColumnType.INT, true, true, 20));
         columns.add(new Column("name", ColumnType.STRING, false, true, 100));
-        database.createTable("table", columns);
-        database.dropTable("table");
+        database.createTable("TABLETEST", columns);
+        database.dropTable("TABLETEST");
 
-        Assert.assertThrows(SQLHandleException.class, ()->{
-            database.dropTable("table");
+        Assert.assertThrows(SQLHandleException.class, () -> {
+            database.dropTable("TABLETEST");
         });
     }
 
@@ -61,10 +61,10 @@ public class databaseTest {
     public void testCreateDatabase() throws SQLHandleException {
         System.out.println("----------testCreateDatabase----------");
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
+        manager.createDatabaseIfNotExists("TESTDATABASE");
 
         Assert.assertThrows(SQLHandleException.class, () -> {
-            manager.createDatabaseIfNotExists("database");
+            manager.createDatabaseIfNotExists("TESTDATABASE");
         });
     }
 
@@ -72,8 +72,8 @@ public class databaseTest {
     public void testDeleteDatabase() throws SQLHandleException {
         System.out.println("----------testDeleteDatabase----------");
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
-        manager.deleteDatabase("database");
+        manager.createDatabaseIfNotExists("TESTDATABASE");
+        manager.deleteDatabase("TESTDATABASE");
 
         Assert.assertThrows(SQLHandleException.class, () -> {
             manager.deleteDatabase("database3");
@@ -84,19 +84,19 @@ public class databaseTest {
     public void testSwitchDatabase() {
         System.out.println("----------testSwitchDatabase----------");
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
+        manager.createDatabaseIfNotExists("TESTDATABASE");
         ConnectResp resp = new ConnectResp();
         Status status = new Status(Global.SUCCESS_CODE, "");
         resp.status = status;
         resp.sessionId = 1;
         manager.addConnection(1, resp);
-        manager.switchDatabase(1, "database");
+        manager.switchDatabase(1, "TESTDATABASE");
 
         Assert.assertThrows(SessionLostException.class, () -> {
-            manager.switchDatabase(2, "database");
+            manager.switchDatabase(2, "TESTDATABASE");
         });
 
-        Assert.assertThrows(SQLHandleException.class, ()->{
+        Assert.assertThrows(SQLHandleException.class, () -> {
             manager.switchDatabase(1, "database1");
         });
     }
@@ -105,12 +105,12 @@ public class databaseTest {
     public void testRecoverDatabase() {
         System.out.println("----------testRecoverDatabase----------");
         manager.deleteAllDatabase();
-        manager.createDatabaseIfNotExists("database");
-        Database database = new Database("database", Paths.get(manager.getRoot(), "database").toString());
+        manager.createDatabaseIfNotExists("TESTDATABASE");
+        Database database = new Database("TESTDATABASE", Paths.get(manager.getRoot(), "TESTDATABASE").toString());
         ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("ID", ColumnType.INT, true, true, 20));
         columns.add(new Column("name", ColumnType.STRING, false, true, 100));
-        Table table = new Table(Paths.get(database.getRoot(), "table").toString(), "table", columns);
+        Table table = new Table(Paths.get(database.getRoot(), "TABLETEST").toString(), "TABLETEST", columns);
 
         Row newRow_1 = new Row();
         ArrayList<Entry> entries = new ArrayList<Entry>();

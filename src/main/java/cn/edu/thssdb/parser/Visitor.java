@@ -356,7 +356,7 @@ public class Visitor extends SQLBaseVisitor<Object> {
 
     @Override
     public Object visitStringConstant(SQLParser.StringConstantContext ctx) {
-        return new ConstantVariable(ctx.getText().substring(1, ctx.getText().length()-1));
+        return new ConstantVariable(ctx.getText().substring(1, ctx.getText().length() - 1));
     }
 
     @Override

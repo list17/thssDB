@@ -1,21 +1,13 @@
 package cn.edu.thssdb.utils;
 
-import cn.edu.thssdb.exception.KeyNotExistException;
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.index.BPlusTree;
-import cn.edu.thssdb.schema.*;
-import cn.edu.thssdb.type.ColumnType;
-import com.sun.scenario.effect.impl.state.AccessHelper;
-import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class UserManager {
     // 用户管理器单例对象
@@ -47,8 +39,7 @@ public class UserManager {
     public boolean login(String username, String password) {
         if (this.userMap.get(username) == null) {
             return false;
-        }
-        else {
+        } else {
             return this.userMap.get(username).checkPassword(password);
         }
     }
@@ -74,7 +65,7 @@ public class UserManager {
 
     public void createUser(String username, String password) {
         if (password.charAt(0) == '\'' && password.charAt(password.length() - 1) == '\'') {
-            password = password.substring(1, password.length() -1);
+            password = password.substring(1, password.length() - 1);
         }
         User newUser = new User(username, password);
         this.userMap.put(username, newUser);
@@ -163,7 +154,8 @@ public class UserManager {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("./user"));
 
-            ArrayList<User> tmpUserList = (ArrayList<User>) objectInputStream.readObject();;
+            ArrayList<User> tmpUserList = (ArrayList<User>) objectInputStream.readObject();
+            ;
 
             for (User tmpUser : tmpUserList) {
 //                System.out.println(tmpUser.getUsername() + " output " + tmpUser.getPassword());

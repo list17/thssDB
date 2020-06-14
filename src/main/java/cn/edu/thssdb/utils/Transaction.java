@@ -5,7 +5,6 @@ import cn.edu.thssdb.exception.SQLHandleException;
 import cn.edu.thssdb.schema.Manager;
 import cn.edu.thssdb.schema.Row;
 import cn.edu.thssdb.schema.Table;
-import com.sun.javafx.iio.ios.IosDescriptor;
 import javafx.util.Pair;
 
 import java.io.BufferedWriter;
@@ -90,16 +89,13 @@ public class Transaction {
                 bw.flush();
             }
             this.scrtipts = null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new FileWriteException("Write file *.script failed.");
-        }
-        finally {
+        } finally {
             try {
                 bw.close();
                 fw.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new FileWriteException("Close file *.script output-stream failed.");
             }
         }

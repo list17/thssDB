@@ -2,7 +2,6 @@ package cn.edu.thssdb.statement;
 
 import cn.edu.thssdb.exception.FileWriteException;
 import cn.edu.thssdb.exception.SQLHandleException;
-import cn.edu.thssdb.exception.UserManageException;
 import cn.edu.thssdb.query.QueryTable;
 import cn.edu.thssdb.schema.Column;
 import cn.edu.thssdb.schema.Database;
@@ -11,7 +10,7 @@ import cn.edu.thssdb.utils.*;
 
 import java.util.ArrayList;
 
-public class CreateTableStatement implements Statement{
+public class CreateTableStatement implements Statement {
     private String name;
     private ArrayList<ColumnDefinition> columnDefinitions;
 
@@ -32,10 +31,10 @@ public class CreateTableStatement implements Statement{
         }
 
         Database database = manager.getSessionCurrentDatabase(sessionId);
-        if(database == null)
+        if (database == null)
             throw new SQLHandleException("No database selected");
         ArrayList<Column> columns = new ArrayList<>();
-        for(ColumnDefinition columnDefinition : this.columnDefinitions)
+        for (ColumnDefinition columnDefinition : this.columnDefinitions)
             columnDefinition.attach(columns);
 
         TransactionManager tm = TransactionManager.getInstance();

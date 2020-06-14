@@ -5,6 +5,7 @@ package cn.edu.thssdb.exception;
  */
 public class ExpressionHandleException extends RuntimeException {
     private String message;
+
     public enum ErrorCode {
         GENERAL("Exception: general"),
         INDEX_OVERFLOW("Exception: index overflow."),
@@ -13,18 +14,22 @@ public class ExpressionHandleException extends RuntimeException {
         TYPE_NOT_MATCH("Exception: The comparison between variable and constant is not compatible.");
 
         private String message;
+
         ErrorCode(String message) {
             this.message = message;
         }
+
         public String getMessage() {
             return message;
         }
     }
+
     private ErrorCode errorCode;
 
     public ExpressionHandleException() {
         this.errorCode = ErrorCode.GENERAL;
     }
+
     public ExpressionHandleException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
